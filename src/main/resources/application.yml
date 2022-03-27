@@ -1,0 +1,16 @@
+server:
+  port: 8086
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/arknights?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+
+userConfig:
+  #登录的机器人qq
+  loginQq:
+  #OPQ框架部署的IP
+  OPQUrl: localhost
