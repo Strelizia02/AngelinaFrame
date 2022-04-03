@@ -1,11 +1,10 @@
 package top.angelinaBot.annotation;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.reflections.Reflections;
 import org.springframework.stereotype.Service;
 import top.angelinaBot.Aspect.AngelinaAspect;
 import top.angelinaBot.Exception.AngelinaException;
+import top.angelinaBot.bean.SpringContextUtil;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 
@@ -13,8 +12,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.*;
 
-
-@Slf4j
+/**
+ * @author strelitzia
+ * @Date 2022/04/03
+ * 用于扫描项目中的的文件列表，生成每一个@Angelina注解的方法映射
+ **/
 public class ReflectCallMethodAngelina {
 
     /**
@@ -25,18 +27,17 @@ public class ReflectCallMethodAngelina {
      */
     public static void annotationMethod() {
 
-        //查找service包下，所有Service类
-        Reflections reflections = new Reflections("top.angelinaBot.service");
-        Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(Service.class);
+        // 查找所有@Service类
+        Set<Class<?>> typesAnnotatedWith = SpringContextUtil.getClassesByAnnotation(Service.class);
 
         for (Class<?> clazz : typesAnnotatedWith) {
-            //循环查找被Angelina修饰的方法
+            // 循环查找被Angelina修饰的方法
             List<Method> methods = MethodUtils.getMethodsListWithAnnotation(clazz, Angelina.class);
             for (Method method : methods) {
                 if (method.getReturnType() != ReplayInfo.class) {
                     throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 的返回值类型应为 ReplayInfo.class");
                 } else {
-                    //获取方法参数
+                    // 获取方法参数
                     Class<?>[] parameterTypes = method.getParameterTypes();
                     if (parameterTypes.length != 1) {
                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 的参数个数应为 1 个");

@@ -152,9 +152,9 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
+            <groupId>io.socket</groupId>
+            <artifactId>socket.io-client</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

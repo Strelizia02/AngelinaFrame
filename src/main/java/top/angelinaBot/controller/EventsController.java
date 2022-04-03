@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wangzy
- * @Date 2020/11/20 17:02
- * 通用的群聊回复接口
+ * @author strelitzia
+ * @Date 2022/04/03
+ * QQ事件消息处理接口
  **/
 @RequestMapping("Events")
 @RestController

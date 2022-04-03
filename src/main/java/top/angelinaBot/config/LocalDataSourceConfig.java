@@ -20,8 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author wangzy
- * @Date 2020/11/20 17:01
+ * @author strelitzia
+ * @Date 2022/04/03
+ * 注入DataSource相关配置Bean
  **/
 @Configuration
 @MapperScan(basePackages = "top.angelinaBot.dao",
@@ -31,9 +32,6 @@ public class LocalDataSourceConfig {
     @Autowired
     private LocalDataSourceProperties prop;
 
-    /**
-     * 创建数据源
-     */
     @Bean(name = "localDataSource")
     public DataSource getFirstDataSource() {
         return DataSourceBuilder.create()
@@ -61,7 +59,6 @@ public class LocalDataSourceConfig {
         return new DataSourceTransactionManager(dataSource);
     }
 
-    // 创建SqlSessionTemplate
     @Bean("localSqlSessionTemplate")
     public SqlSessionTemplate localSqlSessionTemplate(
             @Qualifier("localSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {

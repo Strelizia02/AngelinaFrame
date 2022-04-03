@@ -5,14 +5,13 @@ import org.springframework.web.bind.annotation.*;
 
 
 /**
- * @author wangzy
- * @Date 2020/11/20 17:02
- * 通用的群聊回复接口
+ * @author strelitzia
+ * @Date 2022/04/03
+ * Web前端主页用接口
  **/
 @RequestMapping("web")
 @RestController
 @Slf4j
 public class WebController {
-
 
 }

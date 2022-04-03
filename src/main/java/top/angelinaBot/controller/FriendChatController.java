@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * @author wangzy
- * @Date 2020/12/24 15:58
- * 私聊回复接口单独实现，尽量不与群聊接口重复
+ * @author strelitzia
+ * @Date 2022/04/03
+ * QQ私聊消息处理接口
  **/
-@RequestMapping("PrivateChat")
+@RequestMapping("FriendChat")
 @RestController
 @Slf4j
-public class PrivateChatController {
+public class FriendChatController {
 
 }

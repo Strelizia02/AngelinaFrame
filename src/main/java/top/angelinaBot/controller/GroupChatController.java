@@ -1,6 +1,5 @@
 package top.angelinaBot.controller;
 
-import org.json.JSONObject;
 import top.angelinaBot.Aspect.AngelinaAspect;
 import top.angelinaBot.bean.SpringContextUtil;
 import top.angelinaBot.model.MessageInfo;
@@ -9,15 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.util.SendMessageUtil;
 import top.angelinaBot.vo.JsonResult;
 
+import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * @author wangzy
- * @Date 2022/3/23 17:02
- * 通用的群聊回复接口
+ * @author strelitzia
+ * @Date 2022/04/03
+ * QQ群聊消息处理接口
  **/
 @RequestMapping("GroupChat")
 @RestController
@@ -26,6 +27,9 @@ public class GroupChatController {
 
     @Value("${userConfig.loginQq}")
     private Long loginQq;
+
+    @Resource(name = "opq")
+    private SendMessageUtil sendMessageUtil;
 
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(
@@ -46,6 +50,7 @@ public class GroupChatController {
                 if (AngelinaAspect.keyWordsMap.containsKey(message.getKeyword())) {
                     Method method = AngelinaAspect.keyWordsMap.get(message.getKeyword());
                     ReplayInfo invoke = (ReplayInfo) method.invoke(getClassNameByMethod(method), message);
+                    sendMessageUtil.sendGroupMsg(invoke);
                     return JsonResult.success(invoke);
                 }
             }

@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author wangzy
- * @Date 2020/11/20 17:02
+ * @author strelitzia
+ * @Date 2022/04/03
+ * 相关疏浚内容更新接口
  **/
 @RequestMapping("Update")
 @RestController

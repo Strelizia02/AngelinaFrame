@@ -14,9 +14,9 @@ import static springfox.documentation.builders.RequestHandlerSelectors.basePacka
 
 
 /**
- * @author wangzy
- * Swagger的配置信息
- * @Date 2020/11/20 17:01
+ * @author strelitzia
+ * @Date 2022/04/03
+ * Swagger的配置类
  **/
 @Configuration
 @EnableSwagger2

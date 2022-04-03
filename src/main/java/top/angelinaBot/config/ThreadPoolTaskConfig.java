@@ -8,8 +8,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * @author wangzy
- * @Date 2020/12/25 14:38
+ * @author strelitzia
+ * @Date 2022/04/03
+ * 配置线程池相关信息
  **/
 @Configuration
 public class ThreadPoolTaskConfig {
