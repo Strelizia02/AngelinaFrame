@@ -1,10 +1,11 @@
-package top.angelinaBot.annotation;
+package top.angelinaBot.reflect;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
-import top.angelinaBot.Aspect.AngelinaAspect;
+import top.angelinaBot.aspect.AngelinaAspect;
 import top.angelinaBot.Exception.AngelinaException;
-import top.angelinaBot.bean.SpringContextUtil;
+import top.angelinaBot.annotation.AngelinaGroup;
+import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 
@@ -28,11 +29,11 @@ public class ReflectCallMethodAngelina {
     public static void annotationMethod() {
 
         // 查找所有@Service类
-        Set<Class<?>> typesAnnotatedWith = SpringContextUtil.getClassesByAnnotation(Service.class);
+        Set<Class<?>> typesAnnotatedWith = SpringContextRunner.getClassesByAnnotation(Service.class);
 
         for (Class<?> clazz : typesAnnotatedWith) {
             // 循环查找被Angelina修饰的方法
-            List<Method> methods = MethodUtils.getMethodsListWithAnnotation(clazz, Angelina.class);
+            List<Method> methods = MethodUtils.getMethodsListWithAnnotation(clazz, AngelinaGroup.class);
             for (Method method : methods) {
                 if (method.getReturnType() != ReplayInfo.class) {
                     throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 的返回值类型应为 ReplayInfo.class");
@@ -47,9 +48,9 @@ public class ReflectCallMethodAngelina {
                         } else {
                             for (Annotation annotation : method.getDeclaredAnnotations()) {
                                 //获取方法上的所有修饰注解，循环找到Angelina注解
-                                if (annotation instanceof Angelina) {
+                                if (annotation instanceof AngelinaGroup) {
                                     //获取文字关键字
-                                    String[] keyWords = ((Angelina) annotation).keyWords();
+                                    String[] keyWords = ((AngelinaGroup) annotation).keyWords();
                                     for (String keyWord : keyWords) {
                                         //判断关键字是否重复
                                         if (AngelinaAspect.keyWordsMap.containsKey(keyWord)) {
@@ -63,7 +64,7 @@ public class ReflectCallMethodAngelina {
                                         }
                                     }
 
-                                    String[] dHashList = ((Angelina) annotation).dHash();
+                                    String[] dHashList = ((AngelinaGroup) annotation).dHash();
                                     for (String dHash : dHashList) {
                                         //判断DHash是否重复
                                         if (!"".equals(dHash) && AngelinaAspect.dHashMap.containsKey(dHash)) {

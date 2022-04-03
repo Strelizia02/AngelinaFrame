@@ -1,5 +1,6 @@
 package top.angelinaBot.bean;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -16,7 +17,7 @@ import java.util.Set;
  * 实现ApplicationContextAware接口进而获得Spring容器
  **/
 @Configuration
-public class SpringContextUtil implements ApplicationContextAware {
+public class SpringContextRunner implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
@@ -26,8 +27,8 @@ public class SpringContextUtil implements ApplicationContextAware {
      * @throws BeansException 加载Bean失败时抛出BeanException
      */
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringContextUtil.applicationContext = applicationContext;
+    public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
+        SpringContextRunner.applicationContext = applicationContext;
     }
 
     /**

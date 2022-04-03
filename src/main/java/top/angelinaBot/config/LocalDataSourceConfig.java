@@ -4,7 +4,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.web.client.RestTemplate;
+import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -29,16 +29,12 @@ import java.util.List;
         sqlSessionTemplateRef = "localSqlSessionTemplate")
 public class LocalDataSourceConfig {
 
-    @Autowired
-    private LocalDataSourceProperties prop;
-
     @Bean(name = "localDataSource")
     public DataSource getFirstDataSource() {
         return DataSourceBuilder.create()
-                .driverClassName(prop.getDriverClassName())
-                .url(prop.getUrl())
-                .username(prop.getUsername())
-                .password(prop.getPassword())
+                .driverClassName("org.sqlite.JDBC")
+                .url("jdbc:sqlite:angelina.db")
+                .type(SQLiteDataSource.class)
                 .build();
     }
 
@@ -48,7 +44,6 @@ public class LocalDataSourceConfig {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setMapperLocations(new PathMatchingResourcePatternResolver()
                 .getResources("classpath:mapping/*.xml"));
-
         bean.setDataSource(dataSource);
         return bean.getObject();
     }

@@ -1,7 +1,8 @@
 package top.angelinaBot.controller;
 
-import top.angelinaBot.Aspect.AngelinaAspect;
-import top.angelinaBot.bean.SpringContextUtil;
+import org.json.JSONObject;
+import top.angelinaBot.aspect.AngelinaAspect;
+import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.MsgBody;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,7 @@ public class GroupChatController {
     public JsonResult<ReplayInfo> receive(
             @RequestBody MsgBody msgBody
     ) throws InvocationTargetException, IllegalAccessException {
+        JSONObject jsonObject = new JSONObject();
         //获取发送消息的群友qq
         Long qq = msgBody.getQq();
         //不处理自身发送的消息
@@ -82,7 +84,7 @@ public class GroupChatController {
         //类名首字母小写，去spring容器中查
         String classNameLower = Character.toLowerCase(className.charAt(0)) + className.substring(1);
         //返回bean
-        return SpringContextUtil.getBean(classNameLower);
+        return SpringContextRunner.getBean(classNameLower);
     }
 
 }

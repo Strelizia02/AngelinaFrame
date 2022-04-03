@@ -2,7 +2,8 @@ package top.angelinaBot.bean;
 
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.stereotype.Component;
-import top.angelinaBot.annotation.ReflectCallMethodAngelina;
+import top.angelinaBot.reflect.ReflectCallMethodAngelina;
+import top.angelinaBot.util.MiraiFrameUtil;
 
 /**
  * @author strelitzia
@@ -18,6 +19,6 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Override
     public void afterSingletonsInstantiated() {
         ReflectCallMethodAngelina.annotationMethod();
-        WebSocketConfig.webSocketListener();
+        MiraiFrameUtil.startMirai();
     }
 }
