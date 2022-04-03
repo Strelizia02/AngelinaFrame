@@ -27,8 +27,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class GroupChatController {
 
-    @Value("${userConfig.loginQq}")
-    private Long loginQq;
+    public static Long loginQq = 123456L;
 
     @Resource(name = "opq")
     private SendMessageUtil sendMessageUtil;
@@ -41,7 +40,7 @@ public class GroupChatController {
         //获取发送消息的群友qq
         Long qq = msgBody.getQq();
         //不处理自身发送的消息
-        if (!qq.equals(loginQq)) {
+        if (!loginQq.equals(qq)) {
             log.info("接受到消息:{}", msgBody.getText());
             //获取群号、昵称、消息
             Long groupId = msgBody.getGroupId();

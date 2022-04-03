@@ -1,81 +1,40 @@
-# 警告！！
+# 项目描述
 
-**本项目中包含：**
+本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[mirai]()，[opq]()两个版本，分别集成了mirai和opq框架，如果您是使用其他框架进行开发，请详阅[如何封装其他QQ框架]()
 
-​	**HanYuPinYin**
+项目构建：SpringBoot + 任意QQ框架
 
-​	**命名不规范**
+使用样例：
 
-​	**代码重复**
+```java
+@Service//由Spring容器对实例进行托管
+public class HelloWorldService {
+    
+    @AngelinaGroup(keyWords = {"Hello", "hello"})//当QQ群聊中呼叫【洁哥Hello】或【洁哥hello】时，调用该方法
+    public ReplayInfo helloWorld(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo();
+        replayInfo.setReplayMessage("Angelina Hello World！");
+        return replayInfo;//将你的返回结果封装成ReplayInfo
+    }
+}
+```
 
-基本操作，无需吐槽
+Angelina框架对SpringBoot进行魔改，通过反射调用消息处理方法。开发者仅需处理业务逻辑，无需在意如何监听消息/发送消息，仅需按照方法规定输入输出，再加上@Angelina注解，由Angelina框架部分完成消息接收和发送等操作。
 
-# TIPS：
+本项目完全开源，开源许可请参见[LICENSE]()
 
-本项目主要逻辑均基于SpringBoot+MyBatis+MySQL实现，采用机器人框架->调用API->返回数据->发送消息的方式。
+# 责任声明
 
-项目主要实现机器人的自定义事件触发、自动回复。
+本项目旨在学习交流，请勿商用。
 
-感谢[OPQ机器人框架](https://github.com/OPQBOT/OPQ/wiki)提供的技术支持，有关框架的部署请参考wiki文档。
+请勿使用本项目从事任何违反法律法规的活动。
 
-感谢[兔兔阿米娅](https://github.com/vivien8261/Amiya-Bot)，[企鹅物流](https://penguin-stats.cn/)，[kokodayo资料站](https://kokodayo.fun/)，[ArknightsGameData](https://github.com/Kengxxiao/ArknightsGameData)提供的数据支持。
+项目中包含部分需要将密码明文硬编码的行为，对qq账号有一定安全风险，请勿使用高价值的qq号进行调试。
 
-感谢[百度智能云](https://cloud.baidu.com/)提供的图像识别技术，公开招募可以直接截图查询。
+# 如何使用
 
-前端主页：[Angelina's Home](http://www.angelina-bot.top/)
+[开发者手册]()
 
-前端项目链接:[Angelina-bot](https://github.com/aStrangerPassingBy/Angelina-bot)
+# 项目案例
 
-# 特别鸣谢：
-
-[水長歌](https://github.com/aStrangerPassingBy)
-
-[Chino酱](https://github.com/vivien8261)
-
-# 责任声明：
-
-**我国有一套完善的法律制度，请不要使用本项目传播不能过审的信息，应当遵守中华人民共和国法律法规。**
-
-部署后将机器人拉入群聊，发送[##菜单]即可获取功能详情，当前触发关键字是**##/洁哥/安洁莉娜/杰哥**，后期会酌情更改。
-
-抽卡的垫刀数是根据抽卡人QQ分别记录的，因此会记录QQ，群昵称以及群号，涉及部分隐私信息，虽已将信息加密存储，由于不同的服务器安全等级不同，仍有泄露风险，请酌情使用或修改源码。
-
-自8.2事变起，企鹅机器人风控异常严格，容易造成机器人账号冻结，为了您的账号安全，请使用小号进行测试，小号提前预热活跃度可以有效减少冻结几率。
-
-# 功能实现：
-
-[功能文档](https://github.com/Strelizia02/ArknightsAPI/wiki)
-
-# 项目部署：
-
-[项目主页](http://www.angelina-bot.top/)
-
-[机器人框架部署文档](https://github.com/OPQBOT/OPQ/wiki/%E5%AE%89%E8%A3%85%E6%8C%87%E5%8D%97)
-
-[本项目部署文档](https://www.cnblogs.com/strelizia/p/14120201.html)
-
-[视频教程](https://www.bilibili.com/video/BV1hw411f7a4)
-
-# TODO：
-
-- [x] 增加敌人信息
-- [x] 材料信息自动更新
-- [ ] ~~对接微博api监听微博更新~~
-- [x] 对接B站api提供作业查询
-- [x] 给孩子起个名吧，球球啦
-- [ ] ~~自然语言处理，中文分词，关键词触发~~
-- [ ] ~~语音识别系统~~
-- [x] 增加前端管理页面
-- [x] 增加材料图标、干员立绘
-- [x] 增加干员档案信息
-- [x] 干员生日提醒推送
-
-# 售后服务：
-
-bug报修请私信博客园，或者在测试QQ群【洁哥妙妙屋(691029037)】中私聊群主，内容包括但不限于：bug触发条件、截图、报错信息。
-
-[博客地址](https://www.cnblogs.com/strelizia/)，有其他问题也可直接联系。不定期收私信，可能回复有延迟。
-
-# 打赏通道：
-
-群相册中提供打赏二维码，更推荐通过【Github star】【视频点赞】的方式支持作者。
+[BotByAngelinaFrame]()

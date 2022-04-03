@@ -7,6 +7,7 @@ import net.mamoe.mirai.event.Listener;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.utils.BotConfiguration;
+import top.angelinaBot.controller.GroupChatController;
 
 /**
  * Mirai框架的通用启动方法
@@ -17,7 +18,7 @@ public class MiraiFrameUtil {
      * Mirai框架的启动方法，一次性启动Mirai并开启消息监听
      */
     public static void startMirai(){
-        Bot bot = BotFactory.INSTANCE.newBot(12345L, "123456", new BotConfiguration(){{
+        Bot bot = BotFactory.INSTANCE.newBot(GroupChatController.loginQq, "123456", new BotConfiguration(){{
             setProtocol(BotConfiguration.MiraiProtocol.ANDROID_PAD);
         }});
         bot.login();
