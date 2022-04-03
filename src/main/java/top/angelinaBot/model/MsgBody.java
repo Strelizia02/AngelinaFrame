@@ -3,7 +3,9 @@ package top.angelinaBot.model;
 import java.io.Serializable;
 
 /**
- * qq消息封装
+ * @author strelitzia
+ * @Date 2022/04/03
+ * QQ消息原始Bean
  **/
 public class MsgBody implements Serializable {
     private String text;

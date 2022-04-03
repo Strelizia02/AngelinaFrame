@@ -17,4 +17,6 @@ import java.util.Map;
 public class AngelinaAspect {
     //用于存放所有被注解的方法
     public static final Map<String, Method> keyWordsMap = new HashMap<>();
+
+    public static final Map<String, Method> dHashMap = new HashMap<>();
 }

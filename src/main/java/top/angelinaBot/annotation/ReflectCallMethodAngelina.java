@@ -48,6 +48,7 @@ public class ReflectCallMethodAngelina {
                             for (Annotation annotation : method.getDeclaredAnnotations()) {
                                 //获取方法上的所有修饰注解，循环找到Angelina注解
                                 if (annotation instanceof Angelina) {
+                                    //获取文字关键字
                                     String[] keyWords = ((Angelina) annotation).keyWords();
                                     for (String keyWord : keyWords) {
                                         //判断关键字是否重复
@@ -59,6 +60,20 @@ public class ReflectCallMethodAngelina {
                                             method.setAccessible(true);
                                             //确认完全符合要求后，将关键字和方法添加至全局变量keyWordsMap中
                                             AngelinaAspect.keyWordsMap.put(keyWord, method);
+                                        }
+                                    }
+
+                                    String[] dHashList = ((Angelina) annotation).dHash();
+                                    for (String dHash : dHashList) {
+                                        //判断DHash是否重复
+                                        if (!"".equals(dHash) && AngelinaAspect.dHashMap.containsKey(dHash)) {
+                                            Method replaceMethod = AngelinaAspect.dHashMap.get(dHash);
+                                            throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() DHash与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() DHash重复");
+                                        } else {
+                                            //关闭安全检查提升反射速度
+                                            method.setAccessible(true);
+                                            //确认完全符合要求后，将关键字和方法添加至全局变量dHashMap中
+                                            AngelinaAspect.dHashMap.put(dHash, method);
                                         }
                                     }
                                 }
