@@ -1,12 +1,9 @@
 package top.angelinaBot.controller;
 
-import org.json.JSONObject;
 import top.angelinaBot.aspect.AngelinaAspect;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.model.MessageInfo;
-import top.angelinaBot.model.MsgBody;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.DHashUtil;
@@ -27,27 +24,21 @@ import java.lang.reflect.Method;
 @Slf4j
 public class GroupChatController {
 
-    public static Long loginQq = 123456L;
-
     @Resource(name = "opq")
     private SendMessageUtil sendMessageUtil;
 
+    /**
+     * 通用的qq群聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
+     * @param message 消息的封装方法
+     * @return 返回消息的封装
+     * @throws InvocationTargetException 反射相关异常
+     * @throws IllegalAccessException 反射相关异常
+     */
     @PostMapping("receive")
-    public JsonResult<ReplayInfo> receive(
-            @RequestBody MsgBody msgBody
-    ) throws InvocationTargetException, IllegalAccessException {
-        JSONObject jsonObject = new JSONObject();
-        //获取发送消息的群友qq
-        Long qq = msgBody.getQq();
+    public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
         //不处理自身发送的消息
-        if (!loginQq.equals(qq)) {
-            log.info("接受到消息:{}", msgBody.getText());
-            //获取群号、昵称、消息
-            Long groupId = msgBody.getGroupId();
-            String name = msgBody.getName();
-            String text = msgBody.getText();
-            //封装消息
-            MessageInfo message = new MessageInfo(qq, groupId, name, text);
+        if (!message.getLoginQq().equals(message.getQq())) {
+            log.info("接受到消息:{}", message.getText());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (AngelinaAspect.keyWordsMap.containsKey(message.getKeyword())) {
                     Method method = AngelinaAspect.keyWordsMap.get(message.getKeyword());
@@ -55,12 +46,12 @@ public class GroupChatController {
                     sendMessageUtil.sendGroupMsg(invoke);
                     return JsonResult.success(invoke);
                 }
-            }else if (message.getKeyword() == null && message.getImgUrlList().size() == 1){
+            } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1) {
                 //没有文字且只有一张图片的时候，准备DHash运算
                 String dHash = DHashUtil.getDHash(message.getImgUrlList().get(0));
-                for (String s: AngelinaAspect.dHashMap.keySet()){
+                for (String s : AngelinaAspect.dHashMap.keySet()) {
                     //循环比对海明距离，小于6的直接触发
-                    if (DHashUtil.getHammingDistance(dHash, s) < 6){
+                    if (DHashUtil.getHammingDistance(dHash, s) < 6) {
                         Method method = AngelinaAspect.dHashMap.get(dHash);
                         ReplayInfo invoke = (ReplayInfo) method.invoke(getClassNameByMethod(method), message);
                         sendMessageUtil.sendGroupMsg(invoke);
@@ -74,8 +65,7 @@ public class GroupChatController {
 
     /**
      * 根据Method获取Spring容器中类的实例
-     *
-     * @return
+     * @return 返回Spring中的实例
      */
     public Object getClassNameByMethod(Method method) {
         //获取method所属的类名

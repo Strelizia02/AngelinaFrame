@@ -1,5 +1,13 @@
 package top.angelinaBot.model;
 
+import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.internal.message.OnlineGroupImage;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.PlainText;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,10 +16,14 @@ import java.util.List;
  * qq消息格式化Bean
  **/
 public class MessageInfo {
+    //登录qq
+    private Long loginQq;
+    //原文字消息
+    private String text;
     //文字消息的第一节
     private String keyword;
     //文字消息的参数
-    private List<String> args;
+    private List<String> args = new ArrayList<>();
     //发送人qq
     private Long qq;
     //发送人昵称
@@ -19,25 +31,74 @@ public class MessageInfo {
     //群号
     private Long groupId;
     //图片url集合
-    private List<String> imgUrlList;
-    //fileMd5消息
-    private String fileMd5;
+    private List<String> imgUrlList = new ArrayList<>();
     //是否被呼叫
-    private Boolean isCallMe;
+    private Boolean isCallMe = false;
     //艾特了哪些人
-    private List<Long> atQQList;
-    //发送时间
-    private String time;
+    private List<Long> atQQList = new ArrayList<>();
+    //发送时间戳
+    private Integer time;
 
     public MessageInfo() {}
 
-    public MessageInfo(Long qq, Long groupId, String name, String text){
-        //TODO 解析json字符串
-        this.qq = qq;
-        this.groupId = groupId;
-        this.name = name;
-        this.keyword = text;
-        this.isCallMe = true;
+    /**
+     * 根据Mirai的事件构建Message，方便后续调用
+     * @param event Mirai事件
+     * @param botNames 机器人名称
+     */
+    public MessageInfo(GroupMessageEvent event, String[] botNames){
+        // Mirai 的事件内容封装
+        this.loginQq = event.getBot().getId();
+        this.qq = event.getSender().getId();
+        this.name = event.getSenderName();
+        this.groupId = event.getSubject().getId();
+        this.time = event.getTime();
+
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                this.atQQList.add(((At) o).getTarget());
+                if (((At) o).getTarget() == this.loginQq){
+                    //如果被艾特则视为被呼叫
+                    this.isCallMe = true;
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                this.text = ((PlainText) o).getContent();
+                String[] orders = this.text.split("\\s+");
+                if (orders.length > 0) {
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            this.isCallMe = true;
+                            this.keyword = orders[0].replace(name, "");
+                            this.args = Arrays.asList(orders);
+                            break;
+                        }
+                    }
+                }
+            } else if (o instanceof OnlineGroupImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
+                //消息图片内容
+                this.imgUrlList.add(((OnlineGroupImage) o).getOriginUrl());
+            }
+        }
+    }
+
+    public Long getLoginQq() {
+        return loginQq;
+    }
+
+    public void setLoginQq(Long loginQq) {
+        this.loginQq = loginQq;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 
     public List<String> getArgs() {
@@ -80,14 +141,6 @@ public class MessageInfo {
         this.groupId = groupId;
     }
 
-    public String getFileMd5() {
-        return fileMd5;
-    }
-
-    public void setFileMd5(String fileMd5) {
-        this.fileMd5 = fileMd5;
-    }
-
     public Boolean getCallMe() {
         return isCallMe;
     }
@@ -112,11 +165,11 @@ public class MessageInfo {
         this.imgUrlList = imgUrlList;
     }
 
-    public String getTime() {
+    public Integer getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(Integer time) {
         this.time = time;
     }
 }

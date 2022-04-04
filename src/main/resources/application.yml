@@ -4,3 +4,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
 userConfig:
+  # 多个选项用空格隔开
+  botNames: '洁哥 杰哥 安洁莉娜'
+  qqList: '123456 78901'
+  pwList: 'qwert yuiop'
