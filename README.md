@@ -1,8 +1,8 @@
 # 项目描述
 
-本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[mirai]()，[opq]()两个版本，分别集成了mirai和opq框架，如果您是使用其他框架进行开发，请详阅[如何封装其他QQ框架]()
+本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[mirai](https://github.com/mamoe/mirai)版本，集成了[mirai](https://github.com/mamoe/mirai)框架，如果您是使用其他框架进行开发，请详阅[如何封装其他QQ框架]()
 
-项目构建：SpringBoot + 任意QQ框架
+项目构建：SpringBoot + QQ框架
 
 使用样例：
 
@@ -21,9 +21,10 @@ public class HelloWorldService {
 
 Angelina框架对SpringBoot进行魔改，通过反射调用消息处理方法。开发者仅需处理业务逻辑，无需在意如何监听消息/发送消息，仅需按照方法规定输入输出，再加上@Angelina注解，由Angelina框架部分完成消息接收和发送等操作。
 
-本项目完全开源，开源许可请参见[LICENSE]()
 
 # 责任声明
+
+本项目完全开源，开源许可请参见[LICENSE](https://github.com/Strelizia02/AngelinaFrame/blob/master/LICENSE)
 
 本项目旨在学习交流，请勿商用。
 
