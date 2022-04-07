@@ -24,9 +24,9 @@ Angelina框架对SpringBoot进行魔改，通过反射调用消息处理方法�
 
 # 责任声明
 
-本项目完全开源，开源许可请参见[LICENSE](https://github.com/Strelizia02/AngelinaFrame/blob/master/LICENSE)
+本项目完全开源，开源许可采用AGPLv3，详情请参见[LICENSE](https://github.com/Strelizia02/AngelinaFrame/blob/master/LICENSE)
 
-本项目旨在学习交流，请勿商用。
+本项目仅用于学习交流。
 
 请勿使用本项目从事任何违反法律法规的活动。
 
