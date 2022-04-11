@@ -2,7 +2,7 @@
 
 本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[mirai](https://github.com/mamoe/mirai)版本，集成了[mirai](https://github.com/mamoe/mirai)框架，如果您是使用其他框架进行开发，请详阅[如何封装其他QQ框架]()
 
-阅读[English Readme](https://github.com/Strelizia02/AngelinaFrame/blob/master/Readme-en.md)
+Read [English Readme](https://github.com/Strelizia02/AngelinaFrame/blob/master/Readme-en.md)
 
 项目构建：SpringBoot + QQ框架
 
