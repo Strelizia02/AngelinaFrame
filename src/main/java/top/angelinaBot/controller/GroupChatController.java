@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class GroupChatController {
 
-    @Resource(name = "opq")
+    @Resource(name = "mirai")
     private SendMessageUtil sendMessageUtil;
 
     /**
