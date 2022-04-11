@@ -36,7 +36,7 @@ The project contains some behaviors that need to hard-code the password in plain
 
 # How To Use
 
-[Developer's Manual]()
+[Developer's Manual](https://github.com/Strelizia02/AngelinaFrame/wiki)
 
 # Project Cases
 
