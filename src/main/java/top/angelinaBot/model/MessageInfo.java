@@ -1,11 +1,15 @@
 package top.angelinaBot.model;
 
+import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.internal.message.OnlineFriendImage;
 import net.mamoe.mirai.internal.message.OnlineGroupImage;
 import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.ImageType;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.PlainText;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,12 +36,16 @@ public class MessageInfo {
     private Long groupId;
     //图片url集合
     private List<String> imgUrlList = new ArrayList<>();
+    //图片类型集合
+    private List<ImageType> imgTypeList = new ArrayList<>();
     //是否被呼叫
     private Boolean isCallMe = false;
     //艾特了哪些人
     private List<Long> atQQList = new ArrayList<>();
     //发送时间戳
     private Integer time;
+    //消息缩略字符串
+    private String eventString;
 
     public MessageInfo() {}
 
@@ -56,6 +64,7 @@ public class MessageInfo {
 
         //获取消息体
         MessageChain chain = event.getMessage();
+        this.eventString = chain.toString();
         for (Object o: chain){
             if (o instanceof At) {
                 //消息艾特内容
@@ -66,14 +75,15 @@ public class MessageInfo {
                 }
             } else if (o instanceof PlainText) {
                 //消息文字内容
-                this.text = ((PlainText) o).getContent();
+                this.text = ((PlainText) o).getContent().trim();
                 String[] orders = this.text.split("\\s+");
                 if (orders.length > 0) {
+                    this.keyword = orders[0];
+                    this.args = Arrays.asList(orders);
                     for (String name: botNames){
                         if (orders[0].startsWith(name)){
                             this.isCallMe = true;
-                            this.keyword = orders[0].replace(name, "");
-                            this.args = Arrays.asList(orders);
+                            this.keyword = this.keyword.replace(name, "");
                             break;
                         }
                     }
@@ -81,8 +91,61 @@ public class MessageInfo {
             } else if (o instanceof OnlineGroupImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
                 //消息图片内容
                 this.imgUrlList.add(((OnlineGroupImage) o).getOriginUrl());
+                this.imgTypeList.add(((OnlineGroupImage) o).getImageType());
             }
         }
+    }
+
+    public MessageInfo(FriendMessageEvent event, String[] botNames) {
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        this.eventString = chain.toString();
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                this.atQQList.add(((At) o).getTarget());
+                if (((At) o).getTarget() == this.loginQq){
+                    //如果被艾特则视为被呼叫
+                    this.isCallMe = true;
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                this.text = ((PlainText) o).getContent().trim();
+
+                String[] orders = this.text.split("\\s+");
+                if (orders.length > 0) {
+                    this.keyword = orders[0];
+                    this.args = Arrays.asList(orders);
+                    this.isCallMe = true;
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            this.keyword = this.keyword.replace(name, "");
+                            break;
+                        }
+                    }
+                }
+            } else if (o instanceof OnlineFriendImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
+                //消息图片内容
+                this.imgUrlList.add(((OnlineFriendImage) o).getOriginUrl());
+                this.imgTypeList.add(((OnlineFriendImage) o).getImageType());
+            }
+        }
+    }
+
+    public List<ImageType> getImgTypeList() {
+        return imgTypeList;
+    }
+
+    public void setImgTypeList(List<ImageType> imgTypeList) {
+        this.imgTypeList = imgTypeList;
+    }
+
+    public String getEventString() {
+        return eventString;
+    }
+
+    public void setEventString(String eventString) {
+        this.eventString = eventString;
     }
 
     public Long getLoginQq() {

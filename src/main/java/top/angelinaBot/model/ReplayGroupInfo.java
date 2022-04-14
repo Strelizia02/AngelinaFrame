@@ -1,13 +1,15 @@
 package top.angelinaBot.model;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author strelitzia
  * @Date 2022/04/03
  * 回复消息结构化Bean
  **/
-public class ReplayInfo {
+public class ReplayGroupInfo {
     //登录QQ
     Long loginQQ;
     //qq
@@ -19,13 +21,20 @@ public class ReplayInfo {
     //文字内容
     String replayMessage;
     //图片内容
-    BufferedImage replayImg;
+    List<BufferedImage> replayImg = new ArrayList<>();
     //踢出群
     String kick;
     //禁言
     Integer muted;
     //戳一戳
-    Boolean isNudged;
+    Boolean isNudged = false;
+
+    public ReplayGroupInfo(MessageInfo messageInfo) {
+        this.loginQQ = messageInfo.getLoginQq();
+        this.groupId = messageInfo.getGroupId();
+        this.qq = messageInfo.getQq();
+        this.name = messageInfo.getName();
+    }
 
     public String getName() {
         return name;
@@ -91,12 +100,11 @@ public class ReplayInfo {
         this.replayMessage = replayMessage;
     }
 
-    public BufferedImage getReplayImg() {
+    public List<BufferedImage> getReplayImg() {
         return replayImg;
     }
 
-    public void setReplayImg(BufferedImage replayImg) {
+    public void setReplayImg(List<BufferedImage> replayImg) {
         this.replayImg = replayImg;
     }
-
 }

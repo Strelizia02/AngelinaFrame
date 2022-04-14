@@ -3,7 +3,6 @@ package top.angelinaBot.bean;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import top.angelinaBot.reflect.ReflectCallMethodAngelina;
 import top.angelinaBot.util.MiraiFrameUtil;
 
 /**
@@ -22,7 +21,6 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
      */
     @Override
     public void afterSingletonsInstantiated() {
-        ReflectCallMethodAngelina.annotationMethod();
         miraiFrameUtil.startMirai();
     }
 }

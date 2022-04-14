@@ -9,12 +9,13 @@ import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
 import org.springframework.stereotype.Component;
-import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.model.ReplayGroupInfo;
 import top.angelinaBot.util.SendMessageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.util.List;
 
 /**
  * Mirai发送消息封装方法
@@ -28,10 +29,10 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
      * @param replayInfo 发送消息的结构封装
      */
     @Override
-    public void sendGroupMsg(ReplayInfo replayInfo) {
+    public void sendGroupMsg(ReplayGroupInfo replayInfo) {
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
-        BufferedImage replayImg = replayInfo.getReplayImg();
+        List<BufferedImage> replayImgList = replayInfo.getReplayImg();
         String kick = replayInfo.getKick();
         Integer muted = replayInfo.getMuted();
         Boolean nudged = replayInfo.getNudged();
@@ -40,18 +41,20 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
         //获取群
         Group group = bot.getGroupOrFail(replayInfo.getGroupId());
-        if (replayMessage != null && replayImg != null) {
+        if (replayMessage != null && replayImgList.size() > 0) {
             //发送图片 + 文字
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
                     .append(new PlainText(replayMessage));
 
             try {
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(replayImg,"jpg",os);
-                InputStream is = new ByteArrayInputStream(os.toByteArray());
-                ExternalResource externalResource = ExternalResource.create(is);
-                Image i = group.uploadImage(externalResource);
-                messageChainBuilder.append(i);
+                for (BufferedImage replayImg: replayImgList) {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ImageIO.write(replayImg, "jpg", os);
+                    InputStream is = new ByteArrayInputStream(os.toByteArray());
+                    ExternalResource externalResource = ExternalResource.create(is);
+                    Image i = group.uploadImage(externalResource);
+                    messageChainBuilder.append(i);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -60,16 +63,18 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         } else if (replayMessage != null) {
             //发送文字
             group.sendMessage(new PlainText(replayMessage));
-        } else if (replayImg != null) {
+        } else if (replayImgList.size() > 0) {
             //发送图片
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
             try {
-                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-                ByteArrayOutputStream os = new ByteArrayOutputStream();
-                ImageIO.write(replayImg,"jpg",os);
-                InputStream is = new ByteArrayInputStream(os.toByteArray());
-                ExternalResource externalResource = ExternalResource.create(is);
-                Image i = group.uploadImage(externalResource);
-                messageChainBuilder.append(i);
+                for (BufferedImage replayImg: replayImgList) {
+                    ByteArrayOutputStream os = new ByteArrayOutputStream();
+                    ImageIO.write(replayImg, "jpg", os);
+                    InputStream is = new ByteArrayInputStream(os.toByteArray());
+                    ExternalResource externalResource = ExternalResource.create(is);
+                    Image i = group.uploadImage(externalResource);
+                    messageChainBuilder.append(i);
+                }
                 MessageChain chain = messageChainBuilder.build();
                 group.sendMessage(chain);
             } catch (IOException e) {

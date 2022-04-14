@@ -1,5 +1,6 @@
 package top.angelinaBot.aspect;
 
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
