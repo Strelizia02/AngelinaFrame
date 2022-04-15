@@ -43,7 +43,7 @@ public class GroupChatController {
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (AngelinaAspect.keyWordsMap.containsKey(message.getKeyword())) {
                     Method method = AngelinaAspect.keyWordsMap.get(message.getKeyword());
-                    ReplayGroupInfo invoke = (ReplayGroupInfo) method.invoke(getClassNameByMethod(method), message);
+                    ReplayGroupInfo invoke = (ReplayGroupInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                     sendMessageUtil.sendGroupMsg(invoke);
                     return JsonResult.success(invoke);
                 }
@@ -54,7 +54,7 @@ public class GroupChatController {
                     //循环比对海明距离，小于6的直接触发
                     if (DHashUtil.getHammingDistance(dHash, s) < 6) {
                         Method method = AngelinaAspect.dHashMap.get(dHash);
-                        ReplayGroupInfo invoke = (ReplayGroupInfo) method.invoke(getClassNameByMethod(method), message);
+                        ReplayGroupInfo invoke = (ReplayGroupInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                         sendMessageUtil.sendGroupMsg(invoke);
                         return JsonResult.success(invoke);
                     }
@@ -63,18 +63,4 @@ public class GroupChatController {
         }
         return null;
     }
-
-    /**
-     * 根据Method获取Spring容器中类的实例
-     * @return 返回Spring中的实例
-     */
-    public Object getClassNameByMethod(Method method) {
-        //获取method所属的类名
-        String className = method.getDeclaringClass().getSimpleName();
-        //类名首字母小写，去spring容器中查
-        String classNameLower = Character.toLowerCase(className.charAt(0)) + className.substring(1);
-        //返回bean
-        return SpringContextRunner.getBean(classNameLower);
-    }
-
 }

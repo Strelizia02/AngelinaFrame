@@ -5,7 +5,7 @@ import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayGroupInfo;
 
-@Service
+@Service("helloWorldService")
 public class HelloWorldService {
 
     @AngelinaGroup(keyWords = {"哈啰", "hello"})

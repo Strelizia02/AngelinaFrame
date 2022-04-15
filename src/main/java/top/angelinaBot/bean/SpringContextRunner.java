@@ -6,10 +6,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author strelitzia
@@ -37,20 +33,8 @@ public class SpringContextRunner implements ApplicationContextAware {
      * @return 返回Bean实例
      * @throws BeansException 加载Bean失败时抛出BeanException
      */
-    public static Object getBean(String name) throws BeansException{
+    public static Object getBean(Class<?> name) throws BeansException{
         //根据class名获取Bean
         return applicationContext.getBean(name);
-    }
-
-    /**
-     * 根据注解，获取Spring容器中所有包含该注解的Class
-     * @param annotation 注解Class
-     * @return Class的Set集合
-     */
-    public static Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation){
-        Set<Class<?>> inClassList = new HashSet<>();
-        Map<String, Object> beanList = applicationContext.getBeansWithAnnotation(annotation);
-        beanList.forEach((k, v) -> inClassList.add(applicationContext.getType(k)));
-        return inClassList;
     }
 }
