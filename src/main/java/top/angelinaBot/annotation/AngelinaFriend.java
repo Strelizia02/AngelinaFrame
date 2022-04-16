@@ -11,4 +11,6 @@ import java.lang.annotation.*;
 public @interface AngelinaFriend {
     //关键字触发
     String[] keyWords();
+    //方法描述
+    String description() default "";
 }

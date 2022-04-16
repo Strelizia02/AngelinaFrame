@@ -1,8 +1,8 @@
 package top.angelinaBot.aspect;
 
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
+import top.angelinaBot.model.EventEnum;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * @author strelitzia
  * @Date 2022/04/03
- * 存放所有@Angelina注解的方法映射，保留方法切点。
+ * 存放所有@Angelina注解的方法映射。
  **/
 @Aspect
 @Component
@@ -20,4 +20,8 @@ public class AngelinaAspect {
     public static final Map<String, Method> keyWordsMap = new HashMap<>();
 
     public static final Map<String, Method> dHashMap = new HashMap<>();
+
+    public static final Map<String, Method> friendMap = new HashMap<>();
+
+    public static final Map<EventEnum, Method> eventMap = new HashMap<>();
 }

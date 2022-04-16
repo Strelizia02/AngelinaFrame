@@ -1,7 +1,9 @@
 package top.angelinaBot.util;
 
-import top.angelinaBot.model.ReplayGroupInfo;
+import top.angelinaBot.model.ReplayInfo;
 
 public interface SendMessageUtil {
-    void sendGroupMsg(ReplayGroupInfo replayInfo);
+    void sendGroupMsg(ReplayInfo replayInfo);
+
+    void sendFriendMsg(ReplayInfo replayInfo);
 }

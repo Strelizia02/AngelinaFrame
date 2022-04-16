@@ -46,6 +46,10 @@ public class MessageInfo {
     private Integer time;
     //消息缩略字符串
     private String eventString;
+    //消息缩略字符串
+    private EventEnum event;
+    //是否要发送消息
+    private boolean isReplay = true;
 
     public MessageInfo() {}
 
@@ -97,6 +101,10 @@ public class MessageInfo {
     }
 
     public MessageInfo(FriendMessageEvent event, String[] botNames) {
+        this.loginQq = event.getBot().getId();
+        this.qq = event.getSender().getId();
+        this.name = event.getSenderName();
+        this.time = event.getTime();
         //获取消息体
         MessageChain chain = event.getMessage();
         this.eventString = chain.toString();
@@ -130,6 +138,22 @@ public class MessageInfo {
                 this.imgTypeList.add(((OnlineFriendImage) o).getImageType());
             }
         }
+    }
+
+    public boolean isReplay() {
+        return isReplay;
+    }
+
+    public void setReplay(boolean replay) {
+        isReplay = replay;
+    }
+
+    public EventEnum getEvent() {
+        return event;
+    }
+
+    public void setEvent(EventEnum event) {
+        this.event = event;
     }
 
     public List<ImageType> getImgTypeList() {

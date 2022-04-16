@@ -9,7 +9,7 @@ import java.util.List;
  * @Date 2022/04/03
  * 回复消息结构化Bean
  **/
-public class ReplayGroupInfo {
+public class ReplayInfo {
     //登录QQ
     Long loginQQ;
     //qq
@@ -29,7 +29,7 @@ public class ReplayGroupInfo {
     //戳一戳
     Boolean isNudged = false;
 
-    public ReplayGroupInfo(MessageInfo messageInfo) {
+    public ReplayInfo(MessageInfo messageInfo) {
         this.loginQQ = messageInfo.getLoginQq();
         this.groupId = messageInfo.getGroupId();
         this.qq = messageInfo.getQq();
