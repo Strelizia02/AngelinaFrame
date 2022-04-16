@@ -13,9 +13,8 @@ import org.springframework.stereotype.Component;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -33,7 +32,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
     public void sendGroupMsg(ReplayInfo replayInfo) {
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
-        List<BufferedImage> replayImgList = replayInfo.getReplayImg();
+        List<InputStream> replayImgList = replayInfo.getReplayImg();
         String kick = replayInfo.getKick();
         Integer muted = replayInfo.getMuted();
         Boolean nudged = replayInfo.getNudged();
@@ -48,11 +47,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                     .append(new PlainText(replayMessage));
 
             try {
-                for (BufferedImage replayImg: replayImgList) {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ImageIO.write(replayImg, "jpg", os);
-                    InputStream is = new ByteArrayInputStream(os.toByteArray());
-                    ExternalResource externalResource = ExternalResource.create(is);
+                for (InputStream replayImg: replayImgList) {
+                    ExternalResource externalResource = ExternalResource.create(replayImg);
                     Image i = group.uploadImage(externalResource);
                     messageChainBuilder.append(i);
                 }
@@ -68,11 +64,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             //发送图片
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
             try {
-                for (BufferedImage replayImg: replayImgList) {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ImageIO.write(replayImg, "jpg", os);
-                    InputStream is = new ByteArrayInputStream(os.toByteArray());
-                    ExternalResource externalResource = ExternalResource.create(is);
+                for (InputStream replayImg: replayImgList) {
+                    ExternalResource externalResource = ExternalResource.create(replayImg);
                     Image i = group.uploadImage(externalResource);
                     messageChainBuilder.append(i);
                 }
@@ -104,9 +97,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
     public void sendFriendMsg(ReplayInfo replayInfo) {
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
-        List<BufferedImage> replayImgList = replayInfo.getReplayImg();
-        String kick = replayInfo.getKick();
-        Integer muted = replayInfo.getMuted();
+        List<InputStream> replayImgList = replayInfo.getReplayImg();
         Boolean nudged = replayInfo.getNudged();
 
         //获取登录bot
@@ -118,11 +109,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                     .append(new PlainText(replayMessage));
 
             try {
-                for (BufferedImage replayImg: replayImgList) {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ImageIO.write(replayImg, "jpg", os);
-                    InputStream is = new ByteArrayInputStream(os.toByteArray());
-                    ExternalResource externalResource = ExternalResource.create(is);
+                for (InputStream replayImg: replayImgList) {
+                    ExternalResource externalResource = ExternalResource.create(replayImg);
                     Image i = user.uploadImage(externalResource);
                     messageChainBuilder.append(i);
                 }
@@ -138,11 +126,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             //发送图片
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
             try {
-                for (BufferedImage replayImg: replayImgList) {
-                    ByteArrayOutputStream os = new ByteArrayOutputStream();
-                    ImageIO.write(replayImg, "jpg", os);
-                    InputStream is = new ByteArrayInputStream(os.toByteArray());
-                    ExternalResource externalResource = ExternalResource.create(is);
+                for (InputStream replayImg: replayImgList) {
+                    ExternalResource externalResource = ExternalResource.create(replayImg);
                     Image i = user.uploadImage(externalResource);
                     messageChainBuilder.append(i);
                 }

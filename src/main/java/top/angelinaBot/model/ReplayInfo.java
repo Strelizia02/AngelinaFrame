@@ -1,6 +1,10 @@
 package top.angelinaBot.model;
 
+import lombok.extern.slf4j.Slf4j;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +13,7 @@ import java.util.List;
  * @Date 2022/04/03
  * 回复消息结构化Bean
  **/
+@Slf4j
 public class ReplayInfo {
     //登录QQ
     Long loginQQ;
@@ -21,7 +26,7 @@ public class ReplayInfo {
     //文字内容
     String replayMessage;
     //图片内容
-    List<BufferedImage> replayImg = new ArrayList<>();
+    List<InputStream> replayImg = new ArrayList<>();
     //踢出群
     String kick;
     //禁言
@@ -100,11 +105,37 @@ public class ReplayInfo {
         this.replayMessage = replayMessage;
     }
 
-    public List<BufferedImage> getReplayImg() {
+    /**
+     * 获取ReplayInfo的图片集合
+     * @return 返回图片的输入流集合
+     */
+    public List<InputStream> getReplayImg() {
         return replayImg;
     }
 
-    public void setReplayImg(List<BufferedImage> replayImg) {
-        this.replayImg = replayImg;
+    /**
+     * 以BufferImage格式插入图片
+     * @param bufferedImage 图片BufferedImage
+     */
+    public void setReplayImg(BufferedImage bufferedImage) {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(bufferedImage, "jpg", os);
+            replayImg.add(new ByteArrayInputStream(os.toByteArray()));
+        } catch (IOException e) {
+            log.error("BufferImage读取IO流失败");
+        }
+    }
+
+    /**
+     * 以文件格式插入图片
+     * @param file 文件File
+     */
+    public void setReplayImg(File file) {
+        try {
+            replayImg.add(new FileInputStream(file));
+        } catch (IOException e) {
+            log.error("File读取IO流失败");
+        }
     }
 }
