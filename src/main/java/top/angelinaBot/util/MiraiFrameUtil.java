@@ -4,7 +4,6 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.User;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.utils.BotConfiguration;
