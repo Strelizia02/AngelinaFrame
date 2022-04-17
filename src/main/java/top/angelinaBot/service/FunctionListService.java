@@ -36,7 +36,7 @@ public class FunctionListService {
         g.setColor(Color.BLACK);
         g.setFont(new Font("宋体", Font.BOLD, 50));
         int gHeight = 75;
-        g.drawString(title, width/2 - title.length()/2, gHeight);
+        g.drawString(title, width/2 - title.length() * 25, gHeight);
         gHeight += 75;
         for (String s: funcStrList) {
             g.drawString(s, 0, gHeight);
@@ -54,9 +54,9 @@ public class FunctionListService {
         List<String> strList = new ArrayList<>();
         strList.add("群聊菜单：");
 
-        Collection<Method> group = AngelinaContainer.keyWordsMap.values();
-        Collection<Method> friend = AngelinaContainer.friendMap.values();
-        Collection<Method> event = AngelinaContainer.eventMap.values();
+        Set<Method> group = new HashSet<>(AngelinaContainer.keyWordsMap.values());
+        Set<Method> friend = new HashSet<>(AngelinaContainer.friendMap.values());
+        Set<Method> event = new HashSet<>(AngelinaContainer.eventMap.values());
 
         for(Method method: group) {
             AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
