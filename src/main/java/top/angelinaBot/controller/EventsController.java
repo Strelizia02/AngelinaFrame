@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import top.angelinaBot.aspect.AngelinaAspect;
+import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -40,8 +40,8 @@ public class EventsController {
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到事件:{}", message.getEvent());
-            if (AngelinaAspect.eventMap.containsKey(message.getEvent())) {
-                Method method = AngelinaAspect.eventMap.get(message.getEvent());
+            if (AngelinaContainer.eventMap.containsKey(message.getEvent())) {
+                Method method = AngelinaContainer.eventMap.get(message.getEvent());
                 ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                 if (message.isReplay()) {
                     sendMessageUtil.sendGroupMsg(invoke);

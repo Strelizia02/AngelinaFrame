@@ -9,7 +9,7 @@ import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.annotation.AngelinaEvent;
 import top.angelinaBot.annotation.AngelinaFriend;
 import top.angelinaBot.annotation.AngelinaGroup;
-import top.angelinaBot.aspect.AngelinaAspect;
+import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -55,31 +55,31 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 String[] groupKeyWords = ((AngelinaGroup) annotation).keyWords();
                                 for (String keyWord : groupKeyWords) {
                                     //判断关键字是否重复
-                                    if (AngelinaAspect.keyWordsMap.containsKey(keyWord)) {
-                                        Method replaceMethod = AngelinaAspect.keyWordsMap.get(keyWord);
+                                    if (AngelinaContainer.keyWordsMap.containsKey(keyWord)) {
+                                        Method replaceMethod = AngelinaContainer.keyWordsMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
                                     } else {
                                         //关闭安全检查提升反射速度
                                         method.setAccessible(true);
                                         //确认完全符合要求后，将关键字和方法添加至全局变量keyWordsMap中
-                                        AngelinaAspect.keyWordsMap.put(keyWord, method);
+                                        AngelinaContainer.keyWordsMap.put(keyWord, method);
                                     }
                                 }
 
                                 String[] dHashList = ((AngelinaGroup) annotation).dHash();
-                                if (AngelinaAspect.dHashMap.size() == 10) {
+                                if (AngelinaContainer.dHashMap.size() == 10) {
                                     log.error("dHash 方法超过十个,会一定程度影响性能");
                                 }
                                 for (String dHash : dHashList) {
                                     //判断DHash是否重复
-                                    if (!"".equals(dHash) && AngelinaAspect.dHashMap.containsKey(dHash)) {
-                                        Method replaceMethod = AngelinaAspect.dHashMap.get(dHash);
+                                    if (!"".equals(dHash) && AngelinaContainer.dHashMap.containsKey(dHash)) {
+                                        Method replaceMethod = AngelinaContainer.dHashMap.get(dHash);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() DHash与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() DHash重复");
                                     } else {
                                         //关闭安全检查提升反射速度
                                         method.setAccessible(true);
                                         //确认完全符合要求后，将关键字和方法添加至全局变量dHashMap中
-                                        AngelinaAspect.dHashMap.put(dHash, method);
+                                        AngelinaContainer.dHashMap.put(dHash, method);
                                     }
                                 }
                             }
@@ -87,14 +87,14 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 String[] friendKeyWords = ((AngelinaFriend) annotation).keyWords();
                                 for (String keyWord : friendKeyWords) {
                                     //判断关键字是否重复
-                                    if (AngelinaAspect.friendMap.containsKey(keyWord)) {
-                                        Method replaceMethod = AngelinaAspect.friendMap.get(keyWord);
+                                    if (AngelinaContainer.friendMap.containsKey(keyWord)) {
+                                        Method replaceMethod = AngelinaContainer.friendMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
                                     } else {
                                         //关闭安全检查提升反射速度
                                         method.setAccessible(true);
                                         //确认完全符合要求后，将关键字和方法添加至全局变量friendMap中
-                                        AngelinaAspect.friendMap.put(keyWord, method);
+                                        AngelinaContainer.friendMap.put(keyWord, method);
                                     }
                                 }
                             }
@@ -102,14 +102,14 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                             if (annotation instanceof AngelinaEvent) {
                                 EventEnum eventEnum = ((AngelinaEvent) annotation).event();
                                 //判断关键字是否重复
-                                if (AngelinaAspect.eventMap.containsKey(eventEnum)) {
-                                    Method replaceMethod = AngelinaAspect.eventMap.get(eventEnum);
+                                if (AngelinaContainer.eventMap.containsKey(eventEnum)) {
+                                    Method replaceMethod = AngelinaContainer.eventMap.get(eventEnum);
                                     throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 事件 \"" + eventEnum + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 事件 \"" + eventEnum + "\" 重复");
                                 } else {
                                     //关闭安全检查提升反射速度
                                     method.setAccessible(true);
                                     //确认完全符合要求后，将关键字和方法添加至全局变量eventMap中
-                                    AngelinaAspect.eventMap.put(eventEnum, method);
+                                    AngelinaContainer.eventMap.put(eventEnum, method);
                                 }
 
                             }

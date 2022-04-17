@@ -1,7 +1,7 @@
 package top.angelinaBot.controller;
 
 import net.mamoe.mirai.message.data.ImageType;
-import top.angelinaBot.aspect.AngelinaAspect;
+import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +41,8 @@ public class GroupChatController {
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到群消息:{}", message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if (AngelinaAspect.keyWordsMap.containsKey(message.getKeyword())) {
-                    Method method = AngelinaAspect.keyWordsMap.get(message.getKeyword());
+                if (AngelinaContainer.keyWordsMap.containsKey(message.getKeyword())) {
+                    Method method = AngelinaContainer.keyWordsMap.get(message.getKeyword());
                     ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                     if (message.isReplay()) {
                         sendMessageUtil.sendGroupMsg(invoke);
@@ -52,10 +52,10 @@ public class GroupChatController {
             } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1 && message.getImgTypeList().get(0) != ImageType.GIF) {
                 //没有文字且只有一张非gif图片的时候，准备DHash运算
                 String dHash = DHashUtil.getDHash(message.getImgUrlList().get(0));
-                for (String s : AngelinaAspect.dHashMap.keySet()) {
+                for (String s : AngelinaContainer.dHashMap.keySet()) {
                     //循环比对海明距离，小于6的直接触发
                     if (DHashUtil.getHammingDistance(dHash, s) < 6) {
-                        Method method = AngelinaAspect.dHashMap.get(dHash);
+                        Method method = AngelinaContainer.dHashMap.get(dHash);
                         ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                         if (message.isReplay()) {
                             sendMessageUtil.sendGroupMsg(invoke);

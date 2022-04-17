@@ -16,7 +16,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class ThreadPoolTaskConfig {
     /**
      * 线程池配置信息，线程池主要用于发送消息.
-     * @return
      */
     @Bean("taskModuleExecutor")
     public Executor taskModuleExecutor() {

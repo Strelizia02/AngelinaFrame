@@ -37,7 +37,7 @@ public class SwaggerConfig {
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Angelina QQ Bot Frame")
-                .termsOfServiceUrl("https://github.com/Strelizia02/ArknightsAPI")
+                .termsOfServiceUrl("https://github.com/Strelizia02/AngelinaFrame")
                 .version("1.0")
                 .description("API 描述")
                 .build();
