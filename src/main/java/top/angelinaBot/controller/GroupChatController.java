@@ -14,6 +14,8 @@ import top.angelinaBot.vo.JsonResult;
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author strelitzia
@@ -41,8 +43,13 @@ public class GroupChatController {
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到群消息:{}", message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if (AngelinaContainer.keyWordsMap.containsKey(message.getKeyword())) {
-                    Method method = AngelinaContainer.keyWordsMap.get(message.getKeyword());
+                if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
+                    List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
+                    ReplayInfo replayInfo = new ReplayInfo(message);
+                    replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
+                    sendMessageUtil.sendGroupMsg(replayInfo);
+                } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
+                    Method method = AngelinaContainer.groupMap.get(message.getKeyword());
                     ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                     if (message.isReplay()) {
                         sendMessageUtil.sendGroupMsg(invoke);

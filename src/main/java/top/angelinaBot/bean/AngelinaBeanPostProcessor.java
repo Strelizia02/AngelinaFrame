@@ -55,14 +55,14 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 String[] groupKeyWords = ((AngelinaGroup) annotation).keyWords();
                                 for (String keyWord : groupKeyWords) {
                                     //判断关键字是否重复
-                                    if (AngelinaContainer.keyWordsMap.containsKey(keyWord)) {
-                                        Method replaceMethod = AngelinaContainer.keyWordsMap.get(keyWord);
+                                    if (AngelinaContainer.groupMap.containsKey(keyWord)) {
+                                        Method replaceMethod = AngelinaContainer.groupMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
                                     } else {
                                         //关闭安全检查提升反射速度
                                         method.setAccessible(true);
                                         //确认完全符合要求后，将关键字和方法添加至全局变量keyWordsMap中
-                                        AngelinaContainer.keyWordsMap.put(keyWord, method);
+                                        AngelinaContainer.groupMap.put(keyWord, method);
                                     }
                                 }
 

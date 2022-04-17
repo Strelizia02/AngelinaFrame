@@ -54,7 +54,7 @@ public class FunctionListService {
         List<String> strList = new ArrayList<>();
         strList.add("群聊菜单：");
 
-        Set<Method> group = new HashSet<>(AngelinaContainer.keyWordsMap.values());
+        Set<Method> group = new HashSet<>(AngelinaContainer.groupMap.values());
         Set<Method> friend = new HashSet<>(AngelinaContainer.friendMap.values());
         Set<Method> event = new HashSet<>(AngelinaContainer.eventMap.values());
 
