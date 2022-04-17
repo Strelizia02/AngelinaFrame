@@ -8,9 +8,9 @@
         <version>2.4.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>top.angelinaBot</groupId>
-    <artifactId>angelina</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>top.angelina-bot</groupId>
+    <artifactId>angelina-frame</artifactId>
+    <version>1.0</version>
     <name>angelina</name>
     <description>Angelina QQ Bot Frame By SpringBoot</description>
 
@@ -165,18 +165,5 @@
             <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
-
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <includeSystemScope>true</includeSystemScope>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>
