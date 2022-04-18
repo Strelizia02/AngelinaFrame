@@ -13,8 +13,6 @@ import java.lang.annotation.*;
 public @interface AngelinaEvent {
     //关键字触发
     EventEnum event();
-    //图片DHash触发，需要循环比对，尽量减少DHash
-    String[] dHash() default "";
     //方法描述
     String description() default "";
 }
