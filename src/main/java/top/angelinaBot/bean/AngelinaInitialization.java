@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaContainer;
+import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.util.MiraiFrameUtil;
 
 import java.io.*;
@@ -28,6 +29,9 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Autowired
     private MiraiFrameUtil miraiFrameUtil;
 
+    @Autowired
+    private ActivityMapper activityMapper;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
@@ -35,6 +39,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     public void afterSingletonsInstantiated() {
         miraiFrameUtil.startMirai();
         getJsonReplay();
+        activityMapper.initActivityTable();
     }
 
     /**

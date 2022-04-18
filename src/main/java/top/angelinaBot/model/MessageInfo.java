@@ -1,5 +1,6 @@
 package top.angelinaBot.model;
 
+import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.internal.message.OnlineFriendImage;
@@ -48,9 +49,13 @@ public class MessageInfo {
     //接收到的事件
     private EventEnum event;
     //是否要发送消息
-    private boolean isReplay = true;
+    private Boolean isReplay = true;
+    //用户权限
+    private MemberPermission userAdmin;
 
-    public MessageInfo() {}
+    public MessageInfo() {
+
+    }
 
     /**
      * 根据Mirai的事件构建Message，方便后续调用
@@ -64,6 +69,7 @@ public class MessageInfo {
         this.name = event.getSenderName();
         this.groupId = event.getSubject().getId();
         this.time = event.getTime();
+        this.userAdmin = event.getSender().getPermission();
 
         //获取消息体
         MessageChain chain = event.getMessage();
@@ -257,5 +263,21 @@ public class MessageInfo {
 
     public void setTime(Integer time) {
         this.time = time;
+    }
+
+    public Boolean getReplay() {
+        return isReplay;
+    }
+
+    public MemberPermission getUserAdmin() {
+        return userAdmin;
+    }
+
+    public void setUserAdmin(MemberPermission userAdmin) {
+        this.userAdmin = userAdmin;
+    }
+
+    public void setReplay(Boolean replay) {
+        isReplay = replay;
     }
 }

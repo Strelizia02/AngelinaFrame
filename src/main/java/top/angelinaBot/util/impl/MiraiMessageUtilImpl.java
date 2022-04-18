@@ -9,7 +9,9 @@ import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
 
@@ -24,12 +26,16 @@ import java.util.List;
 @Slf4j
 public class MiraiMessageUtilImpl implements SendMessageUtil {
 
+    @Autowired
+    private ActivityMapper activityMapper;
+
     /**
      * 发送群消息方法
      * @param replayInfo 发送消息的结构封装
      */
     @Override
     public void sendGroupMsg(ReplayInfo replayInfo) {
+        activityMapper.sendMessage();
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
         List<InputStream> replayImgList = replayInfo.getReplayImg();
@@ -95,6 +101,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
 
     @Override
     public void sendFriendMsg(ReplayInfo replayInfo) {
+        activityMapper.sendMessage();
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
         List<InputStream> replayImgList = replayInfo.getReplayImg();
