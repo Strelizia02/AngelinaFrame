@@ -45,7 +45,7 @@ public class MessageInfo {
     private Integer time;
     //消息缩略字符串
     private String eventString;
-    //消息缩略字符串
+    //接收到的事件
     private EventEnum event;
     //是否要发送消息
     private boolean isReplay = true;
