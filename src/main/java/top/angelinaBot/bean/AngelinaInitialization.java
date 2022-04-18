@@ -42,8 +42,10 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
      */
     private void getJsonReplay() {
         try {
+            //闲聊配置应在运行目录下
             File file = new File("chatReplay.json");
             if (file.exists()) {
+                //仅当文件存在时，流式读取文件内容
                 FileReader fileReader = new FileReader(file);
                 Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
                 int ch = 0;
@@ -54,21 +56,27 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                 fileReader.close();
                 reader.close();
                 String jsonStr = sb.toString();
+                //将文件内容格式化为JSON
                 JSONArray chatReplayJson = new JSONArray(jsonStr);
                 for (int i = 0; i < chatReplayJson.length(); i++) {
+                    //循环判断每个JSON对象需要复读的内容
                     JSONObject funcJson = chatReplayJson.getJSONObject(i);
                     JSONArray keyWords = funcJson.getJSONArray("keyWords");
                     JSONArray replay = funcJson.getJSONArray("replay");
                     for (int j = 0; j < keyWords.length(); j++) {
+                        //关键词内出现空格应预警
                         if (keyWords.getString(j).contains(" ")) {
                             log.warn("keyWord: " + keyWords.getString(j) + "中包含空格字符，实际代码处理中会去掉空格字符。");
                         }
+                        //去掉空格，空格内容会让用户产生歧义
                         String keyWord = keyWords.getString(j).trim();
                         if (AngelinaContainer.chatMap.containsKey(keyWord)) {
+                            //闲聊关键字重复判定
                             throw new AngelinaException("chatReplay.json中 " + keyWord + " 出现了多次，请检查修改chatReplay.json");
                         } else {
                             if (AngelinaContainer.groupMap.containsKey(keyWord)) {
                                 Method method = AngelinaContainer.groupMap.get(keyWord);
+                                //闲聊和群聊的关键字重复判定
                                 throw new AngelinaException("chatReplay.json中" + keyWord + "与 " + method.getName() + " 的KeyWord重复，请检查修改重复内容");
                             } else {
                                 List<String> replayList = new ArrayList<>();
@@ -81,6 +89,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                     }
                 }
             } else {
+                //如果文件不存在，默认创建一个空文件
                 boolean newFile = file.createNewFile();
             }
         }catch (IOException e) {
