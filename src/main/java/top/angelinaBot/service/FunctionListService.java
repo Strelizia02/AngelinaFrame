@@ -32,7 +32,7 @@ public class FunctionListService {
         BufferedImage back = new BufferedImage(width + 40, height + 40, BufferedImage.TYPE_INT_RGB);
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        g.setColor(new Color(208, 145, 122, 205)); // 先用白色填充整张图片,也就是背景
+        g.setColor(new Color(208, 145, 122, 205));
         g.fillRect(0, 0, width, height);
         g.setColor(Color.WHITE);
         g.setFont(new Font("宋体", Font.BOLD, 50));
@@ -46,10 +46,11 @@ public class FunctionListService {
         g.dispose();
 
         Graphics graphics = back.getGraphics();
-        graphics.setColor(new Color(255, 156, 118, 255)); // 先用白色填充整张图片,也就是背景
+        graphics.setColor(new Color(255, 156, 118, 255));
         graphics.fillRect(0, 0, width + 40, height + 40);
         graphics.drawImage(image, 20, 20, null);
         graphics.dispose();
+        
         replayInfo.setReplayImg(back);
         return replayInfo;
     }
