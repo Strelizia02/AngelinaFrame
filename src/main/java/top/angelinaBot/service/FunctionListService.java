@@ -29,11 +29,12 @@ public class FunctionListService {
         String title = botNames[0] + "菜单";
         int width = Math.max(getStringListWidth(funcStrList), title.length()) * 50 + 50;
         int height = funcStrList.size() * 75 + 100;
+        BufferedImage back = new BufferedImage(width + 40, height + 40, BufferedImage.TYPE_INT_RGB);
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
-        g.setColor(Color.WHITE); // 先用白色填充整张图片,也就是背景
+        g.setColor(new Color(208, 145, 122, 205)); // 先用白色填充整张图片,也就是背景
         g.fillRect(0, 0, width, height);
-        g.setColor(Color.BLACK);
+        g.setColor(Color.WHITE);
         g.setFont(new Font("宋体", Font.BOLD, 50));
         int gHeight = 75;
         g.drawString(title, width/2 - title.length() * 25, gHeight);
@@ -42,7 +43,14 @@ public class FunctionListService {
             g.drawString(s, 0, gHeight);
             gHeight += 75;
         }
-        replayInfo.setReplayImg(image);
+        g.dispose();
+
+        Graphics graphics = back.getGraphics();
+        graphics.setColor(new Color(255, 156, 118, 255)); // 先用白色填充整张图片,也就是背景
+        graphics.fillRect(0, 0, width + 40, height + 40);
+        graphics.drawImage(image, 20, 20, null);
+        graphics.dispose();
+        replayInfo.setReplayImg(back);
         return replayInfo;
     }
 
