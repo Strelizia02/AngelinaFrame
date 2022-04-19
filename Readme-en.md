@@ -1,6 +1,6 @@
 # Project Description
 
-This project only simplifies the development process of QQBot, and does not directly provide the relevant QQ protocol. The framework has a built-in [Mirai](https://github.com/mamoe/mirai) version and integrates the [Mirai](https://github.com/mamoe/mirai) framework, if you are using other frameworks for development, please read [How to encapsulate other QQ frameworks]()
+This project only simplifies the development process of QQBot, and does not directly provide the relevant QQ protocol. The framework has a built-in [Mirai](https://github.com/mamoe/mirai).
 
 阅读 [中文文档](https://github.com/Strelizia02/AngelinaFrame/blob/master/README.md)
 
