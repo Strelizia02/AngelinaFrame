@@ -1,6 +1,6 @@
 # 项目描述
 
-本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[mirai](https://github.com/mamoe/mirai)框架。
+本项目仅为简化QQBot的开发流程，并非直接提供相关QQ协议，框架内置了[Mirai](https://github.com/mamoe/mirai)框架。
 
 Read [English Readme](https://github.com/Strelizia02/AngelinaFrame/blob/master/Readme-en.md)
 
