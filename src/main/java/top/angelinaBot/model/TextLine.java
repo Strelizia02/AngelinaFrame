@@ -163,6 +163,12 @@ public class TextLine {
             x = size/2;
             y += size;
         }
+        
+        try {
+            graphics.drawImage(ImageIO.read(new File("logo.png")), image.getWidth() - size/2, 0, size/2, size/2, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         graphics.dispose();
         return image;
     }
