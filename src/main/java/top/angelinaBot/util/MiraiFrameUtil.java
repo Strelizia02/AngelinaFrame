@@ -107,13 +107,14 @@ public class MiraiFrameUtil {
         //监听全部qq账号所接受的消息
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
-                getMsgLimit(event);
-                activityMapper.getGroupMessage();
-                MessageInfo messageInfo = new MessageInfo(event, botNames);
-                try {
-                    groupChatController.receive(messageInfo);
-                } catch (InvocationTargetException | IllegalAccessException e) {
-                    e.printStackTrace();
+                if(getMsgLimit(event)) {
+                    activityMapper.getGroupMessage();
+                    MessageInfo messageInfo = new MessageInfo(event, botNames);
+                    try {
+                        groupChatController.receive(messageInfo);
+                    } catch (InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
