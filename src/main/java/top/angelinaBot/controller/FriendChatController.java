@@ -1,6 +1,7 @@
 package top.angelinaBot.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +26,7 @@ import java.lang.reflect.Method;
 @Slf4j
 public class FriendChatController {
 
-    @Resource(name = "mirai")
+    @Autowired
     private SendMessageUtil sendMessageUtil;
 
     /**

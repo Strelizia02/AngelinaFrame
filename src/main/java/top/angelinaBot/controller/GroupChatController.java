@@ -1,8 +1,10 @@
 package top.angelinaBot.controller;
 
 import net.mamoe.mirai.message.data.ImageType;
+import org.springframework.beans.factory.annotation.Autowired;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,11 @@ import java.util.Random;
 @Slf4j
 public class GroupChatController {
 
-    @Resource(name = "mirai")
+    @Autowired
     private SendMessageUtil sendMessageUtil;
+    
+    @Autowired
+    private AdminMapper adminMapper;
 
     /**
      * 通用的qq群聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
@@ -46,15 +51,21 @@ public class GroupChatController {
                 if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
                     List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
                     ReplayInfo replayInfo = new ReplayInfo(message);
-                    replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
-                    sendMessageUtil.sendGroupMsg(replayInfo);
+                    //判断该群是否已关闭该功能
+                    if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
+                        replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
+                        sendMessageUtil.sendGroupMsg(replayInfo);
+                        return JsonResult.success(replayInfo);
+                    }
                 } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
                     Method method = AngelinaContainer.groupMap.get(message.getKeyword());
-                    ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                    if (message.isReplay()) {
-                        sendMessageUtil.sendGroupMsg(invoke);
+                    if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                        ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                        if (message.isReplay()) {
+                            sendMessageUtil.sendGroupMsg(invoke);
+                        }
+                        return JsonResult.success(invoke);
                     }
-                    return JsonResult.success(invoke);
                 }
             } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1 && message.getImgTypeList().get(0) != ImageType.GIF) {
                 //没有文字且只有一张非gif图片的时候，准备DHash运算

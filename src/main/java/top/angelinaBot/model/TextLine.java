@@ -1,7 +1,12 @@
 package top.angelinaBot.model;
 
+import org.springframework.core.io.ClassPathResource;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +43,7 @@ public class TextLine {
 
     /**
      * 为内容增加一个图片，图片可以超出最长字符限制
+     *
      * @param image 图片
      */
     public void addImage(BufferedImage image) {
@@ -49,6 +55,7 @@ public class TextLine {
 
     /**
      * 为内容增加一行字符串，字符串若超出最长限制，截断换行并进行两个空格的缩进
+     *
      * @param s 字符串
      */
     public void addString(String s) {
@@ -70,6 +77,7 @@ public class TextLine {
 
     /**
      * 为内容添加空格，若添加空格后超出最长限制，则仅添加一个
+     *
      * @param spaceNum 空格数
      */
     public void addSpace(int spaceNum) {
@@ -102,6 +110,7 @@ public class TextLine {
 
     /**
      * 添加单独一行的居中字符串，居中字符串必须单独一行
+     *
      * @param s 字符串
      */
     public void addCenterStringLine(String s) {
@@ -116,6 +125,7 @@ public class TextLine {
 
     /**
      * 将TextLine生成一个图片
+     *
      * @param size 单个字符大小
      * @return 生成图片
      */
@@ -133,14 +143,14 @@ public class TextLine {
         graphics.setColor(new Color(208, 145, 122, 205));
         graphics.fillRect(0, 0, (width + 2) * size, (height + 2) * size);
         graphics.setColor(new Color(160, 130, 115, 205));
-        graphics.fillRect(size/2, size/2, (width + 1) * size, (height + 1) * size);
+        graphics.fillRect(size / 2, size / 2, (width + 1) * size, (height + 1) * size);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("宋体", Font.BOLD, size));
 
-        int x = size/2;
-        int y = size/2;
-        for (List<Object> line: text) {
-            for (Object obj: line) {
+        int x = size / 2;
+        int y = size / 2;
+        for (List<Object> line : text) {
+            for (Object obj : line) {
                 if (obj instanceof String) {
                     String str = (String) obj;
                     graphics.drawString(str, x, y + size);
@@ -149,7 +159,7 @@ public class TextLine {
                 if (obj instanceof StringBuilder) {
                     String str = ((StringBuilder) obj).toString();
                     graphics.drawString(str, (width - str.length()) / 2 * size, y + size);
-                    x = size/2;
+                    x = size / 2;
                 }
                 if (obj instanceof BufferedImage) {
                     BufferedImage bf = (BufferedImage) obj;
@@ -160,12 +170,13 @@ public class TextLine {
                     x += (int) obj * size;
                 }
             }
-            x = size/2;
+            x = size / 2;
             y += size;
         }
-        
+
         try {
-            graphics.drawImage(ImageIO.read(new File("logo.png")), image.getWidth() - size/2, 0, size/2, size/2, null);
+            ClassPathResource classPathResource = new ClassPathResource("/pic/logo.jpg");
+            graphics.drawImage(ImageIO.read(classPathResource.getFile()), image.getWidth() - size / 2, 0, size / 2, size / 2, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -179,3 +190,4 @@ public class TextLine {
     public BufferedImage drawImage() {
         return drawImage(50);
     }
+}

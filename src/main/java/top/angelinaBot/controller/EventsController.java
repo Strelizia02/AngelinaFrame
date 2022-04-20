@@ -1,11 +1,13 @@
 package top.angelinaBot.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
@@ -25,8 +27,11 @@ import java.lang.reflect.Method;
 @Slf4j
 public class EventsController {
 
-    @Resource(name = "mirai")
+    @Autowired
     private SendMessageUtil sendMessageUtil;
+
+    @Autowired
+    private AdminMapper adminMapper;
 
     /**
      * 通用的qq事件处理接口，可以通过代码内部调用，也可以通过Post接口调用
@@ -42,11 +47,13 @@ public class EventsController {
             log.info("接受到事件:{}", message.getEvent());
             if (AngelinaContainer.eventMap.containsKey(message.getEvent())) {
                 Method method = AngelinaContainer.eventMap.get(message.getEvent());
-                ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                if (message.isReplay()) {
-                    sendMessageUtil.sendGroupMsg(invoke);
+                if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                    ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                    if (message.isReplay()) {
+                        sendMessageUtil.sendGroupMsg(invoke);
+                    }
+                    return JsonResult.success(invoke);
                 }
-                return JsonResult.success(invoke);
             }
         }
         return null;
