@@ -4,7 +4,7 @@
 
     <resultMap id="BaseResultMap" type="top.angelinaBot.model.ActivityInfo">
         <result column="type" property="type" jdbcType="INTEGER"/>
-        <result column="hour" property="hour" jdbcType="VARCHAR"/>
+        <result column="hour" property="hour" jdbcType="TIMESTAMP"/>
         <result column="count" property="count" jdbcType="BIGINT"/>
     </resultMap>
 

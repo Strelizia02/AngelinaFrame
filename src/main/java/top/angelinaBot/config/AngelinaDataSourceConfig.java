@@ -28,24 +28,28 @@ import java.io.InputStream;
 @MapperScan(basePackages = "top.angelinaBot.dao",
         sqlSessionTemplateRef = "angelinaSqlSessionTemplate")
 @Slf4j
-public class LocalDataSourceConfig {
+public class AngelinaDataSourceConfig {
     /**
      * 创建数据源
      */
     @Bean(name = "angelinaDataSource")
     public DataSource getFirstDataSource() {
+        File dir = new File("runFile");
+        if (!dir.exists()) {
+            boolean mkdir = dir.mkdir();
+        }
         File file = new File("runFile/template.db");
         if (!file.exists()) {
-            if (file.mkdirs()) {
-                ClassPathResource classPathResource = new ClassPathResource("/sqlite/template.db");
-                try(InputStream is = classPathResource.getInputStream();FileOutputStream fs = new FileOutputStream(file)) {
-                    byte[] b = new byte[1024];
-                    while (is.read(b) != -1) {
-                        fs.write(b);
-                    }
-                } catch (IOException e) {
-                    log.error("创建数据库文件失败");
+            try (InputStream is = new ClassPathResource("/sqlite/template.db").getInputStream();FileOutputStream fs = new FileOutputStream(file)) {
+                if (file.createNewFile()) {
+                        byte[] b = new byte[1024];
+                        while (is.read(b) != -1) {
+                            fs.write(b);
+                        }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error("创建数据库文件失败");
             }
         }
         return DataSourceBuilder.create()

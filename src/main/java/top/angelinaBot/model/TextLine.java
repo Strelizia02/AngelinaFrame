@@ -137,12 +137,12 @@ public class TextLine {
             height++;
             text.add(line);
         }
-        BufferedImage image = new BufferedImage((width + 2) * size, (height + 2) * size, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage((width + 2) * size, (height + 2) * size, BufferedImage.TYPE_INT_RGB);
         Graphics graphics = image.getGraphics();
 
-        graphics.setColor(new Color(208, 145, 122, 205));
+        graphics.setColor(new Color(208, 145, 122));
         graphics.fillRect(0, 0, (width + 2) * size, (height + 2) * size);
-        graphics.setColor(new Color(160, 130, 115, 205));
+        graphics.setColor(new Color(160, 130, 115));
         graphics.fillRect(size / 2, size / 2, (width + 1) * size, (height + 1) * size);
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("宋体", Font.BOLD, size));
