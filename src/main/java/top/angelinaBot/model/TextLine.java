@@ -5,8 +5,8 @@ import org.springframework.core.io.ClassPathResource;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -175,8 +175,8 @@ public class TextLine {
         }
 
         try {
-            ClassPathResource classPathResource = new ClassPathResource("/pic/logo.jpg");
-            graphics.drawImage(ImageIO.read(classPathResource.getFile()), image.getWidth() - size / 2, 0, size / 2, size / 2, null);
+            InputStream is = new ClassPathResource("/pic/logo.jpg").getInputStream();
+            graphics.drawImage(ImageIO.read(is), image.getWidth() - size / 2, 0, size / 2, size / 2, null);
         } catch (IOException e) {
             e.printStackTrace();
         }

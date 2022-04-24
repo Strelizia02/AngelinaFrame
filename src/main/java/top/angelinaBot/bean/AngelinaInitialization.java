@@ -103,6 +103,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                 boolean newFile = file.createNewFile();
                 FileWriter fw = new FileWriter(file);
                 fw.write("[]");
+                fw.close();
             }
         }catch (IOException e) {
             log.error("读取闲聊JSON文件失败，请检查chatReplay.json文件");

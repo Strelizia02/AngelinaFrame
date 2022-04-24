@@ -60,7 +60,7 @@ public class AngelinaDataSourceConfig {
     }
 
     @Bean(name = "angelinaSqlSessionFactory")
-    public SqlSessionFactory localSqlSessionFactory(
+    public SqlSessionFactory angelinaSqlSessionFactory(
             @Qualifier("angelinaDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setMapperLocations(new PathMatchingResourcePatternResolver()
@@ -77,7 +77,7 @@ public class AngelinaDataSourceConfig {
 
     // 创建SqlSessionTemplate
     @Bean(name = "angelinaSqlSessionTemplate")
-    public SqlSessionTemplate localSqlSessionTemplate(
+    public SqlSessionTemplate angelinaSqlSessionTemplate(
             @Qualifier("angelinaSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }

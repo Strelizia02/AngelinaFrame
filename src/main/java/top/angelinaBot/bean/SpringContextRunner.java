@@ -33,7 +33,7 @@ public class SpringContextRunner implements ApplicationContextAware {
      * @return 返回Bean实例
      * @throws BeansException 加载Bean失败时抛出BeanException
      */
-    public static Object getBean(Class<?> name) throws BeansException{
+    public static Object getBean(Class<?> name) throws BeansException {
         //根据class名获取Bean
         return applicationContext.getBean(name);
     }
