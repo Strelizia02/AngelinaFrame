@@ -205,6 +205,13 @@ public class MiraiFrameUtil {
             reBuildBotGroupMap();
         });
 
+        //账号掉线
+        GlobalEventChannel.INSTANCE.subscribeAlways(BotMuteEvent.class, event -> {
+            if (event.component1() > 60 * 60 * 24) {
+                event.getGroup().quit();
+            }
+        });
+
         //账号上线
         GlobalEventChannel.INSTANCE.subscribeAlways(BotOnlineEvent.class, event -> {
             reBuildBotGroupMap();
