@@ -118,7 +118,7 @@ public class TextLine {
         if (pointers != 0) {
             nextLine();
         }
-        pointers = maxWidth;
+        pointers = s.length();
         line.add(sb);
         nextLine();
     }
