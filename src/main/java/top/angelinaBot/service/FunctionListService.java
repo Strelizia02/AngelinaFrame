@@ -47,10 +47,7 @@ public class FunctionListService {
             AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
             textLine.addString(annotation.keyWords()[0]);
             textLine.nextLine();
-            if (annotation.description().equals("")) {
-                textLine.addSpace(2);
-                textLine.addString(Arrays.toString(annotation.keyWords()));
-            } else {
+            if (!annotation.description().equals("")) {
                 textLine.addSpace(2);
                 textLine.addString(annotation.description());
             }
@@ -62,10 +59,7 @@ public class FunctionListService {
             AngelinaFriend annotation = method.getAnnotation(AngelinaFriend.class);
             textLine.addString(annotation.keyWords()[0]);
             textLine.nextLine();
-            if (annotation.description().equals("")) {
-                textLine.addSpace(2);
-                textLine.addString(Arrays.toString(annotation.keyWords()));
-            } else {
+            if (!annotation.description().equals("")) {
                 textLine.addSpace(2);
                 textLine.addString(annotation.description());
             }
@@ -78,10 +72,7 @@ public class FunctionListService {
             AngelinaEvent annotation = method.getAnnotation(AngelinaEvent.class);
             textLine.addString(annotation.event().toString());
             textLine.nextLine();
-            if (annotation.description().equals("")) {
-                textLine.addSpace(2);
-                textLine.addString(annotation.event() + "的方法");
-            } else {
+            if (!annotation.description().equals("")) {
                 textLine.addSpace(2);
                 textLine.addString(annotation.description());
             }
