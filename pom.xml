@@ -11,7 +11,7 @@
     <groupId>top.angelina-bot</groupId>
     <artifactId>angelina-frame</artifactId>
     <version>1.0</version>
-    <name>angelina</name>
+    <name>AngelinaFrame</name>
     <description>Angelina QQ Bot Frame By SpringBoot</description>
     <url>https://github.com/Strelizia02/AngelinaFrame</url>
 
