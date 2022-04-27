@@ -70,11 +70,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -98,11 +93,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
-            <artifactId>okhttp</artifactId>
-            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -150,9 +140,9 @@
             <artifactId>spring-boot-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.baidu.aip</groupId>
-            <artifactId>java-sdk</artifactId>
-            <version>4.15.1</version>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
