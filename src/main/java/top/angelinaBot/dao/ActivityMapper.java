@@ -12,5 +12,5 @@ public interface ActivityMapper {
 
     void initActivityTable();
 
-
+    void clearActivity();
 }
