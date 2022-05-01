@@ -63,8 +63,6 @@ public class AngelinaDataSourceConfig {
     public SqlSessionFactory angelinaSqlSessionFactory(
             @Qualifier("angelinaDataSource") DataSource dataSource) throws Exception {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
-        bean.setMapperLocations(new PathMatchingResourcePatternResolver()
-                .getResources("classpath:mapping/*.xml"));
         bean.setDataSource(dataSource);
         return bean.getObject();
     }

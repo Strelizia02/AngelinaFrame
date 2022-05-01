@@ -68,6 +68,10 @@ public class AdminService {
     public ReplayInfo funcList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         List<String> closeFunction = adminMapper.getCloseFunction(messageInfo.getGroupId());
+        if (closeFunction.size() == 0) {
+            replayInfo.setReplayMessage("当前本群功能均已开启");
+            return replayInfo;
+        }
         StringBuilder sb = new StringBuilder();
         for (String s: closeFunction) {
             sb.append(s).append("   ").append("关闭").append("\n");
