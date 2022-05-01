@@ -57,7 +57,7 @@ public class MiraiFrameUtil {
     public String[] botNames;
 
     //维护一个群号/账号服务映射，保证一个群只有一个账号提供服务
-    private final Map<Long, Long> messageIdMap = new HashMap<>();
+    public static final Map<Long, Long> messageIdMap = new HashMap<>();
 
     /**
      * Mirai框架的启动方法，一次性启动Mirai并开启消息监听

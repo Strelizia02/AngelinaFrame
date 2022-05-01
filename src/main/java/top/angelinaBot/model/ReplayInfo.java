@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +41,10 @@ public class ReplayInfo {
         this.groupId = messageInfo.getGroupId();
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
+    }
+
+    public ReplayInfo() {
+
     }
 
     public String getName() {
@@ -136,6 +142,22 @@ public class ReplayInfo {
             replayImg.add(new FileInputStream(file));
         } catch (IOException e) {
             log.error("File读取IO流失败");
+        }
+    }
+
+    /**
+     * 以url形式插入图片
+     * @param url 图片url
+     */
+    public void setReplayImg(String url) {
+        try {
+            URL u = new URL(url);
+            HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
+            httpUrl.connect();
+            replayImg.add(httpUrl.getInputStream());
+            httpUrl.disconnect();
+        } catch (IOException e) {
+            log.error("读取图片URL失败");
         }
     }
 }
