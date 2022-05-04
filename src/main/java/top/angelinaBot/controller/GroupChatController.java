@@ -30,7 +30,7 @@ public class GroupChatController {
 
     @Autowired
     private SendMessageUtil sendMessageUtil;
-    
+
     @Autowired
     private AdminMapper adminMapper;
 
@@ -41,10 +41,11 @@ public class GroupChatController {
 
     /**
      * 通用的qq群聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
+     *
      * @param message 消息的封装方法
      * @return 返回消息的封装
      * @throws InvocationTargetException 反射相关异常
-     * @throws IllegalAccessException 反射相关异常
+     * @throws IllegalAccessException    反射相关异常
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
@@ -52,25 +53,26 @@ public class GroupChatController {
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到群消息:{}", message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if(getMsgLimit(message)) {
+                if (getMsgLimit(message)) {
                     activityMapper.getGroupMessage();
-                if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
-                    List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
-                    ReplayInfo replayInfo = new ReplayInfo(message);
-                    //判断该群是否已关闭该功能
-                    if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
-                        replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
-                        sendMessageUtil.sendGroupMsg(replayInfo);
-                        return JsonResult.success(replayInfo);
-                    }
-                } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
-                    Method method = AngelinaContainer.groupMap.get(message.getKeyword());
-                    if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
-                        ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                        if (message.isReplay()) {
-                            sendMessageUtil.sendGroupMsg(invoke);
+                    if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
+                        List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
+                        ReplayInfo replayInfo = new ReplayInfo(message);
+                        //判断该群是否已关闭该功能
+                        if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
+                            replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
+                            sendMessageUtil.sendGroupMsg(replayInfo);
+                            return JsonResult.success(replayInfo);
                         }
-                        return JsonResult.success(invoke);
+                    } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
+                        Method method = AngelinaContainer.groupMap.get(message.getKeyword());
+                        if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                            ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                            if (message.isReplay()) {
+                                sendMessageUtil.sendGroupMsg(invoke);
+                            }
+                            return JsonResult.success(invoke);
+                        }
                     }
                 }
             } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1 && message.getImgTypeList().get(0) != ImageType.GIF) {
@@ -79,7 +81,7 @@ public class GroupChatController {
                 for (String s : AngelinaContainer.dHashMap.keySet()) {
                     //循环比对海明距离，小于6的直接触发
                     if (DHashUtil.getHammingDistance(dHash, s) < 6) {
-                        Method method = AngelinaContainer.dHashMap.get(dHash);
+                        Method method = AngelinaContainer.dHashMap.get(s);
                         ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                         if (message.isReplay()) {
                             sendMessageUtil.sendGroupMsg(invoke);
@@ -88,13 +90,12 @@ public class GroupChatController {
                     }
                 }
             }
-            }
         }
         return null;
     }
 
     //消息回复限速机制
-    private boolean getMsgLimit(MessageInfo messageInfo){
+    private boolean getMsgLimit(MessageInfo messageInfo) {
         boolean flag = true;
         //每10秒限制三条消息,10秒内超过5条就不再提示
         int length = 3;
@@ -102,7 +103,7 @@ public class GroupChatController {
         int second = 10;
         long qq = messageInfo.getQq();
         String name = messageInfo.getName();
-        if (!qqMsgRateList.containsKey(qq)){
+        if (!qqMsgRateList.containsKey(qq)) {
             List<Long> msgList = new ArrayList<>(maxTips);
             msgList.add(System.currentTimeMillis());
             qqMsgRateList.put(qq, msgList);
@@ -111,24 +112,24 @@ public class GroupChatController {
         if (limit.size() <= length) {
             //队列未满三条，直接返回消息
             limit.add(System.currentTimeMillis());
-        }else {
-            if (getSecondDiff(limit.get(0), second)){
+        } else {
+            if (getSecondDiff(limit.get(0), second)) {
                 //队列长度超过三条，但是距离首条消息已经大于10秒
                 limit.remove(0);
                 //把后面两次提示的时间戳删掉
-                while (limit.size() > 3){
+                while (limit.size() > 3) {
                     limit.remove(3);
                 }
                 limit.add(System.currentTimeMillis());
-            }else {
-                if (limit.size() <= maxTips){
+            } else {
+                if (limit.size() <= maxTips) {
                     //队列长度在3~5之间，并且距离首条消息不足10秒，发出提示
                     log.warn("{}超出单人回复速率,{}", name, limit.size());
                     ReplayInfo replayInfo = new ReplayInfo(messageInfo);
                     replayInfo.setReplayMessage(name + "说话太快了，请稍后再试");
                     sendMessageUtil.sendGroupMsg(replayInfo);
                     limit.add(System.currentTimeMillis());
-                }else {
+                } else {
                     //队列长度等于5，直接忽略消息
                     log.warn("{}连续请求,已拒绝消息", name);
                 }
@@ -144,7 +145,7 @@ public class GroupChatController {
     /**
      * 计算时间差
      */
-    public boolean getSecondDiff(Long timestamp, int second){
+    public boolean getSecondDiff(Long timestamp, int second) {
         return (System.currentTimeMillis() - timestamp) / 1000 > second;
     }
 
@@ -153,7 +154,7 @@ public class GroupChatController {
      */
     public void gcMsgLimitRate() {
         //大于1024个队列的时候进行垃圾回收,大概占用24k
-        if (qqMsgRateList.size() > 1024){
+        if (qqMsgRateList.size() > 1024) {
             log.warn("开始对消息速率队列进行回收，当前map长度为：{}", qqMsgRateList.size());
             //回收所有超过30秒的会话
             qqMsgRateList.entrySet().removeIf(entry -> getSecondDiff(entry.getValue().get(0), 30));
