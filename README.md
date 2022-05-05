@@ -40,4 +40,4 @@ Angelina框架对SpringBoot进行魔改，通过反射调用消息处理方法�
 
 # 项目案例
 
-[BotByAngelinaFrame]()
+[BotByAngelinaFrame](https://github.com/Strelizia02/AngelinaBot)
