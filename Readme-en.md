@@ -40,4 +40,4 @@ The project contains some behaviors that need to hard-code the password in plain
 
 # Project Cases
 
-[BotByAngelinaFrame]()
+[BotByAngelinaFrame](https://github.com/Strelizia02/AngelinaBot)
