@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -152,10 +151,7 @@ public class ReplayInfo {
     public void setReplayImg(String url) {
         try {
             URL u = new URL(url);
-            HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
-            httpUrl.connect();
-            replayImg.add(httpUrl.getInputStream());
-            httpUrl.disconnect();
+            setReplayImg(ImageIO.read(u));
         } catch (IOException e) {
             log.error("读取图片URL失败");
         }
