@@ -30,7 +30,7 @@ public class ReplayInfo {
     //文字内容
     String replayMessage;
     //图片内容
-    List<Image> replayImg = new ArrayList<>();
+    List<ExternalResource> replayImg = new ArrayList<>();
     //踢出群
     String kick;
     //禁言
@@ -117,7 +117,7 @@ public class ReplayInfo {
      * 获取ReplayInfo的图片集合
      * @return 返回图片的输入流集合
      */
-    public List<Image> getReplayImg() {
+    public List<ExternalResource> getReplayImg() {
         return replayImg;
     }
 
@@ -130,13 +130,7 @@ public class ReplayInfo {
             ImageIO.write(bufferedImage, "jpg", os);
             InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
             ExternalResource externalResource = ExternalResource.create(inputStream);
-            Image i;
-            if (groupId != null) {
-                i = Bot.getInstance(loginQQ).getGroupOrFail(groupId).uploadImage(externalResource);
-            } else {
-                i = Bot.getInstance(loginQQ).getFriendOrFail(qq).uploadImage(externalResource);
-            }
-            replayImg.add(i);
+            replayImg.add(externalResource);
             inputStream.close();
         } catch (IOException e) {
             log.error("BufferImage读取IO流失败");
@@ -150,13 +144,7 @@ public class ReplayInfo {
     public void setReplayImg(File file) {
         try (InputStream inputStream = new FileInputStream(file)){
             ExternalResource externalResource = ExternalResource.create(inputStream);
-            Image i;
-            if (groupId != null) {
-                i = Bot.getInstance(loginQQ).getGroupOrFail(groupId).uploadImage(externalResource);
-            } else {
-                i = Bot.getInstance(loginQQ).getFriendOrFail(qq).uploadImage(externalResource);
-            }
-            replayImg.add(i);
+            replayImg.add(externalResource);
         } catch (IOException e) {
             log.error("File读取IO流失败");
         }
