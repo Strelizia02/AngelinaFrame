@@ -38,7 +38,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         activityMapper.sendMessage();
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
-        List<InputStream> replayImgList = replayInfo.getReplayImg();
+        List<Image> replayImgList = replayInfo.getReplayImg();
         String kick = replayInfo.getKick();
         Integer muted = replayInfo.getMuted();
         Boolean nudged = replayInfo.getNudged();
@@ -52,14 +52,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
                     .append(new PlainText(replayMessage));
 
-            try {
-                for (InputStream replayImg: replayImgList) {
-                    ExternalResource externalResource = ExternalResource.create(replayImg);
-                    Image i = group.uploadImage(externalResource);
-                    messageChainBuilder.append(i);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Image replayImg: replayImgList) {
+                messageChainBuilder.append(replayImg);
             }
             MessageChain chain = messageChainBuilder.build();
             group.sendMessage(chain);
@@ -69,17 +63,11 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         } else if (replayImgList.size() > 0) {
             //发送图片
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-            try {
-                for (InputStream replayImg: replayImgList) {
-                    ExternalResource externalResource = ExternalResource.create(replayImg);
-                    Image i = group.uploadImage(externalResource);
-                    messageChainBuilder.append(i);
-                }
-                MessageChain chain = messageChainBuilder.build();
-                group.sendMessage(chain);
-            } catch (IOException e) {
-                log.error("构建图片失败");
+            for (Image replayImg: replayImgList) {
+                messageChainBuilder.append(replayImg);
             }
+            MessageChain chain = messageChainBuilder.build();
+            group.sendMessage(chain);
         }
         if (kick != null) {
             //踢出群
@@ -104,7 +92,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         activityMapper.sendMessage();
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
-        List<InputStream> replayImgList = replayInfo.getReplayImg();
+        List<Image> replayImgList = replayInfo.getReplayImg();
         Boolean nudged = replayInfo.getNudged();
 
         //获取登录bot
@@ -115,14 +103,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
                     .append(new PlainText(replayMessage));
 
-            try {
-                for (InputStream replayImg: replayImgList) {
-                    ExternalResource externalResource = ExternalResource.create(replayImg);
-                    Image i = user.uploadImage(externalResource);
-                    messageChainBuilder.append(i);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            for (Image replayImg: replayImgList) {
+                messageChainBuilder.append(replayImg);
             }
             MessageChain chain = messageChainBuilder.build();
             user.sendMessage(chain);
@@ -132,17 +114,11 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         } else if (replayImgList.size() > 0) {
             //发送图片
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-            try {
-                for (InputStream replayImg: replayImgList) {
-                    ExternalResource externalResource = ExternalResource.create(replayImg);
-                    Image i = user.uploadImage(externalResource);
-                    messageChainBuilder.append(i);
-                }
-                MessageChain chain = messageChainBuilder.build();
-                user.sendMessage(chain);
-            } catch (IOException e) {
-                log.error("构建图片失败");
+            for (Image replayImg: replayImgList) {
+                messageChainBuilder.append(replayImg);
             }
+            MessageChain chain = messageChainBuilder.build();
+            user.sendMessage(chain);
         }
 
         if (nudged) {

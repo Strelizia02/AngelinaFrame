@@ -1,6 +1,9 @@
 package top.angelinaBot.model;
 
 import lombok.extern.slf4j.Slf4j;
+import net.mamoe.mirai.Bot;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.utils.ExternalResource;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -27,7 +30,7 @@ public class ReplayInfo {
     //文字内容
     String replayMessage;
     //图片内容
-    List<InputStream> replayImg = new ArrayList<>();
+    List<Image> replayImg = new ArrayList<>();
     //踢出群
     String kick;
     //禁言
@@ -114,7 +117,7 @@ public class ReplayInfo {
      * 获取ReplayInfo的图片集合
      * @return 返回图片的输入流集合
      */
-    public List<InputStream> getReplayImg() {
+    public List<Image> getReplayImg() {
         return replayImg;
     }
 
@@ -123,10 +126,18 @@ public class ReplayInfo {
      * @param bufferedImage 图片BufferedImage
      */
     public void setReplayImg(BufferedImage bufferedImage) {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
+        try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
             ImageIO.write(bufferedImage, "jpg", os);
-            replayImg.add(new ByteArrayInputStream(os.toByteArray()));
+            InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
+            ExternalResource externalResource = ExternalResource.create(inputStream);
+            Image i;
+            if (groupId != null) {
+                i = Bot.getInstance(loginQQ).getGroupOrFail(groupId).uploadImage(externalResource);
+            } else {
+                i = Bot.getInstance(loginQQ).getFriendOrFail(qq).uploadImage(externalResource);
+            }
+            replayImg.add(i);
+            inputStream.close();
         } catch (IOException e) {
             log.error("BufferImage读取IO流失败");
         }
@@ -137,8 +148,15 @@ public class ReplayInfo {
      * @param file 文件File
      */
     public void setReplayImg(File file) {
-        try {
-            replayImg.add(new FileInputStream(file));
+        try (InputStream inputStream = new FileInputStream(file)){
+            ExternalResource externalResource = ExternalResource.create(inputStream);
+            Image i;
+            if (groupId != null) {
+                i = Bot.getInstance(loginQQ).getGroupOrFail(groupId).uploadImage(externalResource);
+            } else {
+                i = Bot.getInstance(loginQQ).getFriendOrFail(qq).uploadImage(externalResource);
+            }
+            replayImg.add(i);
         } catch (IOException e) {
             log.error("File读取IO流失败");
         }
