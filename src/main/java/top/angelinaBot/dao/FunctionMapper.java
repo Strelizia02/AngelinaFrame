@@ -9,7 +9,7 @@ public interface FunctionMapper {
 
     @Select("CREATE TABLE IF NOT EXISTS `a_funcCount`  (\n" +
             "        `func` varchar(255) NOT NULL,\n" +
-            "        `count` int(255)\n" +
-            "        );")
+            "        `count` int(255),\n" +
+            "        PRIMARY KEY (\"func\"));")
     void initFunctionTable();
 }
