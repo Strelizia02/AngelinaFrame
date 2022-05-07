@@ -25,5 +25,5 @@ public interface AdminMapper {
             "        `group_id` bigInt(255) NOT NULL,\n" +
             "        `func_name` varchar(6) NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +
             "        );")
-    Integer initFunctionTable();
+    Integer initAdminTable();
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
@@ -33,6 +34,9 @@ public class EventsController {
     @Autowired
     private AdminMapper adminMapper;
 
+    @Autowired
+    private FunctionMapper functionMapper;
+
     /**
      * 通用的qq事件处理接口，可以通过代码内部调用，也可以通过Post接口调用
      * @param message 消息的封装方法
@@ -48,6 +52,7 @@ public class EventsController {
             if (AngelinaContainer.eventMap.containsKey(message.getEvent())) {
                 Method method = AngelinaContainer.eventMap.get(message.getEvent());
                 if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                    functionMapper.insertFunction(method.getName());
                     ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                     if (message.isReplay()) {
                         sendMessageUtil.sendGroupMsg(invoke);

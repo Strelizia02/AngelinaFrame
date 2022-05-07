@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
@@ -29,6 +30,9 @@ public class FriendChatController {
     @Autowired
     private SendMessageUtil sendMessageUtil;
 
+    @Autowired
+    private FunctionMapper functionMapper;
+
     /**
      * 通用的qq私聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
      * @param message 消息的封装方法
@@ -42,6 +46,7 @@ public class FriendChatController {
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到私聊消息:{}", message.getText());
             if (AngelinaContainer.friendMap.containsKey(message.getKeyword())) {
+                functionMapper.insertFunction(message.getName());
                 Method method = AngelinaContainer.friendMap.get(message.getKeyword());
                 ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                 if (message.isReplay()) {

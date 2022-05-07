@@ -10,6 +10,7 @@ import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.util.MiraiFrameUtil;
 
 import java.io.*;
@@ -36,6 +37,9 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Autowired
     private AdminMapper adminMapper;
 
+    @Autowired
+    private FunctionMapper functionMapper;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
@@ -44,7 +48,8 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         miraiFrameUtil.startMirai();
         getJsonReplay();
         activityMapper.initActivityTable();
-        adminMapper.initFunctionTable();
+        functionMapper.initFunctionTable();
+        adminMapper.initAdminTable();
     }
 
     /**

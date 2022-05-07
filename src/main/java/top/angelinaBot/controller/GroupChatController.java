@@ -6,6 +6,7 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,9 @@ public class GroupChatController {
     @Autowired
     private ActivityMapper activityMapper;
 
+    @Autowired
+    private FunctionMapper functionMapper;
+
     private final Map<Long, List<Long>> qqMsgRateList = new HashMap<>();
 
     /**
@@ -67,6 +71,7 @@ public class GroupChatController {
                     } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
                         Method method = AngelinaContainer.groupMap.get(message.getKeyword());
                         if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                            functionMapper.insertFunction(method.getName());
                             ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                             if (message.isReplay()) {
                                 sendMessageUtil.sendGroupMsg(invoke);
@@ -82,6 +87,7 @@ public class GroupChatController {
                     //循环比对海明距离，小于6的直接触发
                     if (DHashUtil.getHammingDistance(dHash, s) < 6) {
                         Method method = AngelinaContainer.dHashMap.get(s);
+                        functionMapper.insertFunction(method.getName());
                         ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                         if (message.isReplay()) {
                             sendMessageUtil.sendGroupMsg(invoke);
