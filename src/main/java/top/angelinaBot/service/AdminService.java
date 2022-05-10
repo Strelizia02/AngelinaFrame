@@ -6,11 +6,13 @@ import org.springframework.stereotype.Service;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class AdminService {
@@ -35,6 +37,15 @@ public class AdminService {
                 adminMapper.closeFunction(messageInfo.getGroupId(), AngelinaContainer.groupMap.get(key).getName());
                 replayInfo.setReplayMessage("关闭功能 " + key + "成功");
                 return replayInfo;
+            } else {
+                Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
+                for (EventEnum e: eventEnums) {
+                    if (key.equals(e.getEventName())) {
+                        adminMapper.closeFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getName());
+                        replayInfo.setReplayMessage("关闭功能 " + key + "成功");
+                        return replayInfo;
+                    }
+                }
             }
         }
         replayInfo.setReplayMessage("未找到该功能，关闭失败");
@@ -58,6 +69,15 @@ public class AdminService {
                 adminMapper.openFunction(messageInfo.getGroupId(), AngelinaContainer.groupMap.get(key).getName());
                 replayInfo.setReplayMessage("打开功能 " + key + "成功");
                 return replayInfo;
+            } else {
+                Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
+                for (EventEnum e: eventEnums) {
+                    if (key.equals(e.getEventName())) {
+                        adminMapper.openFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getName());
+                        replayInfo.setReplayMessage("打开功能 " + key + "成功");
+                        return replayInfo;
+                    }
+                }
             }
         }
         replayInfo.setReplayMessage("未找到该功能，打开失败");

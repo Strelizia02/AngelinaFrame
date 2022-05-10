@@ -167,6 +167,7 @@ public class MiraiFrameUtil {
                 messageInfo.setLoginQq(event.getBot().getId());
                 messageInfo.setGroupId(event.getGroup().getId());
                 messageInfo.setQq(event.getMember().getId());
+                messageInfo.setName(event.getMember().getNick());
                 try {
                     eventsController.receive(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
@@ -184,6 +185,7 @@ public class MiraiFrameUtil {
                 messageInfo.setLoginQq(event.getBot().getId());
                 messageInfo.setGroupId(event.getGroup().getId());
                 messageInfo.setQq(event.getMember().getId());
+                messageInfo.setName(event.getMember().getNick());
                 try {
                     eventsController.receive(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {

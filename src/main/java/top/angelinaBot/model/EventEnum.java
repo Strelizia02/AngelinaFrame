@@ -19,4 +19,8 @@ public enum EventEnum {
     public String toString() {
         return eventName;
     }
+
+    public String getEventName() {
+        return eventName;
+    }
 }
