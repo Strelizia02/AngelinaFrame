@@ -44,6 +44,11 @@ public class MiraiFrameUtil {
     @Autowired
     private ActivityMapper activityMapper;
 
+    /**
+     * rebuild状态，1为正在rebuild，0为已经rebuild完成
+     */
+    private volatile int status = 0;
+
     //qq列表
     @Value("#{'${userConfig.qqList}'.split(' ')}")
     private String[] qqList;
@@ -119,6 +124,16 @@ public class MiraiFrameUtil {
         //某个Bot加入了一个新群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {
             messageIdMap.put(event.getGroupId(), event.getBot().getId());
+            activityMapper.getEventMessage();
+            MessageInfo messageInfo = new MessageInfo();
+            messageInfo.setEvent(EventEnum.MemberJoinEvent);
+            messageInfo.setLoginQq(event.getBot().getId());
+            messageInfo.setGroupId(event.getGroup().getId());
+            try {
+                eventsController.receive(messageInfo);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         });
 
         //群撤回消息
@@ -228,12 +243,18 @@ public class MiraiFrameUtil {
      */
     private void reBuildBotGroupMap() {
         //一个群号只能有一个bot提供服务
-        for (Bot bot: Bot.getInstances()) {
-            if (bot.isOnline()) {
-                for (Group group : bot.getGroups()) {
-                    messageIdMap.put(group.getId(), bot.getId());
+        if (status == 0) {
+            status = 1;
+            for (Bot bot : Bot.getInstances()) {
+                if (bot.isOnline()) {
+                    for (Group group : bot.getGroups()) {
+                        messageIdMap.put(group.getId(), bot.getId());
+                    }
                 }
             }
+            status = 0;
+        } else {
+            log.warn("is on rebuilding group-bot");
         }
     }
 }
