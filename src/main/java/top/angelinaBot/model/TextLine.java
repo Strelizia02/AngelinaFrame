@@ -59,16 +59,16 @@ public class TextLine {
      * @param s 字符串
      */
     public void addString(String s) {
-        if (pointers > 20) {
+        if (pointers > maxWidth) {
             nextLine();
             addString(s);
-        } else if (s.length() + pointers > 20) {
-            int splitPointer = 20 - pointers;
+        } else if (s.length() + pointers > maxWidth) {
+            int splitPointer = maxWidth - pointers;
             line.add(s.substring(0, splitPointer));
             nextLine();
             addSpace(2);
             addString(s.substring(splitPointer));
-            pointers = 20;
+            pointers = maxWidth;
         } else {
             pointers += s.length();
             line.add(s);
@@ -81,7 +81,7 @@ public class TextLine {
      * @param spaceNum 空格数
      */
     public void addSpace(int spaceNum) {
-        if (pointers + spaceNum > 20) {
+        if (pointers + spaceNum > maxWidth) {
             spaceNum = 1;
         }
         line.add(spaceNum);
