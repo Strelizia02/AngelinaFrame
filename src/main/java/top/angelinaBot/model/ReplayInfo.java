@@ -8,6 +8,7 @@ import net.mamoe.mirai.utils.ExternalResource;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +158,12 @@ public class ReplayInfo {
     public void setReplayImg(String url) {
         try {
             URL u = new URL(url);
-            setReplayImg(ImageIO.read(u));
+            HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
+            httpUrl.connect();
+            try (InputStream is = httpUrl.getInputStream()){
+                ExternalResource externalResource = ExternalResource.create(is);
+                replayImg.add(externalResource);
+            }
         } catch (IOException e) {
             log.error("读取图片URL失败");
         }
