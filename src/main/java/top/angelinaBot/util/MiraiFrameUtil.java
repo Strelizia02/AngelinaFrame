@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
+import top.angelinaBot.container.AngelinaEventSource;
 import top.angelinaBot.controller.EventsController;
 import top.angelinaBot.controller.FriendChatController;
 import top.angelinaBot.controller.GroupChatController;
@@ -110,6 +111,7 @@ public class MiraiFrameUtil {
                 MessageInfo messageInfo = new MessageInfo(event, botNames);
                 try {
                     groupChatController.receive(messageInfo);
+                    AngelinaEventSource.getInstance().handle(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
