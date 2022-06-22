@@ -28,12 +28,16 @@ public class AngelinaEventSource {
 
     public Map<AngelinaListener, AngelinaMessageEvent> listenerSet = new HashMap<>();
 
-    public static AngelinaMessageEvent waiter(AngelinaListener listener) throws InterruptedException {
+    public static AngelinaMessageEvent waiter(AngelinaListener listener) {
         AngelinaMessageEvent o = new AngelinaMessageEvent();
         AngelinaEventSource.getInstance().registerEventListener(listener, o);
         synchronized (o.getLock()) {
             System.out.println("线程等待");
-            o.getLock().wait();
+            try {
+                o.getLock().wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         return o;
     }
@@ -46,12 +50,11 @@ public class AngelinaEventSource {
 
     public void handle(MessageInfo message) {
         for (AngelinaListener l: listenerSet.keySet()) {
-            ReplayInfo callback = l.callback(message);
-            if (callback != null) {
+            if (l.callback(message)) {
                 AngelinaMessageEvent event = listenerSet.get(l);
                 synchronized (event.getLock()) {
                     System.out.println("唤起线程");
-                    event.setReplay(callback);
+                    event.setMessageInfo(message);
                     event.getLock().notify();
                 }
                 listenerSet.remove(l);
