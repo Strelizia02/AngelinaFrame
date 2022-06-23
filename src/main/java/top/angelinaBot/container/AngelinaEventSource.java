@@ -1,13 +1,13 @@
 package top.angelinaBot.container;
 
+import lombok.extern.slf4j.Slf4j;
 import top.angelinaBot.model.AngelinaMessageEvent;
 import top.angelinaBot.model.MessageInfo;
-import top.angelinaBot.model.ReplayInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 public class AngelinaEventSource {
 
 
@@ -32,7 +32,7 @@ public class AngelinaEventSource {
         AngelinaMessageEvent o = new AngelinaMessageEvent();
         AngelinaEventSource.getInstance().registerEventListener(listener, o);
         synchronized (o.getLock()) {
-            System.out.println("线程等待");
+            log.info("线程等待");
             try {
                 o.getLock().wait();
             } catch (InterruptedException e) {
@@ -50,10 +50,16 @@ public class AngelinaEventSource {
 
     public void handle(MessageInfo message) {
         for (AngelinaListener l: listenerSet.keySet()) {
-            if (l.callback(message)) {
-                AngelinaMessageEvent event = listenerSet.get(l);
+            AngelinaMessageEvent event = listenerSet.get(l);
+            if (System.currentTimeMillis() - l.timestamp / 1000 > 60) {
                 synchronized (event.getLock()) {
-                    System.out.println("唤起线程");
+                    log.warn("线程超时");
+                    event.getLock().notify();
+                }
+                listenerSet.remove(l);
+            } else if (l.callback(message)) {
+                synchronized (event.getLock()) {
+                    log.info("唤起线程");
                     event.setMessageInfo(message);
                     event.getLock().notify();
                 }
