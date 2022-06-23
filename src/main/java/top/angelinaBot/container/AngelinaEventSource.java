@@ -51,7 +51,7 @@ public class AngelinaEventSource {
     public void handle(MessageInfo message) {
         for (AngelinaListener l: listenerSet.keySet()) {
             AngelinaMessageEvent event = listenerSet.get(l);
-            if (System.currentTimeMillis() - l.timestamp / 1000 > 60) {
+            if ((System.currentTimeMillis() - l.timestamp) / 1000 > 60) {
                 synchronized (event.getLock()) {
                     log.warn("线程超时");
                     event.getLock().notify();
