@@ -106,6 +106,7 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 String[] StrangerKeyWords = ((AngelinaStranger) annotation).keyWords();
                                 for (String keyWord : StrangerKeyWords) {
                                     //判断关键字是否重复
+                                    //调用friend的关键词map，如有需要可自行修改
                                     if (AngelinaContainer.friendMap.containsKey(keyWord)) {
                                         Method replaceMethod = AngelinaContainer.friendMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
@@ -122,6 +123,7 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 String[] GroupTempKeyWords = ((AngelinaGroupTemp) annotation).keyWords();
                                 for (String keyWord : GroupTempKeyWords) {
                                     //判断关键字是否重复
+                                    //调用friend的关键词map，如有需要可自行修改
                                     if (AngelinaContainer.friendMap.containsKey(keyWord)) {
                                         Method replaceMethod = AngelinaContainer.friendMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");

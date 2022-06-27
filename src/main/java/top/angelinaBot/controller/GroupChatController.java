@@ -6,7 +6,6 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
-import top.angelinaBot.dao.EnableMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +36,6 @@ public class GroupChatController {
     private AdminMapper adminMapper;
 
     @Autowired
-    private EnableMapper enableMapper;
-
-    @Autowired
     private ActivityMapper activityMapper;
 
     @Autowired
@@ -57,10 +53,6 @@ public class GroupChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
-        //如果群组关闭，则拒绝接收消息,即将发送方与接收方合并
-        if (this.enableMapper.canUseGroup(message.getGroupId(), 1) == 1){
-            message.setQq(message.getLoginQq());
-        }
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到群消息:{}", message.getEventString());

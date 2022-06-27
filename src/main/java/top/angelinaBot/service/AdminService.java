@@ -3,11 +3,9 @@ package top.angelinaBot.service;
 import net.mamoe.mirai.contact.MemberPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.angelinaBot.annotation.AngelinaFriend;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
-import top.angelinaBot.dao.EnableMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -21,9 +19,6 @@ public class AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
-
-    @Autowired
-    private EnableMapper enableMapper;
 
     @AngelinaGroup(keyWords = {"关闭"}, description = "关闭洁哥的某个功能")
     public ReplayInfo closeFunc(MessageInfo messageInfo) {
@@ -60,7 +55,7 @@ public class AdminService {
     @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开洁哥的某个功能")
     public ReplayInfo openFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        if (!messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
+        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
             replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
             return replayInfo;
         }
@@ -103,57 +98,5 @@ public class AdminService {
         }
         replayInfo.setReplayMessage(sb.toString());
         return replayInfo;
-    }
-
-    @AngelinaGroup(keyWords = {"群组关闭"},description = "关闭某个群组所有接收消息")
-    public ReplayInfo closeGroup(MessageInfo messageInfo) {
-        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        if (!messageInfo.getUserAdmin().equals(MemberPermission.ADMINISTRATOR)) {
-            replayInfo.setReplayMessage("仅超级管理员有权限对功能进行操作");
-            return replayInfo;
-        } else {
-            if (messageInfo.getArgs().size() > 1) {
-                String key = (String)messageInfo.getArgs().get(1);
-                char num[] = key.toCharArray();
-                for (int i = 0; i < num.length; i++) {
-                    if (Character.isDigit(num[i])) {
-                        long numkey = Integer.parseInt(key);
-                        this.enableMapper.closeGroup(numkey, 1);
-                        replayInfo.setReplayMessage("关闭群组 " + numkey + "成功");
-                    }else{
-                        replayInfo.setReplayMessage("您输入的群组ID有误，请重新输入");
-                    }
-                }
-            }else{
-                replayInfo.setReplayMessage("请输入群组ID以关闭");
-            }
-            return replayInfo;
-        }
-    }
-
-    @AngelinaGroup(keyWords = {"群组开启"},description = "开启某个群组所有接收消息")
-    public ReplayInfo openGroup(MessageInfo messageInfo) {
-        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        if (!messageInfo.getUserAdmin().equals(MemberPermission.ADMINISTRATOR)) {
-            replayInfo.setReplayMessage("仅超级管理员有权限对功能进行操作");
-            return replayInfo;
-        } else {
-            if (messageInfo.getArgs().size() > 1) {
-                String key = (String)messageInfo.getArgs().get(1);
-                char num[] = key.toCharArray();
-                for (int i = 0; i < num.length; i++) {
-                    if (Character.isDigit(num[i])) {
-                        long numkey = Integer.parseInt(key);
-                        this.enableMapper.closeGroup(numkey, 0);
-                        replayInfo.setReplayMessage("开启群组 " + numkey + "成功");
-                    }else{
-                        replayInfo.setReplayMessage("您输入的群组ID有误，请重新输入");
-                    }
-                }
-            }else{
-                replayInfo.setReplayMessage("请输入群组ID以开启");
-            }
-            return replayInfo;
-        }
     }
 }
