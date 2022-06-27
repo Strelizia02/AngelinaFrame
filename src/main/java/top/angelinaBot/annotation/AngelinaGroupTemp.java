@@ -1,0 +1,16 @@
+package top.angelinaBot.annotation;
+
+import java.lang.annotation.*;
+
+/**
+ * Angelina框架的私聊方法通用修饰注解
+ */
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface AngelinaGroupTemp {
+    //关键字触发
+    String[] keyWords();
+    //方法描述
+    String description() default "";
+}

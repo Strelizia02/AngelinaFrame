@@ -32,8 +32,12 @@ public class ReplayInfo {
     String replayMessage;
     //图片内容
     List<ExternalResource> replayImg = new ArrayList<>();
+    //语音内容
+    List<ExternalResource> replayAudio = new ArrayList<>();
     //踢出群
     String kick;
+    //@某个人
+    Long AT;
     //禁言
     Integer muted;
     //戳一戳
@@ -89,6 +93,10 @@ public class ReplayInfo {
     public void setKick(String kick) {
         this.kick = kick;
     }
+
+    public Long getAT() { return AT; }
+
+    public void setAT(Long AT) { this.AT = AT; }
 
     public Integer getMuted() {
         return muted;
@@ -166,6 +174,27 @@ public class ReplayInfo {
             }
         } catch (IOException e) {
             log.error("读取图片URL失败");
+        }
+    }
+
+    /**
+     * 获取ReplayInfo的语音集合
+     * @return 返回语音的输入流集合
+     */
+    public List<ExternalResource> getReplayAudio() {
+        return replayAudio;
+    }
+
+    /**
+     * 以文件格式插入语音
+     * @param file 文件File
+     */
+    public void setReplayAudio(File file) {
+        try (InputStream inputStream = new FileInputStream(file)){
+            ExternalResource externalResource = ExternalResource.create(inputStream);
+            replayAudio.add(externalResource);
+        } catch (IOException e) {
+            log.error("File读取IO流失败");
         }
     }
 }

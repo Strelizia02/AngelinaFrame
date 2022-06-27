@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.EnableMapper;
 import top.angelinaBot.dao.FunctionMapper;
+import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
@@ -35,6 +37,9 @@ public class EventsController {
     private AdminMapper adminMapper;
 
     @Autowired
+    private EnableMapper enableMapper;
+
+    @Autowired
     private FunctionMapper functionMapper;
 
     /**
@@ -46,6 +51,10 @@ public class EventsController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
+        //如果群组关闭，则拒绝接收事件
+        if (this.enableMapper.canUseGroup(message.getGroupId(), 1) == 1){
+            message.setQq(message.getLoginQq());
+        }
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到事件:{}", message.getEvent());

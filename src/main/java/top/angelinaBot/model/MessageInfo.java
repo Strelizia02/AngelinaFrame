@@ -3,6 +3,8 @@ package top.angelinaBot.model;
 import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
+import net.mamoe.mirai.event.events.GroupTempMessageEvent;
+import net.mamoe.mirai.event.events.StrangerMessageEvent;
 import net.mamoe.mirai.internal.message.OnlineFriendImage;
 import net.mamoe.mirai.internal.message.OnlineGroupImage;
 import net.mamoe.mirai.message.data.At;
@@ -144,6 +146,79 @@ public class MessageInfo {
             }
         }
     }
+
+    public MessageInfo(StrangerMessageEvent event, String[] botNames) {
+        this.loginQq = event.getBot().getId();
+        this.qq = event.getSender().getId();
+        this.name = event.getSenderName();
+        this.time = event.getTime();
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        this.eventString = chain.toString();
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                this.atQQList.add(((At) o).getTarget());
+                if (((At) o).getTarget() == this.loginQq){
+                    //如果被艾特则视为被呼叫
+                    this.isCallMe = true;
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                this.text = ((PlainText) o).getContent().trim();
+
+                String[] orders = this.text.split("\\s+");
+                if (orders.length > 0) {
+                    this.keyword = orders[0];
+                    this.args = Arrays.asList(orders);
+                    this.isCallMe = true;
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            this.keyword = this.keyword.replace(name, "");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    public MessageInfo(GroupTempMessageEvent event, String[] botNames) {
+        this.loginQq = event.getBot().getId();
+        this.qq = event.getSender().getId();
+        this.groupId = event.getGroup().getId();
+        this.name = event.getSenderName();
+        this.time = event.getTime();
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        this.eventString = chain.toString();
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                this.atQQList.add(((At) o).getTarget());
+                if (((At) o).getTarget() == this.loginQq){
+                    //如果被艾特则视为被呼叫
+                    this.isCallMe = true;
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                this.text = ((PlainText) o).getContent().trim();
+
+                String[] orders = this.text.split("\\s+");
+                if (orders.length > 0) {
+                    this.keyword = orders[0];
+                    this.args = Arrays.asList(orders);
+                    this.isCallMe = true;
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            this.keyword = this.keyword.replace(name, "");
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     public boolean isReplay() {
         return isReplay;
