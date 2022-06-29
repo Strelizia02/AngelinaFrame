@@ -36,55 +36,60 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
     @Override
     public void sendGroupMsg(ReplayInfo replayInfo) {
         activityMapper.sendMessage();
-        //解析replayInfo
-        String replayMessage = replayInfo.getReplayMessage();
-        List<ExternalResource> replayImgList = replayInfo.getReplayImg();
-        String kick = replayInfo.getKick();
-        Integer muted = replayInfo.getMuted();
-        Boolean nudged = replayInfo.getNudged();
+        try {
+            //解析replayInfo
+            String replayMessage = replayInfo.getReplayMessage();
+            List<ExternalResource> replayImgList = replayInfo.getReplayImg();
+            String kick = replayInfo.getKick();
+            Integer muted = replayInfo.getMuted();
+            Boolean nudged = replayInfo.getNudged();
 
-        //获取登录bot
-        Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
-        //获取群
-        Group group = bot.getGroupOrFail(replayInfo.getGroupId());
-        if (replayMessage != null && replayImgList.size() > 0) {
-            //发送图片 + 文字
-            MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
-                    .append(new PlainText(replayMessage));
+            //获取登录bot
+            Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
+            //获取群
+            Group group = bot.getGroupOrFail(replayInfo.getGroupId());
+            if (replayMessage != null && replayImgList.size() > 0) {
+                //发送图片 + 文字
+                MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
+                        .append(new PlainText(replayMessage));
 
-            for (ExternalResource replayImg: replayImgList) {
-                messageChainBuilder.append(group.uploadImage(replayImg));
+                for (ExternalResource replayImg : replayImgList) {
+                    messageChainBuilder.append(group.uploadImage(replayImg));
+                }
+                MessageChain chain = messageChainBuilder.build();
+                group.sendMessage(chain);
+            } else if (replayMessage != null) {
+                //发送文字
+                group.sendMessage(new PlainText(replayMessage));
+            } else if (replayImgList.size() > 0) {
+                //发送图片
+                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+                for (ExternalResource replayImg : replayImgList) {
+                    messageChainBuilder.append(group.uploadImage(replayImg));
+                }
+                MessageChain chain = messageChainBuilder.build();
+                group.sendMessage(chain);
             }
-            MessageChain chain = messageChainBuilder.build();
-            group.sendMessage(chain);
-        } else if (replayMessage != null) {
-            //发送文字
-            group.sendMessage(new PlainText(replayMessage));
-        } else if (replayImgList.size() > 0) {
-            //发送图片
-            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-            for (ExternalResource replayImg: replayImgList) {
-                messageChainBuilder.append(group.uploadImage(replayImg));
+            if (kick != null) {
+                //踢出群
+                group.getOrFail(replayInfo.getQq()).kick("");
             }
-            MessageChain chain = messageChainBuilder.build();
-            group.sendMessage(chain);
-        }
-        if (kick != null) {
-            //踢出群
-            group.getOrFail(replayInfo.getQq()).kick("");
-        }
 
-        if (muted != null) {
-            //禁言muted分钟
-            group.getOrFail(replayInfo.getQq()).mute(muted);
-        }
+            if (muted != null) {
+                //禁言muted分钟
+                group.getOrFail(replayInfo.getQq()).mute(muted);
+            }
 
-        if (nudged) {
-            //戳一戳
-            group.getOrFail(replayInfo.getQq()).nudge();
-        }
+            if (nudged) {
+                //戳一戳
+                group.getOrFail(replayInfo.getQq()).nudge();
+            }
 
-        log.info("发送消息" + replayInfo.getReplayMessage());
+            log.info("发送消息" + replayInfo.getReplayMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("发送消息失败");
+        }
     }
 
     @Override

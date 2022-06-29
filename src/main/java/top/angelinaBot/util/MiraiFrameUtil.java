@@ -100,7 +100,12 @@ public class MiraiFrameUtil {
                         "wifi".getBytes(StandardCharsets.UTF_8)
                 ));
             }});
-            bot.login();
+            try {
+                bot.login();
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error(bot.getId() + " 登录失败");
+            }
         }
 
         reBuildBotGroupMap();
