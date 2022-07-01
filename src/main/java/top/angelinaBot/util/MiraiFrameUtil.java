@@ -116,7 +116,9 @@ public class MiraiFrameUtil {
                 MessageInfo messageInfo = new MessageInfo(event, botNames);
                 try {
                     groupChatController.receive(messageInfo);
-                    AngelinaEventSource.getInstance().handle(messageInfo);
+                    if (messageInfo.getText() != null) {
+                        AngelinaEventSource.getInstance().handle(messageInfo);
+                    }
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
