@@ -190,6 +190,11 @@
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.dadiyang</groupId>
+            <artifactId>jave</artifactId>
+            <version>1.0.5</version>
+        </dependency>
     </dependencies>
 
     <build>

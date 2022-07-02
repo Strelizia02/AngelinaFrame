@@ -14,4 +14,11 @@ public class AboutService {
         replayInfo.setReplayMessage("框架项目地址:https://github.com/Strelizia02/AngelinaFrame");
         return replayInfo;
     }
+
+    @AngelinaGroup(keyWords = {"测试"})
+    public ReplayInfo test(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        replayInfo.setMp3("D:/安洁莉娜_任命助理.mp3");
+        return replayInfo;
+    }
 }

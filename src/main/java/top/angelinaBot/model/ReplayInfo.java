@@ -32,6 +32,8 @@ public class ReplayInfo {
     String replayMessage;
     //图片内容
     List<ExternalResource> replayImg = new ArrayList<>();
+    //语音文件
+    File mp3;
     //踢出群
     String kick;
     //禁言
@@ -108,6 +110,18 @@ public class ReplayInfo {
 
     public String getReplayMessage() {
         return replayMessage;
+    }
+
+    public File getMp3() {
+        return mp3;
+    }
+
+    public void setMp3(File mp3) {
+        this.mp3 = mp3;
+    }
+
+    public void setMp3(String mp3) {
+        this.mp3 = new File(mp3);
     }
 
     public void setReplayMessage(String replayMessage) {

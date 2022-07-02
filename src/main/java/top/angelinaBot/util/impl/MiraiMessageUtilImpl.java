@@ -1,10 +1,10 @@
 package top.angelinaBot.util.impl;
 
+import it.sauronsoftware.jave.*;
 import lombok.extern.slf4j.Slf4j;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.User;
-import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.PlainText;
@@ -15,9 +15,9 @@ import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.SendMessageUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Mirai发送消息封装方法
@@ -43,6 +43,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             String kick = replayInfo.getKick();
             Integer muted = replayInfo.getMuted();
             Boolean nudged = replayInfo.getNudged();
+            File mp3 = replayInfo.getMp3();
 
             //获取登录bot
             Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
@@ -69,6 +70,31 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                 }
                 MessageChain chain = messageChainBuilder.build();
                 group.sendMessage(chain);
+            }
+
+            if (mp3 != null) {
+                File amr = new File("runFile/silkCache/" + UUID.randomUUID());//输出
+                AudioAttributes audio = new AudioAttributes();
+                audio.setCodec("libamr_nb");//编码器
+
+                audio.setBitRate(12200);//比特率
+                audio.setChannels(1);//声道；1单声道，2立体声
+                audio.setSamplingRate(8000);//采样率（重要！！！）
+
+                EncodingAttributes attrs = new EncodingAttributes();
+                attrs.setFormat("amr");//格式
+                attrs.setAudioAttributes(audio);//音频设置
+                Encoder encoder = new Encoder();
+                try {
+                    encoder.encode(mp3, amr, attrs);
+                } catch (EncoderException e) {
+                    e.printStackTrace();
+                }
+                ExternalResource externalResource = ExternalResource.create(amr);
+
+                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+                messageChainBuilder.append(group.uploadAudio(externalResource));
+                group.sendMessage(messageChainBuilder.build());
             }
             if (kick != null) {
                 //踢出群
