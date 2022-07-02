@@ -85,6 +85,13 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                 group.getOrFail(replayInfo.getQq()).nudge();
             }
 
+            if (replayAudioList.size() > 0){
+                //语音发送（注意只能单独发送，无法插入chain)
+                for (ExternalResource replayAudio: replayAudioList){
+                    group.sendMessage(group.uploadAudio(replayAudio));
+                }
+            }
+
             log.info("发送消息" + replayInfo.getReplayMessage());
         } catch (Exception e) {
             e.printStackTrace();
