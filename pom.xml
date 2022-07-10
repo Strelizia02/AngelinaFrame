@@ -11,7 +11,7 @@
 
     <groupId>top.angelina-bot</groupId>
     <artifactId>angelina-frame</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <name>AngelinaFrame</name>
     <description>Angelina QQ Bot Frame By SpringBoot</description>
@@ -163,6 +163,11 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.36.0.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.dadiyang</groupId>
+            <artifactId>jave</artifactId>
+            <version>1.0.5</version>
+        </dependency>
 
         <dependency>
             <groupId>net.mamoe</groupId>
@@ -189,11 +194,6 @@
             <groupId>org.jetbrains.kotlinx</groupId>
             <artifactId>kotlinx-coroutines-core-jvm</artifactId>
             <version>${kotlin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.dadiyang</groupId>
-            <artifactId>jave</artifactId>
-            <version>1.0.5</version>
         </dependency>
     </dependencies>
 
