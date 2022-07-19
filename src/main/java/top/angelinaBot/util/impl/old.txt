@@ -1,0 +1,32 @@
+ if (replayMessage != null && replayImgList.size() > 0) {
+            //发送图片 + 文字
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
+                    .append(new PlainText(replayMessage));
+            for (ExternalResource replayImg: replayImgList) {
+                messageChainBuilder.append(group.uploadImage(replayImg));
+            }
+                MessageChain chain = messageChainBuilder.build();
+                group.sendMessage(chain);
+        }
+         else if (replayMessage != null) {
+            //发送文字
+            group.sendMessage(new PlainText(replayMessage));
+        } else if (replayImgList.size() > 0) {
+            //发送图片
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+            for (ExternalResource replayImg: replayImgList) {
+                messageChainBuilder.append(group.uploadImage(replayImg));
+            }
+            MessageChain chain = messageChainBuilder.build();
+            group.sendMessage(chain);
+         }
+
+          if (replayAudioList.size() > 0) {
+                     //发送语音
+                     MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+                     for (ExternalResource replayAudio: replayAudioList) {
+                         messageChainBuilder.append(group.uploadImage(replayAudio));
+                     }
+                     MessageChain chain = messageChainBuilder.build();
+                     group.sendMessage(chain);
+                 }

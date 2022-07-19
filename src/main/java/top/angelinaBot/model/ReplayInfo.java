@@ -32,14 +32,20 @@ public class ReplayInfo {
     String replayMessage;
     //图片内容
     List<ExternalResource> replayImg = new ArrayList<>();
-    //语音文件
-    File mp3;
+    //语音内容
+    List<ExternalResource> replayAudio = new ArrayList<>();
     //踢出群
+    Long AT;
+    //获取@的人
     String kick;
     //禁言
     Integer muted;
+    //禁言全体
+    Boolean isMutedAll = false;
     //戳一戳
-    Boolean isNudged = false;
+    Long nudged;
+    //查询机器人权限
+    Boolean permission = false;
 
     public ReplayInfo(MessageInfo messageInfo) {
         this.loginQQ = messageInfo.getLoginQq();
@@ -84,6 +90,10 @@ public class ReplayInfo {
         this.groupId = groupId;
     }
 
+    public Long getAT() { return AT; }
+
+    public void setAT(Long AT) { this.AT = AT; }
+
     public String getKick() {
         return kick;
     }
@@ -100,33 +110,25 @@ public class ReplayInfo {
         this.muted = muted;
     }
 
-    public Boolean getNudged() {
-        return isNudged;
-    }
+    public Boolean getMutedAll() { return isMutedAll; }
 
-    public void setNudged(Boolean nudged) {
-        isNudged = nudged;
-    }
+    public void setMutedAll(Boolean mutedAll) { isMutedAll = mutedAll; }
+
+    public Long getNudged() { return nudged; }
+
+    public void setNudged(Long nudged) { this.nudged = nudged; }
 
     public String getReplayMessage() {
         return replayMessage;
     }
 
-    public File getMp3() {
-        return mp3;
-    }
-
-    public void setMp3(File mp3) {
-        this.mp3 = mp3;
-    }
-
-    public void setMp3(String mp3) {
-        this.mp3 = new File(mp3);
-    }
-
     public void setReplayMessage(String replayMessage) {
         this.replayMessage = replayMessage;
     }
+
+    public Boolean getPermission() { return permission; }
+
+    public void setPermission(Boolean permission) { this.permission = permission; }
 
     /**
      * 获取ReplayInfo的图片集合
@@ -144,7 +146,7 @@ public class ReplayInfo {
         try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
             ImageIO.write(bufferedImage, "jpg", os);
             InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
-            ExternalResource externalResource = ExternalResource.create(inputStream);
+            ExternalResource externalResource = ExternalResource.create(inputStream).toAutoCloseable();
             replayImg.add(externalResource);
             inputStream.close();
         } catch (IOException e) {
@@ -158,7 +160,7 @@ public class ReplayInfo {
      */
     public void setReplayImg(File file) {
         try (InputStream inputStream = new FileInputStream(file)){
-            ExternalResource externalResource = ExternalResource.create(inputStream);
+            ExternalResource externalResource = ExternalResource.create(inputStream).toAutoCloseable();
             replayImg.add(externalResource);
         } catch (IOException e) {
             log.error("File读取IO流失败");
@@ -175,11 +177,33 @@ public class ReplayInfo {
             HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
             httpUrl.connect();
             try (InputStream is = httpUrl.getInputStream()){
-                ExternalResource externalResource = ExternalResource.create(is);
+                ExternalResource externalResource = ExternalResource.create(is).toAutoCloseable();
                 replayImg.add(externalResource);
             }
         } catch (IOException e) {
             log.error("读取图片URL失败");
         }
     }
+
+    /**
+     * 获取ReplayInfo的语音集合
+     * @return 返回语音的输入流集合
+     */
+    public List<ExternalResource> getReplayAudio() {
+        return replayAudio;
+    }
+
+    /**
+     * 以文件格式插入语音
+     * @param file 文件File
+     */
+    public void setReplayAudio(File file) {
+        try (InputStream inputStream = new FileInputStream(file)){
+            ExternalResource externalResource  = ExternalResource.create(inputStream).toAutoCloseable();
+            replayAudio.add(externalResource);
+        } catch (IOException e) {
+            log.error("File读取IO流失败");
+        }
+    }
 }
+

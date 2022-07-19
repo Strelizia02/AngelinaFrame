@@ -14,9 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaEventSource;
-import top.angelinaBot.controller.EventsController;
-import top.angelinaBot.controller.FriendChatController;
-import top.angelinaBot.controller.GroupChatController;
+import top.angelinaBot.controller.*;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
@@ -38,6 +36,12 @@ public class MiraiFrameUtil {
 
     @Autowired
     private FriendChatController friendChatController;
+
+    @Autowired
+    private StrangerChatController strangerChatController;
+
+    @Autowired
+    private GroupTempChatController groupTempChatController;
 
     @Autowired
     private EventsController eventsController;
@@ -116,9 +120,7 @@ public class MiraiFrameUtil {
                 MessageInfo messageInfo = new MessageInfo(event, botNames);
                 try {
                     groupChatController.receive(messageInfo);
-                    if (messageInfo.getText() != null) {
-                        AngelinaEventSource.getInstance().handle(messageInfo);
-                    }
+                    AngelinaEventSource.getInstance().handle(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -241,6 +243,28 @@ public class MiraiFrameUtil {
             activityMapper.getFriendMessage();
             try {
                 friendChatController.receive(messageInfo);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+
+        //陌生人消息
+        GlobalEventChannel.INSTANCE.subscribeAlways(StrangerMessageEvent.class, event -> {
+            MessageInfo messageInfo = new MessageInfo(event, botNames);
+            activityMapper.getFriendMessage();
+            try {
+                strangerChatController.receive(messageInfo);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
+
+        //群会话消息
+        GlobalEventChannel.INSTANCE.subscribeAlways(GroupTempMessageEvent.class, event -> {
+            MessageInfo messageInfo = new MessageInfo(event, botNames);
+            activityMapper.getFriendMessage();
+            try {
+                groupTempChatController.receive(messageInfo);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }

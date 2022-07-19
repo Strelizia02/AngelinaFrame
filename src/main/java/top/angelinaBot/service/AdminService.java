@@ -3,9 +3,11 @@ package top.angelinaBot.service;
 import net.mamoe.mirai.contact.MemberPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.angelinaBot.annotation.AngelinaFriend;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.EnableMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -19,6 +21,9 @@ public class AdminService {
 
     @Autowired
     private AdminMapper adminMapper;
+
+    @Autowired
+    private EnableMapper enableMapper;
 
     @AngelinaGroup(keyWords = {"关闭"}, description = "关闭洁哥的某个功能")
     public ReplayInfo closeFunc(MessageInfo messageInfo) {
@@ -98,5 +103,69 @@ public class AdminService {
         }
         replayInfo.setReplayMessage(sb.toString());
         return replayInfo;
+    }
+
+    @AngelinaGroup(keyWords = {"群组关闭"},description = "关闭某个群组所有接收消息（默认是开启的）")
+    public ReplayInfo closeGroup(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
+            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
+        } else {
+            if(this.enableMapper.canUseGroup(messageInfo.getGroupId(),1)==1){
+                this.enableMapper.closeGroup(messageInfo.getGroupId(), 0);
+                replayInfo.setReplayMessage("关闭成功");
+            }else {
+                replayInfo.setReplayMessage("请不要重复关闭");
+            }
+        }
+        return replayInfo;
+    }
+
+    @AngelinaGroup(keyWords = {"群组开启"},description = "开启某个群组所有接收消息（默认是开启的）")
+    public ReplayInfo openGroup(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
+            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
+        } else {
+            if(this.enableMapper.canUseGroup(messageInfo.getGroupId(),0)==1){
+                this.enableMapper.closeGroup(messageInfo.getGroupId(), 1);
+                replayInfo.setReplayMessage("开启成功");
+            }else {
+                replayInfo.setReplayMessage("请不要重复开启");
+            }
+        }
+        return replayInfo;
+    }
+
+    @AngelinaGroup(keyWords = {"关闭破站解析"},description = "关闭小破站的地址解析（默认是关闭的）")
+    public ReplayInfo closeBilibili(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
+            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
+        } else {
+            if(this.enableMapper.canUseBilibili(messageInfo.getGroupId(),1)==1){
+                this.enableMapper.closeBilibili(messageInfo.getGroupId(), 0);
+                replayInfo.setReplayMessage("关闭成功");
+            }else {
+                replayInfo.setReplayMessage("请不要重复关闭");
+            }
+        }
+        return replayInfo;
+    }
+
+    @AngelinaGroup(keyWords = {"开启破站解析"},description = "开启小破站的地址解析（默认是关闭的）")
+    public ReplayInfo openBilibili(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
+            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
+            return replayInfo;
+        } else {
+            if(this.enableMapper.canUseBilibili(messageInfo.getGroupId(),1)==0){
+                this.enableMapper.closeBilibili(messageInfo.getGroupId(), 1);
+                replayInfo.setReplayMessage("开启成功");
+            }else {
+                replayInfo.setReplayMessage("请不要重复开启");
+            }
+        }return replayInfo;
     }
 }

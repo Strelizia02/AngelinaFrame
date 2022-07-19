@@ -1,16 +1,23 @@
 package top.angelinaBot.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.message.data.ImageType;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.EnableMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.service.AdminService;
 import top.angelinaBot.util.DHashUtil;
 import top.angelinaBot.util.SendMessageUtil;
 import top.angelinaBot.vo.JsonResult;
@@ -36,6 +43,9 @@ public class GroupChatController {
     private AdminMapper adminMapper;
 
     @Autowired
+    private EnableMapper enableMapper;
+
+    @Autowired
     private ActivityMapper activityMapper;
 
     @Autowired
@@ -53,6 +63,25 @@ public class GroupChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
+        //如果群组关闭，则拒绝接收消息,即将发送方与接收方合并
+        if (!message.getUserAdmin().equals(MemberPermission.MEMBER)) {
+            String messageInfo = "";
+            if(!(message.getText()==null)){
+                messageInfo =message.getText();
+            }
+            if(messageInfo.equals("群组开启")){
+                ReplayInfo replayInfo = new ReplayInfo(message);
+                if(this.enableMapper.canUseGroup(message.getGroupId(),0)==1){
+                    this.enableMapper.closeGroup(message.getGroupId(), 1);
+                    replayInfo.setReplayMessage("开启成功");
+                }else {
+                    replayInfo.setReplayMessage("请不要重复开启");
+                }sendMessageUtil.sendGroupMsg(replayInfo);
+            }
+        }
+        if (this.enableMapper.canUseGroup(message.getGroupId(), 0) == 1){
+            message.setQq(message.getLoginQq());
+        }
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到群消息:{}", message.getEventString());
@@ -93,6 +122,21 @@ public class GroupChatController {
                             sendMessageUtil.sendGroupMsg(invoke);
                         }
                         return JsonResult.success(invoke);
+                    }
+                }
+            }else if(message.getJSONObjectCTMC().startsWith("[mirai:app")){
+                ReplayInfo replayInfo = new ReplayInfo(message);
+                JSONObject jSONObject = new JSONObject(message.getJSONObjectCTS());
+                String prompt = jSONObject.getString("prompt").trim();
+                if(prompt.equals("[QQ小程序]哔哩哔哩")){
+                    //只有开启了解析才使用
+                    if (this.enableMapper.canUseBilibili(message.getGroupId(), 1) == 1){
+                        JSONObject meta = jSONObject.getJSONObject("meta");
+                        JSONObject detail_1 = meta.getJSONObject("detail_1");
+                        String desc = detail_1.getString("desc");
+                        String qqdocurl =StringUtils.substringBefore(detail_1.getString("qqdocurl"),"?");
+                        replayInfo.setReplayMessage("有群友发送了一条哔哩哔哩分享\n分享名为："+desc+"\n链接为："+qqdocurl);
+                        sendMessageUtil.sendGroupMsg(replayInfo);
                     }
                 }
             }
