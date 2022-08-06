@@ -5,6 +5,7 @@ import top.angelinaBot.model.MessageInfo;
 public abstract class AngelinaListener {
     private Long qq;
     private Long groupId;
+    private Integer second = 60;
     public final long timestamp = System.currentTimeMillis();
 
     public abstract boolean callback(MessageInfo message);
@@ -23,5 +24,13 @@ public abstract class AngelinaListener {
 
     public void setGroupId(Long groupId) {
         this.groupId = groupId;
+    }
+
+    public Integer getSecond() {
+        return second;
+    }
+
+    public void setSecond(Integer second) {
+        this.second = second;
     }
 }

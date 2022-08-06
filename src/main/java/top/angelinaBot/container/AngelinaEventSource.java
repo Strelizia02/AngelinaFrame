@@ -5,6 +5,7 @@ import top.angelinaBot.model.AngelinaMessageEvent;
 import top.angelinaBot.model.MessageInfo;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @Slf4j
@@ -49,21 +50,23 @@ public class AngelinaEventSource {
     }
 
     public void handle(MessageInfo message) {
-        for (AngelinaListener l: listenerSet.keySet()) {
+        for (Iterator<AngelinaListener> it = listenerSet.keySet().iterator(); it.hasNext();){
+            AngelinaListener l = it.next();
             AngelinaMessageEvent event = listenerSet.get(l);
-            if ((System.currentTimeMillis() - l.timestamp) / 1000 > 60) {
+            Integer time = l.getSecond();
+            if ((System.currentTimeMillis() - l.timestamp) / 1000 > time) {
                 synchronized (event.getLock()) {
                     log.warn("线程超时");
                     event.getLock().notify();
                 }
-                listenerSet.remove(l);
+                it.remove();
             } else if (l.callback(message)) {
                 synchronized (event.getLock()) {
                     log.info("唤起线程");
                     event.setMessageInfo(message);
                     event.getLock().notify();
                 }
-                listenerSet.remove(l);
+                it.remove();
             }
         }
     }
