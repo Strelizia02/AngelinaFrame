@@ -73,24 +73,24 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             }
 
             if (mp3 != null) {
-                File amr = new File("runFile/silkCache/" + UUID.randomUUID());//输出
-                AudioAttributes audio = new AudioAttributes();
-                audio.setCodec("libamr_nb");//编码器
-
-                audio.setBitRate(12200);//比特率
-                audio.setChannels(1);//声道；1单声道，2立体声
-                audio.setSamplingRate(8000);//采样率（重要！！！）
-
-                EncodingAttributes attrs = new EncodingAttributes();
-                attrs.setFormat("amr");//格式
-                attrs.setAudioAttributes(audio);//音频设置
-                Encoder encoder = new Encoder();
-                try {
-                    encoder.encode(mp3, amr, attrs);
-                } catch (EncoderException e) {
-                    e.printStackTrace();
-                }
-                ExternalResource externalResource = ExternalResource.create(amr);
+//                File amr = new File("runFile/silkCache/" + UUID.randomUUID());//输出
+//                AudioAttributes audio = new AudioAttributes();
+//                audio.setCodec("libamr_nb");//编码器
+//
+//                audio.setBitRate(12200);//比特率
+//                audio.setChannels(1);//声道；1单声道，2立体声
+//                audio.setSamplingRate(8000);//采样率（重要！！！）
+//
+//                EncodingAttributes attrs = new EncodingAttributes();
+//                attrs.setFormat("amr");//格式
+//                attrs.setAudioAttributes(audio);//音频设置
+//                Encoder encoder = new Encoder();
+//                try {
+//                    encoder.encode(mp3, amr, attrs);
+//                } catch (EncoderException e) {
+//                    e.printStackTrace();
+//                }
+                ExternalResource externalResource = ExternalResource.create(mp3);
 
                 MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
                 messageChainBuilder.append(group.uploadAudio(externalResource));
@@ -129,6 +129,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         //获取登录bot
         Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
         User user = bot.getFriendOrFail(replayInfo.getQq());
+        File mp3 = replayInfo.getMp3();
+
         if (replayMessage != null && replayImgList.size() > 0) {
             //发送图片 + 文字
             MessageChainBuilder messageChainBuilder = new MessageChainBuilder()
