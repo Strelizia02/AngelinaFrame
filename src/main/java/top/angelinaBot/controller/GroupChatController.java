@@ -15,9 +15,12 @@ import top.angelinaBot.util.DHashUtil;
 import top.angelinaBot.util.SendMessageUtil;
 import top.angelinaBot.vo.JsonResult;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author strelitzia
@@ -64,10 +67,10 @@ public class GroupChatController {
                         ReplayInfo replayInfo = new ReplayInfo(message);
                         //判断该群是否已关闭该功能
                         if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
-                            String str = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
+                            String sendStr = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
                             //解析大括号内容
                             Pattern pattern = Pattern.compile("\\{[^}]*\\}");
-                            Matcher m = pattern.matcher(s);
+                            Matcher m = pattern.matcher(sendStr);
                             while (m.find()) {
                                 String str = m.group();
                                 String[] split = str.substring(1, str.length() - 1).split("@");
