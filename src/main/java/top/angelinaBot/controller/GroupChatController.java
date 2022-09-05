@@ -65,14 +65,17 @@ public class GroupChatController {
                         //判断该群是否已关闭该功能
                         if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
                             String str = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
+                            //解析大括号内容
                             Pattern pattern = Pattern.compile("\\{[^}]*\\}");
                             Matcher m = pattern.matcher(s);
                             while (m.find()) {
                                 String str = m.group();
                                 String[] split = str.substring(1, str.length() - 1).split("@");
                                 if (split[0].equals("audio")) {
+                                    //添加语音
                                     replayInfo.setMp3(split[1]);
                                 } else if (split[0].equals("img")) {
+                                    //添加图片
                                     replayInfo.setReplayImg(new File(split[1]));
                                 }
                             }
