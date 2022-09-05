@@ -64,7 +64,19 @@ public class GroupChatController {
                         ReplayInfo replayInfo = new ReplayInfo(message);
                         //判断该群是否已关闭该功能
                         if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
-                            replayInfo.setReplayMessage(s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName()));
+                            String str = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
+                            Pattern pattern = Pattern.compile("\\{[^}]*\\}");
+                            Matcher m = pattern.matcher(s);
+                            while (m.find()) {
+                                String str = m.group();
+                                String[] split = str.substring(1, str.length() - 1).split("@");
+                                if (split[0].equals("audio")) {
+                                    replayInfo.setMp3(split[1]);
+                                } else if (split[0].equals("img")) {
+                                    replayInfo.setReplayImg(new File(split[1]));
+                                }
+                            }
+                            replayInfo.setReplayMessage(m.replaceAll(" "));
                             sendMessageUtil.sendGroupMsg(replayInfo);
                             return JsonResult.success(replayInfo);
                         }
