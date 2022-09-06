@@ -5,6 +5,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaContainer;
@@ -40,12 +41,18 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Autowired
     private FunctionMapper functionMapper;
 
+    @Value("${userConfig.botNames}")
+    public String botNames;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
     @Override
     public void afterSingletonsInstantiated() {
         miraiFrameUtil.startMirai();
+        if (botNames.equals("")) {
+            throw new AngelinaException("请填写bot的名称！");
+        }
         getJsonReplay();
         activityMapper.initActivityTable();
         functionMapper.initFunctionTable();
