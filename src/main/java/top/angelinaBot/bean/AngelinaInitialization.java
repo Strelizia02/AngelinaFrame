@@ -17,6 +17,7 @@ import top.angelinaBot.util.MiraiFrameUtil;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,8 +70,8 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
             if (file.exists()) {
                 //仅当文件存在时，流式读取文件内容
                 FileReader fileReader = new FileReader(file);
-                Reader reader = new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8);
-                int ch = 0;
+                Reader reader = new InputStreamReader(Files.newInputStream(file.toPath()), StandardCharsets.UTF_8);
+                int ch;
                 StringBuilder sb = new StringBuilder();
                 while ((ch = reader.read()) != -1) {
                     sb.append((char) ch);

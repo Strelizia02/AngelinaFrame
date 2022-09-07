@@ -8,6 +8,12 @@ public abstract class AngelinaListener {
     private Integer second = 60;
     public final long timestamp = System.currentTimeMillis();
 
+    public String className;
+
+    public AngelinaListener() {
+        className = Thread.currentThread().getStackTrace()[1].getClassName();
+    }
+
     public abstract boolean callback(MessageInfo message);
 
     public Long getQq() {
