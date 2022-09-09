@@ -15,7 +15,9 @@ Read [English Readme](https://github.com/Strelizia02/AngelinaFrame/blob/master/R
     <img alt="platform" src="https://img.shields.io/badge/platform-Windows-blueviolet?logo=Windows&style=plastic">
     <img alt="platform" src="https://img.shields.io/badge/platform-Linux-blueviolet?logo=Linux&style=plastic">
     <img alt="license" src="https://img.shields.io/badge/license-AGPL3.0-green?style=plastic">
-    <img alt="IntelliJ IDEA" src="https://img.shields.io/badge/JetBrains-IDEA-red?logo=IntelliJ IDEA&logoColor=white&style=plastic"
+    <img alt="IntelliJ IDEA" src="https://img.shields.io/badge/JetBrains-IDEA-red?logo=IntelliJ IDEA&logoColor=white&style=plastic">
+    </br>
+    <img alt="size" src="https://img.shields.io/github/repo-size/Strelizia02/AngelinaFrame?color=%23ffeb3b&style=plastic">
 </div>
 
 使用样例：
