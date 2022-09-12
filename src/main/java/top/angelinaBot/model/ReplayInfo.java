@@ -201,17 +201,6 @@ public class ReplayInfo {
         if (kick != null) {
             sb.append("[踢出群聊]");
         }
-        return "ReplayInfo{" +
-                "loginQQ=" + loginQQ +
-                ", qq=" + qq +
-                ", name='" + name + '\'' +
-                ", groupId=" + groupId +
-                ", replayMessage='" + replayMessage + '\'' +
-                ", replayImg=" + replayImg +
-                ", mp3=" + mp3 +
-                ", kick='" + kick + '\'' +
-                ", muted=" + muted +
-                ", isNudged=" + isNudged +
-                '}';
+        return sb.toString();
     }
 }
