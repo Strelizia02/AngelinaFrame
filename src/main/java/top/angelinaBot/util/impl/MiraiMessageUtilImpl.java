@@ -102,7 +102,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
             }
 
             if (muted != null) {
-                //禁言muted分钟
+                //禁言muted秒
                 group.getOrFail(replayInfo.getQq()).mute(muted);
             }
 
@@ -111,7 +111,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                 group.getOrFail(replayInfo.getQq()).nudge();
             }
 
-            log.info("发送消息" + replayInfo.getReplayMessage());
+            log.info("发送消息" + replayInfo);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("发送消息失败");

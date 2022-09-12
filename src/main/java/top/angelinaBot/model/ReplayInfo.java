@@ -182,4 +182,36 @@ public class ReplayInfo {
             log.error("读取图片URL失败");
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(replayMessage);
+        if (replayImg.size() > 0) {
+            sb.append("[图片]");
+        }
+        if (mp3 != null) {
+            sb.append("[语音]");
+        }
+
+        if (muted != null) {
+            sb.append("[禁言").append(muted).append("秒]");
+        }
+
+        if (kick != null) {
+            sb.append("[踢出群聊]");
+        }
+        return "ReplayInfo{" +
+                "loginQQ=" + loginQQ +
+                ", qq=" + qq +
+                ", name='" + name + '\'' +
+                ", groupId=" + groupId +
+                ", replayMessage='" + replayMessage + '\'' +
+                ", replayImg=" + replayImg +
+                ", mp3=" + mp3 +
+                ", kick='" + kick + '\'' +
+                ", muted=" + muted +
+                ", isNudged=" + isNudged +
+                '}';
+    }
 }
