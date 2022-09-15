@@ -92,6 +92,7 @@ public class AngelinaEventSource {
                         break;
                     }
                 } catch (NoSuchMethodException | ClassNotFoundException e) {
+                    className = Thread.currentThread().getStackTrace()[2].getClassName();
                     e.printStackTrace();
                 }
             }
