@@ -80,9 +80,23 @@ public class AngelinaEventSource {
     }
 
     public static void remove(Long groupId) {
-        AngelinaEventSource.getInstance().listenerMap.keySet().removeIf(l ->
-                groupId.equals(l.getGroupId()) &&
-                l.className.equals(Thread.currentThread().getStackTrace()[1].getClassName()));
+        AngelinaEventSource.getInstance().listenerMap.keySet().removeIf(l -> {
+            String className;
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            for (StackTraceElement s: stackTrace) {
+                try {
+                    Class<?> c = Class.forName(s.getClassName());
+                    Method method = c.getMethod(s.getMethodName());
+                    if (method.getAnnotation(AngelinaGtoup.class)!= null) {
+                        className = s.getClassName();
+                        break;
+                    }
+                } catch (NoSuchMethodException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+            return groupId.equals(l.getGroupId()) && l.className.equals(className);
+        });
     }
 
 }
