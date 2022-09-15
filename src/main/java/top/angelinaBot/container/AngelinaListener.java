@@ -1,6 +1,10 @@
 package top.angelinaBot.container;
 
+import org.springframework.stereotype.Service;
+import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.model.MessageInfo;
+
+import java.lang.reflect.Method;
 
 public abstract class AngelinaListener {
     private Long qq;
@@ -15,12 +19,11 @@ public abstract class AngelinaListener {
             for (StackTraceElement s: stackTrace) {
                 try {
                     Class<?> c = Class.forName(s.getClassName());
-                    Method method = c.getMethod(s.getMethodName());
-                    if (method.getAnnotation(AngelinaGtoup.class)!= null) {
+                    if (c.getAnnotation(Service.class) != null) {
                         className = s.getClassName();
                         break;
                     }
-                } catch (NoSuchMethodException | ClassNotFoundException e) {
+                } catch (ClassNotFoundException e) {
                     className = Thread.currentThread().getStackTrace()[3].getClassName();
                     e.printStackTrace();
                 }
