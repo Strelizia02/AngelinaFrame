@@ -26,7 +26,12 @@ public class FunctionListService {
     @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "洁哥功能列表")
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        replayInfo.setReplayImg(getFuncStrList());
+        File file = new File("runFile/functionList.png");
+        if (file.exists()) {
+            replayInfo.setReplayImg(file);
+        } else {
+            replayInfo.setReplayImg(getFuncStrList());
+        }
         return replayInfo;
     }
 
