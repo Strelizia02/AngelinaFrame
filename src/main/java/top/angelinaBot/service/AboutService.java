@@ -11,7 +11,7 @@ public class AboutService {
     @AngelinaGroup(keyWords = {"关于"}, description = "框架地址源码")
     public ReplayInfo getAbout(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        replayInfo.setReplayMessage("框架项目地址:https://github.com/Strelizia02/AngelinaFrame");
+        replayInfo.setReplayMessage("框架主页:https://www.angelina-bot.top/");
         return replayInfo;
     }
 }
