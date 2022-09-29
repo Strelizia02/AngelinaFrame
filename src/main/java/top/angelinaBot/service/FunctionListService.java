@@ -12,6 +12,7 @@ import top.angelinaBot.model.TextLine;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
