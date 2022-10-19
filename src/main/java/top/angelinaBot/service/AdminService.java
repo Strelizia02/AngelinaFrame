@@ -20,7 +20,7 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
-    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭洁哥的某个功能")
+    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭某个功能")
     public ReplayInfo closeFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
@@ -52,7 +52,7 @@ public class AdminService {
         return replayInfo;
     }
 
-    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开洁哥的某个功能")
+    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开某个功能")
     public ReplayInfo openFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
@@ -84,7 +84,7 @@ public class AdminService {
         return replayInfo;
     }
 
-    @AngelinaGroup(keyWords = {"已关闭", "功能开关"}, description = "查看洁哥当前已关闭的功能")
+    @AngelinaGroup(keyWords = {"已关闭", "功能开关"}, description = "查看当前已关闭的功能")
     public ReplayInfo funcList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         List<String> closeFunction = adminMapper.getCloseFunction(messageInfo.getGroupId());
