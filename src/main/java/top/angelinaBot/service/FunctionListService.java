@@ -24,7 +24,7 @@ public class FunctionListService {
     @Value("#{'${userConfig.botNames}'.split(' ')}")
     public String[] botNames;
 
-    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "洁哥功能列表")
+    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表")
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         File png = new File("runFile/functionList.png");
