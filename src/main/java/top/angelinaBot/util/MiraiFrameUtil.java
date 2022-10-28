@@ -21,8 +21,10 @@ import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
 
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +78,11 @@ public class MiraiFrameUtil {
 
         for (int i = 0; i < qqList.length; i++) {
             //循环登录所有配置的qq账号，如果有需要滑块验证的，需要单独解决
-            Bot bot = BotFactory.INSTANCE.newBot(Long.parseLong(qqList[i]), pwList[i], new BotConfiguration() {{
+
+            long qq = Long.parseLong(qqList[i]);
+            Bot bot = BotFactory.INSTANCE.newBot(qq, pwList[i], new BotConfiguration() {{
+                log.info("尝试登录{}", qq);
+                fileBasedDeviceInfo("runFile/device.json");
                 setProtocol(MiraiProtocol.IPAD);
             }});
             try {
