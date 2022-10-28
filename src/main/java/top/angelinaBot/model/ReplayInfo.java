@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -77,7 +78,7 @@ public class ReplayInfo {
         this.groupId.add(groupId);
     }
 
-    public void setGroupId(List<Long> groupIds) {
+    public void setGroupId(Collection<Long> groupIds) {
         this.groupId.addAll(groupIds);
     }
 

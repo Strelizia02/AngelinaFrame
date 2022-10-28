@@ -78,27 +78,6 @@ public class MiraiFrameUtil {
             //循环登录所有配置的qq账号，如果有需要滑块验证的，需要单独解决
             Bot bot = BotFactory.INSTANCE.newBot(Long.parseLong(qqList[i]), pwList[i], new BotConfiguration() {{
                 setProtocol(MiraiProtocol.IPAD);
-                setDeviceInfo(bot -> new DeviceInfo("Huawei.856832.001".getBytes(StandardCharsets.UTF_8),
-                        "nova75g".getBytes(StandardCharsets.UTF_8),
-                        "JEF-AN20".getBytes(StandardCharsets.UTF_8),
-                        "Huawei Kirin 985".getBytes(StandardCharsets.UTF_8),
-                        "Huawei".getBytes(StandardCharsets.UTF_8),
-                        "Nova 7".getBytes(StandardCharsets.UTF_8),
-                        "HarmonyOS 2.0".getBytes(StandardCharsets.UTF_8),
-                        "Huawei/Nova/nova:7/MIRAI.200122.001/2736748:user/release-keys".getBytes(StandardCharsets.UTF_8),
-                        "1BBBCCA8-0B4A-2EFC-BE95-E732C84DA5F0".getBytes(StandardCharsets.UTF_8),
-                        "HarmonyOS version 2.0.0.221(C00E208R6P8)".getBytes(StandardCharsets.UTF_8),
-                        "unknown".getBytes(StandardCharsets.UTF_8),
-                        new DeviceInfo.Version(),
-                        "T-Mobile".getBytes(StandardCharsets.UTF_8),
-                        "HarmonyOS".getBytes(StandardCharsets.UTF_8),
-                        "02:00:00:00:00:00".getBytes(StandardCharsets.UTF_8),
-                        "02:00:00:00:00:00".getBytes(StandardCharsets.UTF_8),
-                        "Strelitzia".getBytes(StandardCharsets.UTF_8),
-                        "6e096dd53aa9062c".getBytes(StandardCharsets.UTF_8),
-                        "342086728277870",
-                        "wifi".getBytes(StandardCharsets.UTF_8)
-                ));
             }});
             try {
                 bot.login();
