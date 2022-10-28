@@ -1,15 +1,8 @@
 package top.angelinaBot.model;
-
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.message.data.Image;
-import net.mamoe.mirai.utils.ExternalResource;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +20,11 @@ public class ReplayInfo {
     //昵称
     String name;
     //群号
-    Long groupId;
+    List<Long> groupId = new ArrayList<>();
     //文字内容
     String replayMessage;
     //图片内容
-    List<ExternalResource> replayImg = new ArrayList<>();
+    List<Object> replayImg = new ArrayList<>();
     //语音文件
     File mp3;
     //踢出群
@@ -43,7 +36,7 @@ public class ReplayInfo {
 
     public ReplayInfo(MessageInfo messageInfo) {
         this.loginQQ = messageInfo.getLoginQq();
-        this.groupId = messageInfo.getGroupId();
+        this.setGroupId(messageInfo.getGroupId());
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
     }
@@ -76,12 +69,16 @@ public class ReplayInfo {
         this.qq = qq;
     }
 
-    public Long getGroupId() {
+    public List<Long> getGroupId() {
         return groupId;
     }
 
     public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+        this.groupId.add(groupId);
+    }
+
+    public void setGroupId(List<Long> groupIds) {
+        this.groupId.addAll(groupIds);
     }
 
     public String getKick() {
@@ -132,7 +129,7 @@ public class ReplayInfo {
      * 获取ReplayInfo的图片集合
      * @return 返回图片的输入流集合
      */
-    public List<ExternalResource> getReplayImg() {
+    public List<Object> getReplayImg() {
         return replayImg;
     }
 
@@ -141,15 +138,7 @@ public class ReplayInfo {
      * @param bufferedImage 图片BufferedImage
      */
     public void setReplayImg(BufferedImage bufferedImage) {
-        try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
-            ImageIO.write(bufferedImage, "jpg", os);
-            InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
-            ExternalResource externalResource = ExternalResource.create(inputStream);
-            replayImg.add(externalResource);
-            inputStream.close();
-        } catch (IOException e) {
-            log.error("BufferImage读取IO流失败");
-        }
+        replayImg.add(bufferedImage);
     }
 
     /**
@@ -157,12 +146,7 @@ public class ReplayInfo {
      * @param file 文件File
      */
     public void setReplayImg(File file) {
-        try (InputStream inputStream = new FileInputStream(file)){
-            ExternalResource externalResource = ExternalResource.create(inputStream);
-            replayImg.add(externalResource);
-        } catch (IOException e) {
-            log.error("File读取IO流失败");
-        }
+        replayImg.add(file);
     }
 
     /**
@@ -170,17 +154,7 @@ public class ReplayInfo {
      * @param url 图片url
      */
     public void setReplayImg(String url) {
-        try {
-            URL u = new URL(url);
-            HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
-            httpUrl.connect();
-            try (InputStream is = httpUrl.getInputStream()){
-                ExternalResource externalResource = ExternalResource.create(is);
-                replayImg.add(externalResource);
-            }
-        } catch (IOException e) {
-            log.error("读取图片URL失败");
-        }
+        replayImg.add(url);
     }
 
     @Override
