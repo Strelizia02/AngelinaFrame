@@ -57,10 +57,10 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
 
         List<ExternalResource> imgResource = getExternalResource(replayImgList);
 
-        MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
 
         //获取群
         for (Long groupId : replayInfo.getGroupId()) {
+            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
             try {
                 //获取登录bot
                 Bot bot = Bot.getInstance(MiraiFrameUtil.messageIdMap.get(groupId));
