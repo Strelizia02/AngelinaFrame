@@ -99,7 +99,7 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
                 }
                 group.sendMessage(messageChainBuilder.build());
                 log.info("发送消息" + replayInfo);
-                Thread.sleep(new Random().nextInt(3) * 500);
+                Thread.sleep(new Random().nextInt(5) * 500 + 500);
             } catch (Exception e) {
                 e.printStackTrace();
                 log.error("发送消息失败");
