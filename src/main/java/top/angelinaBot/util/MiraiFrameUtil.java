@@ -112,6 +112,7 @@ public class MiraiFrameUtil {
 
         //某个Bot被踢出群或退群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, event -> {
+            messageIdMap.remove(event.getGroupId());
             reBuildBotGroupMap();
         });
 
@@ -242,7 +243,9 @@ public class MiraiFrameUtil {
             for (Bot bot : Bot.getInstances()) {
                 if (bot.isOnline()) {
                     for (Group group : bot.getGroups()) {
-                        messageIdMap.put(group.getId(), bot.getId());
+                        if (messageIdMap.get(group.getId()) == null) {
+                            messageIdMap.put(group.getId(), bot.getId());
+                        }
                     }
                 }
             }
