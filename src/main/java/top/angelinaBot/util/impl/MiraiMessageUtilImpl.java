@@ -60,49 +60,51 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
 
         //获取群
         for (Long groupId : replayInfo.getGroupId()) {
-            MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-            try {
-                //获取登录bot
-                Bot bot = Bot.getInstance(MiraiFrameUtil.messageIdMap.get(groupId));
-                Group group = bot.getGroupOrFail(groupId);
+            if (MiraiFrameUtil.messageIdMap.get(groupId) != null) {
+                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
+                try {
+                    //获取登录bot
+                    Bot bot = Bot.getInstance(MiraiFrameUtil.messageIdMap.get(groupId));
+                    Group group = bot.getGroupOrFail(groupId);
 
-                if (replayMessage != null) {
-                    //发送文字
-                    messageChainBuilder.append(new PlainText(replayMessage));
-                }
-
-                if (replayImgList.size() > 0) {
-                    //发送图片
-                    for (ExternalResource replayImg : imgResource) {
-                        messageChainBuilder.append(group.uploadImage(replayImg));
+                    if (replayMessage != null) {
+                        //发送文字
+                        messageChainBuilder.append(new PlainText(replayMessage));
                     }
-                }
 
-                if (mp3Resource != null) {
-                    //发送语音
-                    messageChainBuilder.append(group.uploadAudio(mp3Resource));
-                }
+                    if (replayImgList.size() > 0) {
+                        //发送图片
+                        for (ExternalResource replayImg : imgResource) {
+                            messageChainBuilder.append(group.uploadImage(replayImg));
+                        }
+                    }
 
-                if (kick != null) {
-                    //踢出群
-                    group.getOrFail(replayInfo.getQq()).kick("");
-                }
+                    if (mp3Resource != null) {
+                        //发送语音
+                        messageChainBuilder.append(group.uploadAudio(mp3Resource));
+                    }
 
-                if (muted != null) {
-                    //禁言muted秒
-                    group.getOrFail(replayInfo.getQq()).mute(muted);
-                }
+                    if (kick != null) {
+                        //踢出群
+                        group.getOrFail(replayInfo.getQq()).kick("");
+                    }
 
-                if (nudged) {
-                    //戳一戳
-                    group.getOrFail(replayInfo.getQq()).nudge();
+                    if (muted != null) {
+                        //禁言muted秒
+                        group.getOrFail(replayInfo.getQq()).mute(muted);
+                    }
+
+                    if (nudged) {
+                        //戳一戳
+                        group.getOrFail(replayInfo.getQq()).nudge();
+                    }
+                    group.sendMessage(messageChainBuilder.build());
+                    log.info("发送消息" + replayInfo);
+                    Thread.sleep(new Random().nextInt(5) * 500 + 500);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("发送消息失败");
                 }
-                group.sendMessage(messageChainBuilder.build());
-                log.info("发送消息" + replayInfo);
-                Thread.sleep(new Random().nextInt(5) * 500 + 500);
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.error("发送消息失败");
             }
         }
 
