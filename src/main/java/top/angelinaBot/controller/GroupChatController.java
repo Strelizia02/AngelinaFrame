@@ -58,7 +58,7 @@ public class GroupChatController {
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("接受到群消息:{}", message.getEventString());
+            log.info("bot[{}]接受到群[{}]消息:{}", message.GetLoginQq(), message.getGroupId(), message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (getMsgLimit(message)) {
                     activityMapper.getGroupMessage();
