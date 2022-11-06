@@ -27,9 +27,9 @@ import java.util.Random;
 /**
  * Mirai发送消息封装方法
  */
-@Component("mirai")
+@Component("channel")
 @Slf4j
-public class MiraiMessageUtilImpl implements SendMessageUtil {
+public class ChannelMessageUtilImpl implements SendMessageUtil {
 
     @Autowired
     private ActivityMapper activityMapper;

@@ -4,6 +4,7 @@ import net.mamoe.mirai.message.data.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
@@ -33,9 +34,6 @@ import java.util.regex.Pattern;
 public class GroupChatController {
 
     @Autowired
-    private SendMessageUtil sendMessageUtil;
-
-    @Autowired
     private AdminMapper adminMapper;
 
     @Autowired
@@ -55,12 +53,13 @@ public class GroupChatController {
      * @throws IllegalAccessException    反射相关异常
      */
     @PostMapping("receive")
-    public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
+    public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
+        SendMessageUtil sendMessageUtil = QQFrameContainer.qqFrameMap.get(frame);
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("bot[{}]接受到群[{}]消息:{}", message.GetLoginQq(), message.getGroupId(), message.getEventString());
+            log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if (getMsgLimit(message)) {
+                if (getMsgLimit(message, sendMessageUtil)) {
                     activityMapper.getGroupMessage();
                     if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
                         List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
@@ -119,7 +118,7 @@ public class GroupChatController {
     }
 
     //消息回复限速机制
-    private boolean getMsgLimit(MessageInfo messageInfo) {
+    private boolean getMsgLimit(MessageInfo messageInfo, SendMessageUtil sendMessageUtil) {
         boolean flag = true;
         //每10秒限制三条消息,10秒内超过5条就不再提示
         int length = 3;

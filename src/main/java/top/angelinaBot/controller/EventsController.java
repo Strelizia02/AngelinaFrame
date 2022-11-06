@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
@@ -29,9 +30,6 @@ import java.lang.reflect.Method;
 public class EventsController {
 
     @Autowired
-    private SendMessageUtil sendMessageUtil;
-
-    @Autowired
     private AdminMapper adminMapper;
 
     @Autowired
@@ -45,7 +43,8 @@ public class EventsController {
      * @throws IllegalAccessException 反射相关异常
      */
     @PostMapping("receive")
-    public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
+    public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
+        SendMessageUtil sendMessageUtil = QQFrameContainer.qqFrameMap.get(frame);
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到事件:{}", message.getEvent());

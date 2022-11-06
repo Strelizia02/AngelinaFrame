@@ -12,6 +12,7 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
+import top.angelinaBot.util.ChannelUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
 
 import java.io.*;
@@ -45,12 +46,31 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Value("${userConfig.botNames}")
     public String botNames;
 
+    @Autowired
+    public ChannelUtil channelUtil;
+
+    @Value("${userConfig.appId}")
+    public String appIds;
+
+    @Value("${userConfig.qqList}")
+    private String qqList;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
     @Override
     public void afterSingletonsInstantiated() {
-        miraiFrameUtil.startMirai();
+        if (!"".equals(qqList)) {
+            miraiFrameUtil.startMirai();
+        } else {
+            log.warn("您尚未填写登录QQ");
+        }
+
+        if (!"".equals(appIds)) {
+            channelUtil.init();
+        } else {
+            log.warn("您尚未填写登录的频道appID");
+        }
         if (botNames.equals("")) {
             throw new AngelinaException("请填写bot的名称！");
         }
