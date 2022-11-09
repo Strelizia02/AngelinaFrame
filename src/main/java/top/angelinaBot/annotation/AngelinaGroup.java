@@ -15,4 +15,8 @@ public @interface AngelinaGroup {
     String[] dHash() default "";
     //方法描述
     String description() default "";
+    //自定义类别
+    String sort() default "其他功能";
+    //功能块归属
+    String funcClass() default "null";
 }
