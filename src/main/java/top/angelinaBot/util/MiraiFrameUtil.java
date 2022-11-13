@@ -20,11 +20,9 @@ import top.angelinaBot.controller.GroupChatController;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
+import xyz.cssxsh.mirai.device.MiraiDeviceGenerator;
 
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,12 +58,24 @@ public class MiraiFrameUtil {
     @Value("#{'${userConfig.pwList}'.split(' ')}")
     private String[] pwList;
 
+    @Value("#{'${userConfig.typeList}'.split(' ')}")
+    private String[]   typeList;
+
     //bot的呼叫关键字
     @Value("#{'${userConfig.botNames}'.split(' ')}")
     public String[] botNames;
 
     //维护一个群号/账号服务映射，保证一个群只有一个账号提供服务
     public static final Map<Long, Long> messageIdMap = new HashMap<>();
+
+    public final Map<String, BotConfiguration.MiraiProtocol> type = new HashMap();
+    {
+        type.put("IPAD", BotConfiguration.MiraiProtocol.IPAD);
+        type.put("ANDROID_PHONE", BotConfiguration.MiraiProtocol.ANDROID_PHONE);
+        type.put("ANDROID_PAD", BotConfiguration.MiraiProtocol.ANDROID_PAD);
+        type.put("ANDROID_WATCH", BotConfiguration.MiraiProtocol.ANDROID_WATCH);
+        type.put("MACOS", BotConfiguration.MiraiProtocol.MACOS);
+    }
 
     /**
      * Mirai框架的启动方法，一次性启动Mirai并开启消息监听
@@ -80,10 +90,13 @@ public class MiraiFrameUtil {
             //循环登录所有配置的qq账号，如果有需要滑块验证的，需要单独解决
 
             long qq = Long.parseLong(qqList[i]);
+            BotConfiguration.MiraiProtocol miraiProtocol = type.get(typeList[i]);
             Bot bot = BotFactory.INSTANCE.newBot(qq, pwList[i], new BotConfiguration() {{
                 log.info("尝试登录{}", qq);
+                setDeviceInfo(bot -> new MiraiDeviceGenerator().load(bot));
                 fileBasedDeviceInfo("runFile/device.json");
-                setProtocol(MiraiProtocol.IPAD);
+                setProtocol(miraiProtocol);
+
             }});
             try {
                 bot.login();

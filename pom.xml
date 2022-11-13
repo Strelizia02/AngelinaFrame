@@ -179,6 +179,11 @@
             <artifactId>mirai-logging-slf4j-simple</artifactId>
             <version>2.13.0-RC2</version>
         </dependency>
+        <dependency>
+            <groupId>xyz.cssxsh.mirai</groupId>
+            <artifactId>mirai-device-generator</artifactId>
+            <version>1.1.3</version>
+        </dependency>
 
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

@@ -5,6 +5,8 @@ spring:
     allow-bean-definition-overriding: true
 userConfig:
   # 多个选项用空格隔开
-  botNames: ''
+  botNames: '洁哥 杰哥 安洁莉娜'
   qqList: ''
   pwList: ''
+  # IPAD ANDROID_PAD ANDROID_PHONE MACOS
+  typeList: 'IPAD'
