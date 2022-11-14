@@ -31,6 +31,9 @@ public class FriendChatController {
     @Autowired
     private FunctionMapper functionMapper;
 
+    @Autowired
+    QQFrameContainer qqFrameContainer;
+
     /**
      * 通用的qq私聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
      * @param message 消息的封装方法
@@ -40,7 +43,7 @@ public class FriendChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
-        SendMessageUtil sendMessageUtil = QQFrameContainer.qqFrameMap.get(frame);
+        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(frame);
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到私聊消息:{}", message.getText());

@@ -1,11 +1,15 @@
 package top.angelinaBot.container;
 
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import top.angelinaBot.util.SendMessageUtil;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class QQFrameContainer {
 
     final static public String Miari = "mirai";
@@ -16,24 +20,6 @@ public class QQFrameContainer {
 
     final static public String Oicq = "oicq";
 
-    @Qualifier(Miari)
-    private static SendMessageUtil MiarisendMessageUtil;
+    final public Map<String, SendMessageUtil> qqFrameMap = new HashMap<>();
 
-    @Qualifier(QQChannel)
-    private static SendMessageUtil QQChannelsendMessageUtil;
-
-//    @Qualifier(Gocq)
-//    private SendMessageUtil GocqsendMessageUtil;
-//
-//    @Qualifier(Oicq)
-//    private SendMessageUtil OicqsendMessageUtil;
-
-    final static public Map<String, SendMessageUtil> qqFrameMap = new HashMap<>();
-
-    static {
-        qqFrameMap.put(Miari, MiarisendMessageUtil);
-        qqFrameMap.put(QQChannel, QQChannelsendMessageUtil);
-//        qqFrameMap.put(Gocq, GocqsendMessageUtil);
-//        qqFrameMap.put(Oicq, OicqsendMessageUtil);
-    }
 }

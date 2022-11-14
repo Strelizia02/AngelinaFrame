@@ -1,17 +1,20 @@
 package top.angelinaBot.util.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.contact.User;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.PlainText;
+
 import net.mamoe.mirai.utils.ExternalResource;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
-import top.angelinaBot.util.MiraiFrameUtil;
 import top.angelinaBot.util.SendMessageUtil;
 
 import javax.imageio.ImageIO;
@@ -24,15 +27,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static top.angelinaBot.container.QQFrameContainer.QQChannel;
+
 /**
  * Mirai发送消息封装方法
  */
-@Component("channel")
+@Component(QQChannel)
 @Slf4j
 public class ChannelMessageUtilImpl implements SendMessageUtil {
 
+    @Value("${userConfig.token}")
+    public String userConfigToken;
+
+    @Value("${userConfig.appId}")
+    public String userConfigAppId;
+
     @Autowired
     private ActivityMapper activityMapper;
+
+    @Autowired
+    RestTemplate restTemplate;
 
     /**
      * 发送群消息方法
@@ -48,160 +62,45 @@ public class ChannelMessageUtilImpl implements SendMessageUtil {
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();
         List<Object> replayImgList = replayInfo.getReplayImg();
-        String kick = replayInfo.getKick();
-        Integer muted = replayInfo.getMuted();
-        Boolean nudged = replayInfo.getNudged();
-        File mp3 = replayInfo.getMp3();
 
-        ExternalResource mp3Resource = null;
-        if (mp3 != null) {
-            mp3Resource = ExternalResource.create(mp3);
-        }
+        String url = "https://sandbox.api.sgroup.qq.com/channels/" + replayInfo.getChannel() + "/messages";
 
-        List<ExternalResource> imgResource = getExternalResource(replayImgList);
+        JSONObject obj = new JSONObject();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Authorization", "Bot " + userConfigAppId + "." + userConfigToken);
+//        httpHeaders.set("Content-Type", "multipart/form-data");
+        httpHeaders.set("Content-Type", "application/json");
 
 
-        //获取群
-        for (Long groupId : replayInfo.getGroupId()) {
-            if (MiraiFrameUtil.messageIdMap.get(groupId) != null) {
-                MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-                try {
-                    //获取登录bot
-                    Bot bot = Bot.getInstance(MiraiFrameUtil.messageIdMap.get(groupId));
-                    Group group = bot.getGroupOrFail(groupId);
+        try {
+            if (replayMessage != null) {
+                //发送文字
+                obj.put("content", replayMessage);
+            }
 
-                    if (replayMessage != null) {
-                        //发送文字
-                        messageChainBuilder.append(new PlainText(replayMessage));
-                    }
-
-                    if (replayImgList.size() > 0) {
-                        //发送图片
-                        for (ExternalResource replayImg : imgResource) {
-                            messageChainBuilder.append(group.uploadImage(replayImg));
-                        }
-                    }
-
-                    if (mp3Resource != null) {
-                        //发送语音
-                        messageChainBuilder.append(group.uploadAudio(mp3Resource));
-                    }
-
-                    if (kick != null) {
-                        //踢出群
-                        group.getOrFail(replayInfo.getQq()).kick("");
-                    }
-
-                    if (muted != null) {
-                        //禁言muted秒
-                        group.getOrFail(replayInfo.getQq()).mute(muted);
-                    }
-
-                    if (nudged) {
-                        //戳一戳
-                        group.getOrFail(replayInfo.getQq()).nudge();
-                    }
-                    group.sendMessage(messageChainBuilder.build());
-                    log.info("发送消息" + replayInfo);
-                    Thread.sleep(new Random().nextInt(5) * 500 + 500);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("发送消息失败");
+            if (replayImgList.size() > 0) {
+                //发送图片
+                for (Object replayImg : replayImgList) {
+                    obj.put("file_image", replayImg);
                 }
             }
-        }
 
-        for (ExternalResource replayImg : imgResource) {
-            try {
-                replayImg.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            String s = obj.toString();
+            HttpEntity<String> httpEntity = new HttpEntity<>(s, httpHeaders);
+
+            restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+
+            log.info("发送消息" + replayInfo);
+            Thread.sleep(new Random().nextInt(5) * 500 + 500);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("发送消息失败");
         }
     }
 
     @Override
     public void sendFriendMsg(ReplayInfo replayInfo) {
-        activityMapper.sendMessage();
-        //解析replayInfo
-        String replayMessage = replayInfo.getReplayMessage();
-        List<Object> replayImgList = replayInfo.getReplayImg();
-        Boolean nudged = replayInfo.getNudged();
-
-        List<ExternalResource> imgResource = getExternalResource(replayImgList);
-
-        //获取登录bot
-        Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
-        User user = bot.getFriendOrFail(replayInfo.getQq());
-        MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
-
-        if (replayMessage != null) {
-            //文字
-            messageChainBuilder.append(new PlainText(replayMessage));
-        }
-
-        if (replayImgList.size() > 0) {
-            //发送图片
-            for (ExternalResource replayImg : imgResource) {
-                messageChainBuilder.append(user.uploadImage(replayImg));
-            }
-        }
-
-        user.sendMessage(messageChainBuilder.build());
-        if (nudged) {
-            //戳一戳
-            user.nudge();
-        }
-
-        for (ExternalResource replayImg : imgResource) {
-            try {
-                replayImg.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        log.info("发送私聊消息" + replayInfo.getReplayMessage());
-    }
-
-    private List<ExternalResource> getExternalResource(List<Object> replayImgList) {
-        List<ExternalResource> imgResource = new ArrayList<>();
-
-        if (replayImgList.size() > 0) {
-            for (Object o: replayImgList) {
-                if (o instanceof String) {
-                    try {
-                        URL u = new URL((String) o);
-                        HttpURLConnection httpUrl = (HttpURLConnection) u.openConnection();
-                        httpUrl.connect();
-                        try (InputStream is = httpUrl.getInputStream()){
-                            ExternalResource externalResource = ExternalResource.create(is);
-                            imgResource.add(externalResource);
-                        }
-                    } catch (IOException e) {
-                        log.error("读取图片URL失败");
-                    }
-                } else if (o instanceof BufferedImage) {
-                    try (ByteArrayOutputStream os = new ByteArrayOutputStream()){
-                        ImageIO.write((BufferedImage) o, "jpg", os);
-                        InputStream inputStream = new ByteArrayInputStream(os.toByteArray());
-                        ExternalResource externalResource = ExternalResource.create(inputStream);
-                        imgResource.add(externalResource);
-                        inputStream.close();
-                    } catch (IOException e) {
-                        log.error("BufferImage读取IO流失败");
-                    }
-                } else if (o instanceof File) {
-                    try (InputStream inputStream = Files.newInputStream(((File) o).toPath())){
-                        ExternalResource externalResource = ExternalResource.create(inputStream);
-                        imgResource.add(externalResource);
-                    } catch (IOException e) {
-                        log.error("File读取IO流失败");
-                    }
-                }
-            }
-        }
-
-        return imgResource;
+        log.info("目前频道不发送私聊消息" + replayInfo.getReplayMessage());
     }
 }

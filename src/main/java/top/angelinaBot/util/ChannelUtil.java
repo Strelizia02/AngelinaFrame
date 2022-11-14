@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.controller.GroupChatController;
 import top.angelinaBot.model.MessageInfo;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,6 +40,11 @@ public class ChannelUtil {
     @Autowired
     protected RestTemplate restTemplate;
 
+    @Autowired
+    GroupChatController gController;
+
+    public static GroupChatController groupChatController;
+
     private Session session;
 
     public static Integer massageIndex;
@@ -54,6 +57,7 @@ public class ChannelUtil {
         token = userConfigToken;
         appId = userConfigAppId;
         type = userConfigType;
+        groupChatController = gController;
         try {
             massageIndex = 0;
             heartbeatInterval = 50000;
@@ -104,17 +108,19 @@ public class ChannelUtil {
                         MessageInfo messageInfo = new MessageInfo();
 
 
-                        messageInfo.setGroupId(Long.parseLong(channelId));
-                        messageInfo.setLoginQq(Long.parseLong(appId));
+                        messageInfo.setChannelId(channelId);
+                        messageInfo.setBot(appId);
+                        messageInfo.setAuthor(id);
 
                         messageInfo.setName(username);
                         messageInfo.setCallMe(true);
                         Pattern pattern = Pattern.compile("\\u003c@!([0-9.]*)\\u003e");
                         Matcher matcher = pattern.matcher(content);
-                        String s = matcher.replaceAll("").replace(" /", "");
+                        String s = matcher.replaceAll("").replace("/", "").trim();
                         messageInfo.setText(s);
+                        messageInfo.setKeyword(s.split(" ")[0]);
                         try {
-                            ((GroupChatController) SpringContextRunner.getBean(GroupChatController.class)).receive(messageInfo, QQFrameContainer.QQChannel);
+                            groupChatController.receive(messageInfo, QQFrameContainer.QQChannel);
                         } catch (InvocationTargetException | IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }

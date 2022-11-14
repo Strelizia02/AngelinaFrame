@@ -2,6 +2,7 @@ package top.angelinaBot.controller;
 
 import net.mamoe.mirai.message.data.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.container.QQFrameContainer;
@@ -44,6 +45,9 @@ public class GroupChatController {
 
     private final Map<Long, List<Long>> qqMsgRateList = new HashMap<>();
 
+    @Autowired
+    QQFrameContainer qqFrameContainer;
+
     /**
      * 通用的qq群聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
      *
@@ -54,9 +58,9 @@ public class GroupChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
-        SendMessageUtil sendMessageUtil = QQFrameContainer.qqFrameMap.get(frame);
+        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(frame);
         //不处理自身发送的消息
-        if (!message.getLoginQq().equals(message.getQq())) {
+        if (message.getQq() == null || !message.getLoginQq().equals(message.getQq())) {
             log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (getMsgLimit(message, sendMessageUtil)) {
@@ -124,44 +128,45 @@ public class GroupChatController {
         int length = 3;
         int maxTips = 5;
         int second = 10;
-        long qq = messageInfo.getQq();
-        String name = messageInfo.getName();
-        if (!qqMsgRateList.containsKey(qq)) {
-            List<Long> msgList = new ArrayList<>(maxTips);
-            msgList.add(System.currentTimeMillis());
-            qqMsgRateList.put(qq, msgList);
-        }
-        List<Long> limit = qqMsgRateList.get(qq);
-        if (limit.size() <= length) {
-            //队列未满三条，直接返回消息
-            limit.add(System.currentTimeMillis());
-        } else {
-            if (getSecondDiff(limit.get(0), second)) {
-                //队列长度超过三条，但是距离首条消息已经大于10秒
-                limit.remove(0);
-                //把后面两次提示的时间戳删掉
-                while (limit.size() > 3) {
-                    limit.remove(3);
-                }
+        Long qq = messageInfo.getQq();
+        if (qq != null) {
+            String name = messageInfo.getName();
+            if (!qqMsgRateList.containsKey(qq)) {
+                List<Long> msgList = new ArrayList<>(maxTips);
+                msgList.add(System.currentTimeMillis());
+                qqMsgRateList.put(qq, msgList);
+            }
+            List<Long> limit = qqMsgRateList.get(qq);
+            if (limit.size() <= length) {
+                //队列未满三条，直接返回消息
                 limit.add(System.currentTimeMillis());
             } else {
-                if (limit.size() <= maxTips) {
-                    //队列长度在3~5之间，并且距离首条消息不足10秒，发出提示
-                    log.warn("{}超出单人回复速率,{}", name, limit.size());
-                    ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-                    replayInfo.setReplayMessage(name + "说话太快了，请稍后再试");
-                    sendMessageUtil.sendGroupMsg(replayInfo);
+                if (getSecondDiff(limit.get(0), second)) {
+                    //队列长度超过三条，但是距离首条消息已经大于10秒
+                    limit.remove(0);
+                    //把后面两次提示的时间戳删掉
+                    while (limit.size() > 3) {
+                        limit.remove(3);
+                    }
                     limit.add(System.currentTimeMillis());
                 } else {
-                    //队列长度等于5，直接忽略消息
-                    log.warn("{}连续请求,已拒绝消息", name);
+                    if (limit.size() <= maxTips) {
+                        //队列长度在3~5之间，并且距离首条消息不足10秒，发出提示
+                        log.warn("{}超出单人回复速率,{}", name, limit.size());
+                        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+                        replayInfo.setReplayMessage(name + "说话太快了，请稍后再试");
+                        sendMessageUtil.sendGroupMsg(replayInfo);
+                        limit.add(System.currentTimeMillis());
+                    } else {
+                        //队列长度等于5，直接忽略消息
+                        log.warn("{}连续请求,已拒绝消息", name);
+                    }
+                    flag = false;
                 }
-                flag = false;
             }
+            //对队列进行垃圾回收
+            gcMsgLimitRate();
         }
-        //对队列进行垃圾回收
-        gcMsgLimitRate();
-
         return flag;
     }
 
