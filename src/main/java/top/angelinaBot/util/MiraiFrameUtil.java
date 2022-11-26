@@ -94,7 +94,7 @@ public class MiraiFrameUtil {
             Bot bot = BotFactory.INSTANCE.newBot(qq, pwList[i], new BotConfiguration() {{
                 log.info("尝试登录{}", qq);
                 setDeviceInfo(bot -> new MiraiDeviceGenerator().load(bot));
-                fileBasedDeviceInfo("runFile/device.json");
+                fileBasedDeviceInfo("runFile/" + qq + "device.json");
                 setProtocol(miraiProtocol);
 
             }});
