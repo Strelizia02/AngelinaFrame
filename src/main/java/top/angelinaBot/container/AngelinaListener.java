@@ -18,19 +18,19 @@ public abstract class AngelinaListener {
      * 基础的监听器构造方法，能够监听全部群聊消息
      */
     public AngelinaListener() {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            for (StackTraceElement s: stackTrace) {
-                try {
-                    Class<?> c = Class.forName(s.getClassName());
-                    if (c.getAnnotation(Service.class) != null) {
-                        className = s.getClassName();
-                        break;
-                    }
-                } catch (ClassNotFoundException e) {
-                    className = Thread.currentThread().getStackTrace()[3].getClassName();
-                    e.printStackTrace();
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement s: stackTrace) {
+            try {
+                Class<?> c = Class.forName(s.getClassName());
+                if (c.getAnnotation(Service.class) != null) {
+                    className = s.getClassName();
+                    break;
                 }
+            } catch (ClassNotFoundException e) {
+                className = Thread.currentThread().getStackTrace()[3].getClassName();
+                e.printStackTrace();
             }
+        }
     }
     
      /**
@@ -38,7 +38,19 @@ public abstract class AngelinaListener {
      */
     public AngelinaListener(Long groupId) {
         this.groupId = groupId;
-        AngelinaListener();
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement s: stackTrace) {
+            try {
+                Class<?> c = Class.forName(s.getClassName());
+                if (c.getAnnotation(Service.class) != null) {
+                    className = s.getClassName();
+                    break;
+                }
+            } catch (ClassNotFoundException e) {
+                className = Thread.currentThread().getStackTrace()[3].getClassName();
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
