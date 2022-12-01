@@ -14,6 +14,9 @@ public abstract class AngelinaListener {
 
     public String className;
 
+    /**
+     * 基础的监听器构造方法，能够监听全部群聊消息
+     */
     public AngelinaListener() {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             for (StackTraceElement s: stackTrace) {
@@ -28,6 +31,14 @@ public abstract class AngelinaListener {
                     e.printStackTrace();
                 }
             }
+    }
+    
+     /**
+     * 增强的监听器构造方法，只监听当前群号的方法
+     */
+    public AngelinaListener(Long groupId) {
+        this.groupId = groupId;
+        AngelinaListener();
     }
 
     public abstract boolean callback(MessageInfo message);
