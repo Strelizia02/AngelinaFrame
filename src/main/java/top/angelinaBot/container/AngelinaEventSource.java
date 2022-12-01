@@ -70,8 +70,8 @@ public class AngelinaEventSource {
                     event.getLock().notify();
                 }
                 it.remove();
-            } else if (l.callback(message)) {
-                //调用callback方法，如果返回true则唤起线程
+            } else if (l.callbackUp(message)) {
+                //调用callbackUp方法，如果返回true则唤起线程
                 synchronized (event.getLock()) {
                     log.info("唤起线程");
                     event.setMessageInfo(message);
