@@ -13,10 +13,12 @@ public @interface AngelinaGroup {
     String[] keyWords();
     //图片DHash触发，需要循环比对，尽量减少DHash
     String[] dHash() default "";
-    //方法描述
+    //使用方法描述
     String description() default "";
     //自定义类别
     String sort() default "其他功能";
     //功能块归属
-    String funcClass() default "null";
+    FunctionType funcClass() default Others;
+    //作者
+    String author() default "Strelitzia02";
 }
