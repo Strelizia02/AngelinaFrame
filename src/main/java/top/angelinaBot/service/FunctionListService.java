@@ -27,14 +27,19 @@ public class FunctionListService {
     @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表")
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        File png = new File("runFile/functionList.png");
-        File jpg = new File("runFile/functionList.jpg");
-        if (png.exists()) {
-            replayInfo.setReplayImg(png);
-        } else if (jpg.exists()) {
-            replayInfo.setReplayImg(jpg);
+        
+        if (message.getArgs().size() > 1) {
+            
         } else {
-            replayInfo.setReplayImg(getFuncStrList());
+            File png = new File("runFile/functionList.png");
+            File jpg = new File("runFile/functionList.jpg");
+            if (png.exists()) {
+                replayInfo.setReplayImg(png);
+            } else if (jpg.exists()) {
+                replayInfo.setReplayImg(jpg);
+            } else {
+                replayInfo.setReplayImg(getFuncStrList());
+            }
         }
         return replayInfo;
     }
