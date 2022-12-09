@@ -106,11 +106,11 @@ public class ChannelUtil {
                         String channelId = messageObj.getString("channel_id");
                         String content = messageObj.getString("content");
                         MessageInfo messageInfo = new MessageInfo();
+                        messageInfo.setFrame(QQFrameContainer.QQChannel);
 
-
-                        messageInfo.setChannelId(channelId);
-                        messageInfo.setBot(appId);
-                        messageInfo.setAuthor(id);
+                        messageInfo.setGroupId(channelId);
+                        messageInfo.setLoginQq(appId);
+                        messageInfo.setQq(id);
 
                         messageInfo.setName(username);
                         messageInfo.setCallMe(true);
@@ -120,7 +120,7 @@ public class ChannelUtil {
                         messageInfo.setText(s);
                         messageInfo.setKeyword(s.split(" ")[0]);
                         try {
-                            groupChatController.receive(messageInfo, QQFrameContainer.QQChannel);
+                            groupChatController.receive(messageInfo);
                         } catch (InvocationTargetException | IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }

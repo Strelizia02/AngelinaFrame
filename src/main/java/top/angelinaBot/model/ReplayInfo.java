@@ -14,41 +14,57 @@ import java.util.List;
  **/
 @Slf4j
 public class ReplayInfo {
-    //登录QQ
+    /**
+     * 登录QQ
+     */
     String loginQQ;
-    //qq
+    /**
+     * qq
+     */
     String qq;
-    //昵称
+    /**
+     * 昵称
+     */
     String name;
-    //群号
+    /**
+     * 群号
+     */
     List<String> groupId = new ArrayList<>();
-    //文字内容
+    /**
+     * 文字内容
+     */
     String replayMessage;
-    //图片内容
+    /**
+     * 图片内容
+     */
     List<Object> replayImg = new ArrayList<>();
-    //语音文件
+    /**
+     * 语音文件
+     */
     File mp3;
-    //踢出群
+    /**
+     * 踢出群
+     */
     String kick;
-    //禁言
+    /**
+     * 禁言
+     */
     Integer muted;
-    //戳一戳
+    /**
+     * 戳一戳
+     */
     Boolean isNudged = false;
 
-    String channel;
-
-    String bot;
-
-    String author;
+    /**
+     * 所用框架
+     */
+    String frame;
 
     public ReplayInfo(MessageInfo messageInfo) {
         this.loginQQ = messageInfo.getLoginQq();
         this.setGroupId(messageInfo.getGroupId());
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
-        this.channel = messageInfo.getChannelId();
-        this.bot = messageInfo.getBot();
-        this.author = messageInfo.getAuthor();
     }
 
     public ReplayInfo() {
@@ -188,27 +204,11 @@ public class ReplayInfo {
         return sb.toString();
     }
 
-    public String getChannel() {
-        return channel;
+    public String getFrame() {
+        return frame;
     }
 
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public String getBot() {
-        return bot;
-    }
-
-    public void setBot(String bot) {
-        this.bot = bot;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setFrame(String frame) {
+        this.frame = frame;
     }
 }

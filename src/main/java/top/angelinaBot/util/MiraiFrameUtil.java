@@ -120,8 +120,9 @@ public class MiraiFrameUtil {
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
             if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
                 MessageInfo messageInfo = getMessageInfo(event, botNames);
+                messageInfo.setFrame(QQFrameContainer.Miari);
                 try {
-                    groupChatController.receive(messageInfo, QQFrameContainer.Miari);
+                    groupChatController.receive(messageInfo);
                     if (messageInfo.getText() != null) {
                         AngelinaEventSource.getInstance().handle(messageInfo);
                     }

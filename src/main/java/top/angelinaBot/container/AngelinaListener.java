@@ -1,14 +1,12 @@
 package top.angelinaBot.container;
 
 import org.springframework.stereotype.Service;
-import top.angelinaBot.annotation.AngelinaGroup;
+
 import top.angelinaBot.model.MessageInfo;
 
-import java.lang.reflect.Method;
-
 public abstract class AngelinaListener {
-    private Long qq;
-    private Long groupId;
+    private String qq;
+    private String groupId;
     private Integer second = 60;
     public final long timestamp = System.currentTimeMillis();
 
@@ -36,7 +34,7 @@ public abstract class AngelinaListener {
      /**
      * 增强的监听器构造方法，只监听当前群号的方法
      */
-    public AngelinaListener(Long groupId) {
+    public AngelinaListener(String groupId) {
         this.groupId = groupId;
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         for (StackTraceElement s: stackTrace) {
@@ -70,19 +68,19 @@ public abstract class AngelinaListener {
         }
     }
 
-    public Long getQq() {
+    public String getQq() {
         return qq;
     }
 
-    public void setQq(Long qq) {
+    public void setQq(String qq) {
         this.qq = qq;
     }
 
-    public Long getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 

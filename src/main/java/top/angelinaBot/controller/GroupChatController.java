@@ -59,8 +59,8 @@ public class GroupChatController {
      * @throws IllegalAccessException    反射相关异常
      */
     @PostMapping("receive")
-    public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
-        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(frame);
+    public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
+        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(message.getFrame());
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());

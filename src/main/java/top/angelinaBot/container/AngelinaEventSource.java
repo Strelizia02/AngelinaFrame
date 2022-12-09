@@ -2,11 +2,9 @@ package top.angelinaBot.container;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.model.AngelinaMessageEvent;
 import top.angelinaBot.model.MessageInfo;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -82,7 +80,7 @@ public class AngelinaEventSource {
         }
     }
 
-    public static void remove(Long groupId) {
+    public static void remove(String groupId) {
         AngelinaEventSource.getInstance().listenerMap.keySet().removeIf(l -> {
             String className = null;
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
