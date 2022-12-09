@@ -88,8 +88,17 @@ public class GroupChatController {
                         }
                     } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
                         Method method = AngelinaContainer.groupMap.get(message.getKeyword());
-                        //TODO 在这里获取函数的Permisson注解来判断方法权限
                         if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
+                            //在这里获取函数的Permisson注解来判断方法权限
+                            PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();PermissionEnum;
+                            PermissionEnum userAdmin = message.getUserAdmin();
+                            if (userAdmin.getLevel() < p.getLevel()) {
+                                ReplayInfo replayInfo = new ReplayInfo();
+                                replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
+                                sendMessageUtil.sendGroupMsg(replayInfo);
+                                return JsonResult.success(invoke);
+                            }
+                            
                             functionMapper.insertFunction(method.getName());
                             ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                             if (message.isReplay()) {
