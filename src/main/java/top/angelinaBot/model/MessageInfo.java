@@ -1,6 +1,5 @@
 package top.angelinaBot.model;
 
-import net.mamoe.mirai.contact.MemberPermission;
 import net.mamoe.mirai.event.events.FriendMessageEvent;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.internal.message.image.OnlineFriendImage;
@@ -51,7 +50,7 @@ public class MessageInfo {
     //是否要发送消息
     private Boolean isReplay = true;
     //用户权限
-    private MemberPermission userAdmin;
+    private PermissionEnum  userAdmin;
 
     public MessageInfo() {
 
@@ -269,7 +268,7 @@ public class MessageInfo {
         return isReplay;
     }
 
-    public MemberPermission getUserAdmin() {
+    public PermissionEnum getUserAdmin() {
         return userAdmin;
     }
 
