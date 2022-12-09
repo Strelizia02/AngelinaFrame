@@ -25,7 +25,7 @@ public class FunctionListService {
     @Value("#{'${userConfig.botNames}'.split(' ')}")
     public String[] botNames;
 
-    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表", permission = PermissionEnum.GroupMaster)
+    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表")
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         

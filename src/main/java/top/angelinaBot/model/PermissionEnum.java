@@ -6,8 +6,8 @@ public enum PermissionEnum {
     GroupAdministrator("群管理", 1),
     GroupUser("普通成员", 0);
 
-    private String name;
-    private int level;
+    private final String name;
+    private final int level;
 
 
     PermissionEnum(String name, int level) {

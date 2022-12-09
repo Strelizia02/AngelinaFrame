@@ -8,6 +8,7 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
+import top.angelinaBot.model.PermissionEnum;
 import top.angelinaBot.model.ReplayInfo;
 
 import java.lang.reflect.Method;
@@ -20,13 +21,9 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
-    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭某个功能")
+    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭某个功能", permission = PermissionEnum.GroupAdministrator)
     public ReplayInfo closeFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
-            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
-            return replayInfo;
-        }
         if (messageInfo.getArgs().size() > 1) {
             String key = messageInfo.getArgs().get(1);
             if (key.equals("开启") || key.equals("打开") || key.equals("关闭")) {
@@ -52,13 +49,9 @@ public class AdminService {
         return replayInfo;
     }
 
-    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开某个功能")
+    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开某个功能", permission = PermissionEnum.GroupAdministrator)
     public ReplayInfo openFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
-        if (messageInfo.getUserAdmin().equals(MemberPermission.MEMBER)) {
-            replayInfo.setReplayMessage("仅本群群主及管理员有权限对功能进行操作");
-            return replayInfo;
-        }
         if (messageInfo.getArgs().size() > 1) {
             String key = messageInfo.getArgs().get(1);
             if (key.equals("开启") || key.equals("打开") || key.equals("关闭")) {
