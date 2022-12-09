@@ -15,13 +15,13 @@ import java.util.List;
 @Slf4j
 public class ReplayInfo {
     //登录QQ
-    Long loginQQ;
+    String loginQQ;
     //qq
-    Long qq;
+    String qq;
     //昵称
     String name;
     //群号
-    List<Long> groupId = new ArrayList<>();
+    List<String> groupId = new ArrayList<>();
     //文字内容
     String replayMessage;
     //图片内容
@@ -63,31 +63,31 @@ public class ReplayInfo {
         this.name = name;
     }
 
-    public Long getLoginQQ() {
+    public String getLoginQQ() {
         return loginQQ;
     }
 
-    public void setLoginQQ(Long loginQQ) {
+    public void setLoginQQ(String loginQQ) {
         this.loginQQ = loginQQ;
     }
 
-    public Long getQq() {
+    public String getQq() {
         return qq;
     }
 
-    public void setQq(Long qq) {
+    public void setQq(String qq) {
         this.qq = qq;
     }
 
-    public List<Long> getGroupId() {
+    public List<String> getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(String groupId) {
         this.groupId.add(groupId);
     }
 
-    public void setGroupId(Collection<Long> groupIds) {
+    public void setGroupId(Collection<String> groupIds) {
         this.groupId.addAll(groupIds);
     }
 

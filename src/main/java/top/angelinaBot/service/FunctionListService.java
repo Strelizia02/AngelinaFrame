@@ -7,6 +7,7 @@ import top.angelinaBot.annotation.AngelinaFriend;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.model.MessageInfo;
+import top.angelinaBot.model.PermissionEnum;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.model.TextLine;
 
@@ -24,11 +25,11 @@ public class FunctionListService {
     @Value("#{'${userConfig.botNames}'.split(' ')}")
     public String[] botNames;
 
-    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表")
+    @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表", permission = PermissionEnum.GroupMaster)
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         
-        if (message.getArgs().size() > 1) {
+        if (messageInfo.getArgs().size() > 1) {
             
         } else {
             File png = new File("runFile/functionList.png");

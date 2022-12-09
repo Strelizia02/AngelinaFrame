@@ -22,7 +22,7 @@ public class MessageInfo {
     /**
      * 登录qq
     */
-    private Long loginQq;
+    private String loginQq;
     /**
      * 原文字消息
     */
@@ -38,7 +38,7 @@ public class MessageInfo {
     /**
      * 发送人qq
     */
-    private Long qq;
+    private String qq;
     /**
      * 发送人昵称
     */
@@ -46,7 +46,7 @@ public class MessageInfo {
     /**
      * 群号
     */
-    private Long groupId;
+    private String groupId;
     /**
      * 图片Url合集
     */
@@ -62,7 +62,7 @@ public class MessageInfo {
     /**
      * 艾特了哪些人
     */
-    private List<Long> atQQList = new ArrayList<>();
+    private List<String> atQQList = new ArrayList<>();
     /**
      * 发送时间戳
     */
@@ -92,94 +92,6 @@ public class MessageInfo {
 
     public MessageInfo() {
 
-    }
-
-    /**
-     * 根据Mirai的事件构建Message，方便后续调用
-     * @param event Mirai事件
-     * @param botNames 机器人名称
-     */
-    public MessageInfo(GroupMessageEvent event, String[] botNames){
-        // Mirai 的事件内容封装
-        this.loginQq = event.getBot().getId();
-        this.qq = event.getSender().getId();
-        this.name = event.getSenderName();
-        this.groupId = event.getSubject().getId();
-        this.time = event.getTime();
-        this.userAdmin = event.getSender().getPermission();
-
-        //获取消息体
-        MessageChain chain = event.getMessage();
-        this.eventString = chain.toString();
-        for (Object o: chain){
-            if (o instanceof At) {
-                //消息艾特内容
-                this.atQQList.add(((At) o).getTarget());
-                if (((At) o).getTarget() == this.loginQq){
-                    //如果被艾特则视为被呼叫
-                    this.isCallMe = true;
-                }
-            } else if (o instanceof PlainText) {
-                //消息文字内容
-                this.text = ((PlainText) o).getContent().trim();
-                String[] orders = this.text.split("\\s+");
-                if (orders.length > 0) {
-                    this.keyword = orders[0];
-                    this.args = Arrays.asList(orders);
-                    for (String name: botNames){
-                        if (orders[0].startsWith(name)){
-                            this.isCallMe = true;
-                            this.keyword = this.keyword.replace(name, "");
-                            break;
-                        }
-                    }
-                }
-            } else if (o instanceof OnlineGroupImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
-                //消息图片内容
-                this.imgUrlList.add(((OnlineGroupImage) o).getOriginUrl());
-                this.imgTypeList.add(((OnlineGroupImage) o).getImageType());
-            }
-        }
-    }
-
-    public MessageInfo(FriendMessageEvent event, String[] botNames) {
-        this.loginQq = event.getBot().getId();
-        this.qq = event.getSender().getId();
-        this.name = event.getSenderName();
-        this.time = event.getTime();
-        //获取消息体
-        MessageChain chain = event.getMessage();
-        this.eventString = chain.toString();
-        for (Object o: chain){
-            if (o instanceof At) {
-                //消息艾特内容
-                this.atQQList.add(((At) o).getTarget());
-                if (((At) o).getTarget() == this.loginQq){
-                    //如果被艾特则视为被呼叫
-                    this.isCallMe = true;
-                }
-            } else if (o instanceof PlainText) {
-                //消息文字内容
-                this.text = ((PlainText) o).getContent().trim();
-
-                String[] orders = this.text.split("\\s+");
-                if (orders.length > 0) {
-                    this.keyword = orders[0];
-                    this.args = Arrays.asList(orders);
-                    this.isCallMe = true;
-                    for (String name: botNames){
-                        if (orders[0].startsWith(name)){
-                            this.keyword = this.keyword.replace(name, "");
-                            break;
-                        }
-                    }
-                }
-            } else if (o instanceof OnlineFriendImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
-                //消息图片内容
-                this.imgUrlList.add(((OnlineFriendImage) o).getOriginUrl());
-                this.imgTypeList.add(((OnlineFriendImage) o).getImageType());
-            }
-        }
     }
 
     public boolean isReplay() {
@@ -214,11 +126,11 @@ public class MessageInfo {
         this.eventString = eventString;
     }
 
-    public Long getLoginQq() {
+    public String getLoginQq() {
         return loginQq;
     }
 
-    public void setLoginQq(Long loginQq) {
+    public void setLoginQq(String loginQq) {
         this.loginQq = loginQq;
     }
 
@@ -246,11 +158,11 @@ public class MessageInfo {
         this.keyword = keyword;
     }
 
-    public Long getQq() {
+    public String getQq() {
         return qq;
     }
 
-    public void setQq(Long qq) {
+    public void setQq(String qq) {
         this.qq = qq;
     }
 
@@ -262,11 +174,11 @@ public class MessageInfo {
         this.name = name;
     }
 
-    public Long getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Long groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
@@ -278,11 +190,11 @@ public class MessageInfo {
         isCallMe = callMe;
     }
 
-    public List<Long> getAtQQList() {
+    public List<String> getAtQQList() {
         return atQQList;
     }
 
-    public void setAtQQList(List<Long> atQQList) {
+    public void setAtQQList(List<String> atQQList) {
         this.atQQList = atQQList;
     }
 
@@ -310,7 +222,7 @@ public class MessageInfo {
         return userAdmin;
     }
 
-    public void setUserAdmin(MemberPermission userAdmin) {
+    public void setUserAdmin(PermissionEnum userAdmin) {
         this.userAdmin = userAdmin;
     }
 

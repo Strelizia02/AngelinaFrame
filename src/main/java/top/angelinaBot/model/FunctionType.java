@@ -1,3 +1,5 @@
+package top.angelinaBot.model;
+
 public enum FunctionType {
     FunctionAdmin("功能管理"),
     MockSearch("模拟寻访"),

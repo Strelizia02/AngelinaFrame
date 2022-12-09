@@ -3,10 +3,20 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+# 多个选项用空格隔开
 userConfig:
-  # 多个选项用空格隔开
-  botNames: '洁哥 杰哥 安洁莉娜'
+  # 超级管理员，建议只给自己
+  administrators: ''
+  # Bot名称，只响应以Bot名开头的消息
+  botNames: '测试'
+  # QQ账号密码列表
   qqList: ''
   pwList: ''
-  # IPAD ANDROID_PAD ANDROID_PHONE MACOS
+
+  # 登录协议，可选项有：IPAD ANDROID_PAD ANDROID_PHONE MACOS，推荐IPAD或MACOS
   typeList: 'IPAD'
+
+  # QQ频道机器人登录信息
+  token: ''
+  appId: ''
+  type: ''

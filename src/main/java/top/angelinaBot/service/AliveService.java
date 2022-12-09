@@ -12,18 +12,25 @@ public class AliveService {
     @AngelinaGroup( keyWords = {"切换"}, description = "切换活跃账号")
     public ReplayInfo switchAliveQQ(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        String qq;
 
         if (messageInfo.getArgs().size() > 1) {
-            long qq = Long.parseLong(messageInfo.getArgs().get(1));
-            Bot bot = Bot.getInstanceOrNull(qq);
-            if (bot != null && bot.isOnline() && bot.getGroups().contains(messageInfo.getGroupId().longValue())) {
-                MiraiFrameUtil.messageIdMap.put(messageInfo.getGroupId(), qq);
-                replayInfo.setReplayMessage("已将本群bot切换为" + bot.getNick());
-            } else {
-                replayInfo.setReplayMessage("所选账号不在本群中或已被封号");
-            }
+            qq = messageInfo.getArgs().get(1);
         } else {
-            replayInfo.setReplayMessage("请输入需要切换的qq号");
+            if (messageInfo.getAtQQList().size() == 1) {
+                qq = messageInfo.getAtQQList().get(0);
+            } else {
+                replayInfo.setReplayMessage("请输入或艾特需要切换的qq号");
+                return replayInfo;
+            }
+        }
+
+        Bot bot = Bot.getInstanceOrNull(Long.parseLong(qq));
+        if (bot != null && bot.isOnline() && bot.getGroups().contains(Long.parseLong(messageInfo.getGroupId()))) {
+            MiraiFrameUtil.messageIdMap.put(messageInfo.getGroupId(), qq);
+            replayInfo.setReplayMessage("已将本群bot切换为" + bot.getNick());
+        } else {
+            replayInfo.setReplayMessage("所选账号不在本群中或已被封号");
         }
         return replayInfo;
     }

@@ -4,9 +4,7 @@ import org.springframework.stereotype.Component;
 import top.angelinaBot.model.EventEnum;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author strelitzia
@@ -25,4 +23,6 @@ public class AngelinaContainer {
     public static final Map<String, Method> friendMap = new HashMap<>();
     //事件触发方法
     public static final Map<EventEnum, Method> eventMap = new HashMap<>();
+
+    public static final Set<String> administrators = new HashSet<>();
 }

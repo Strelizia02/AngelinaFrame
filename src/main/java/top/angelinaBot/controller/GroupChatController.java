@@ -3,6 +3,7 @@ package top.angelinaBot.controller;
 import net.mamoe.mirai.message.data.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.container.QQFrameContainer;
@@ -12,6 +13,7 @@ import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import top.angelinaBot.model.PermissionEnum;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.DHashUtil;
 import top.angelinaBot.util.SendMessageUtil;
@@ -35,9 +37,6 @@ import java.util.regex.Pattern;
 public class GroupChatController {
 
     @Autowired
-    private SendMessageUtil sendMessageUtil;
-
-    @Autowired
     private AdminMapper adminMapper;
 
     @Autowired
@@ -46,7 +45,7 @@ public class GroupChatController {
     @Autowired
     private FunctionMapper functionMapper;
 
-    private final Map<Long, List<Long>> qqMsgRateList = new HashMap<>();
+    private final Map<String, List<Long>> qqMsgRateList = new HashMap<>();
 
     @Autowired
     QQFrameContainer qqFrameContainer;
@@ -64,7 +63,7 @@ public class GroupChatController {
         SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(frame);
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("bot[{}]接受到群[{}]消息:{}", message.GetLoginQq(), message.getGroupId(), message.getEventString());
+            log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (getMsgLimit(message, sendMessageUtil)) {
                     activityMapper.getGroupMessage();
@@ -95,14 +94,14 @@ public class GroupChatController {
                     } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
                         Method method = AngelinaContainer.groupMap.get(message.getKeyword());
                         if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
-                            //在这里获取函数的Permisson注解来判断方法权限
-                            PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();PermissionEnum;
+                            //在这里获取函数的Permission注解来判断方法权限
+                            PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();
                             PermissionEnum userAdmin = message.getUserAdmin();
                             if (userAdmin.getLevel() < p.getLevel()) {
-                                ReplayInfo replayInfo = new ReplayInfo();
+                                ReplayInfo replayInfo = new ReplayInfo(message);
                                 replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
                                 sendMessageUtil.sendGroupMsg(replayInfo);
-                                return JsonResult.success(invoke);
+                                return JsonResult.success(replayInfo);
                             }
 
                             functionMapper.insertFunction(method.getName());
@@ -134,14 +133,16 @@ public class GroupChatController {
         return null;
     }
 
-    //消息回复限速机制
+    /**
+     * 消息回复限速机制
+     */
     private boolean getMsgLimit(MessageInfo messageInfo, SendMessageUtil sendMessageUtil) {
         boolean flag = true;
         //每10秒限制三条消息,10秒内超过5条就不再提示
         int length = 3;
         int maxTips = 5;
         int second = 10;
-        Long qq = messageInfo.getQq();
+        String qq = messageInfo.getQq();
         if (qq != null) {
             String name = messageInfo.getName();
             if (!qqMsgRateList.containsKey(qq)) {

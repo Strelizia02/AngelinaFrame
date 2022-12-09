@@ -10,16 +10,16 @@ import java.util.List;
 public interface AdminMapper {
 
     @Insert("insert into a_group_func_close (group_id, func_name) values (#{groupId}, #{funcName});")
-    Integer closeFunction(@Param("groupId") Long groupId, @Param("funcName") String funcName);
+    Integer closeFunction(@Param("groupId") String groupId, @Param("funcName") String funcName);
 
     @Delete("delete from a_group_func_close where group_id=#{groupId} and func_name=#{funcName};")
-    Integer openFunction(@Param("groupId") Long groupId, @Param("funcName") String funcName);
+    Integer openFunction(@Param("groupId") String groupId, @Param("funcName") String funcName);
 
     @Select("select count(group_id) from a_group_func_close where group_id=#{groupId} and func_name=#{funcName};")
-    Integer canUseFunction(@Param("groupId") Long groupId, @Param("funcName") String funcName);
+    Integer canUseFunction(@Param("groupId") String groupId, @Param("funcName") String funcName);
 
     @Select("select func_name from a_group_func_close where group_id=#{groupId};")
-    List<String> getCloseFunction(@Param("groupId") Long groupId);
+    List<String> getCloseFunction(@Param("groupId") String groupId);
 
     @Select("CREATE TABLE IF NOT EXISTS `a_group_func_close`  (\n" +
             "        `group_id` bigInt(255) NOT NULL,\n" +

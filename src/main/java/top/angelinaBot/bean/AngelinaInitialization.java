@@ -22,10 +22,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static top.angelinaBot.container.QQFrameContainer.*;
 
@@ -53,6 +50,9 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Value("${userConfig.botNames}")
     public String botNames;
 
+    @Value("#{'${userConfig.administrators}'.split(' ')}")
+    public String[] administrators;
+
     @Autowired
     public ChannelUtil channelUtil;
 
@@ -67,6 +67,8 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
      */
     @Override
     public void afterSingletonsInstantiated() {
+        AngelinaContainer.administrators.addAll(Arrays.asList(administrators));
+
         initQQFrameContainer();
         if (!"".equals(qqList)) {
             miraiFrameUtil.startMirai();

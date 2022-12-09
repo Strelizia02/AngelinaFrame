@@ -7,11 +7,17 @@ import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
+import net.mamoe.mirai.internal.message.image.OnlineFriendImage;
+import net.mamoe.mirai.internal.message.image.OnlineGroupImage;
+import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.BotConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
+import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.container.AngelinaEventSource;
 import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.controller.EventsController;
@@ -20,9 +26,11 @@ import top.angelinaBot.controller.GroupChatController;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.EventEnum;
 import top.angelinaBot.model.MessageInfo;
+import top.angelinaBot.model.PermissionEnum;
 import xyz.cssxsh.mirai.device.MiraiDeviceGenerator;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,9 +74,9 @@ public class MiraiFrameUtil {
     public String[] botNames;
 
     //维护一个群号/账号服务映射，保证一个群只有一个账号提供服务
-    public static final Map<Long, Long> messageIdMap = new HashMap<>();
+    public static final Map<String, String> messageIdMap = new HashMap<>();
 
-    public final Map<String, BotConfiguration.MiraiProtocol> type = new HashMap();
+    public final Map<String, BotConfiguration.MiraiProtocol> type = new HashMap<>();
     {
         type.put("IPAD", BotConfiguration.MiraiProtocol.IPAD);
         type.put("ANDROID_PHONE", BotConfiguration.MiraiProtocol.ANDROID_PHONE);
@@ -110,8 +118,8 @@ public class MiraiFrameUtil {
 
         //监听全部qq账号所接受的消息
         GlobalEventChannel.INSTANCE.subscribeAlways(GroupMessageEvent.class, event -> {
-            if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
-                MessageInfo messageInfo = new MessageInfo(event, botNames);
+            if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
+                MessageInfo messageInfo = getMessageInfo(event, botNames);
                 try {
                     groupChatController.receive(messageInfo, QQFrameContainer.Miari);
                     if (messageInfo.getText() != null) {
@@ -125,18 +133,18 @@ public class MiraiFrameUtil {
 
         //某个Bot被踢出群或退群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotLeaveEvent.class, event -> {
-            messageIdMap.remove(event.getGroupId());
+            messageIdMap.remove(event.getGroupId() + "");
             reBuildBotGroupMap();
         });
 
         //某个Bot加入了一个新群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {
-            messageIdMap.put(event.getGroupId(), event.getBot().getId());
+            messageIdMap.put(event.getGroupId() + "", event.getBot().getId() + "");
             activityMapper.getEventMessage();
             MessageInfo messageInfo = new MessageInfo();
             messageInfo.setEvent(EventEnum.MemberJoinEvent);
-            messageInfo.setLoginQq(event.getBot().getId());
-            messageInfo.setGroupId(event.getGroup().getId());
+            messageInfo.setLoginQq(event.getBot().getId() + "");
+            messageInfo.setGroupId(event.getGroup().getId() + "");
             try {
                 eventsController.receive(messageInfo, QQFrameContainer.Miari);
             } catch (InvocationTargetException | IllegalAccessException e) {
@@ -146,13 +154,13 @@ public class MiraiFrameUtil {
 
         //群撤回消息
         GlobalEventChannel.INSTANCE.subscribeAlways(MessageRecallEvent.GroupRecall.class, event -> {
-            if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
+            if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
                 activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.GroupRecall);
-                messageInfo.setLoginQq(event.getBot().getId());
-                messageInfo.setGroupId(event.getGroup().getId());
-                messageInfo.setQq(event.getAuthorId());
+                messageInfo.setLoginQq(event.getBot().getId() + "");
+                messageInfo.setGroupId(event.getGroup().getId() + "");
+                messageInfo.setQq(event.getAuthorId() + "");
                 try {
                     eventsController.receive(messageInfo, QQFrameContainer.Miari);
                 } catch (InvocationTargetException | IllegalAccessException e) {
@@ -165,13 +173,13 @@ public class MiraiFrameUtil {
         GlobalEventChannel.INSTANCE.subscribeAlways(NudgeEvent.class, event -> {
             Contact subject = event.getSubject();
             if (subject instanceof Group) {
-                if (messageIdMap.get(subject.getId()) == event.getBot().getId() && event.getTarget() instanceof Bot){
+                if (messageIdMap.get(subject.getId() + "").equals(event.getBot().getId() + "") && event.getTarget() instanceof Bot){
                     activityMapper.getEventMessage();
                     MessageInfo messageInfo = new MessageInfo();
                     messageInfo.setEvent(EventEnum.NudgeEvent);
-                    messageInfo.setLoginQq(event.getBot().getId());
-                    messageInfo.setGroupId(subject.getId());
-                    messageInfo.setQq(event.getFrom().getId());
+                    messageInfo.setLoginQq(event.getBot().getId() + "");
+                    messageInfo.setGroupId(subject.getId() + "");
+                    messageInfo.setQq(event.getFrom().getId() + "");
                     try {
                         eventsController.receive(messageInfo, QQFrameContainer.Miari);
                     } catch (InvocationTargetException | IllegalAccessException e) {
@@ -183,13 +191,13 @@ public class MiraiFrameUtil {
 
         //某人进群
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, event -> {
-            if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
+            if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
                 activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.MemberJoinEvent);
-                messageInfo.setLoginQq(event.getBot().getId());
-                messageInfo.setGroupId(event.getGroup().getId());
-                messageInfo.setQq(event.getMember().getId());
+                messageInfo.setLoginQq(event.getBot().getId() + "");
+                messageInfo.setGroupId(event.getGroup().getId() + "");
+                messageInfo.setQq(event.getMember().getId() + "");
                 messageInfo.setName(event.getMember().getNick());
                 try {
                     eventsController.receive(messageInfo, QQFrameContainer.Miari);
@@ -201,13 +209,13 @@ public class MiraiFrameUtil {
 
         //某人退群
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberLeaveEvent.class, event -> {
-            if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
+            if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
                 activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.MemberLeaveEvent);
-                messageInfo.setLoginQq(event.getBot().getId());
-                messageInfo.setGroupId(event.getGroup().getId());
-                messageInfo.setQq(event.getMember().getId());
+                messageInfo.setLoginQq(event.getBot().getId() + "");
+                messageInfo.setGroupId(event.getGroup().getId() + "");
+                messageInfo.setQq(event.getMember().getId() + "");
                 messageInfo.setName(event.getMember().getNick());
                 try {
                     eventsController.receive(messageInfo, QQFrameContainer.Miari);
@@ -236,7 +244,7 @@ public class MiraiFrameUtil {
 
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
-            MessageInfo messageInfo = new MessageInfo(event, botNames);
+            MessageInfo messageInfo = getMessageInfo(event, botNames);
             activityMapper.getFriendMessage();
             try {
                 friendChatController.receive(messageInfo, QQFrameContainer.Miari);
@@ -256,8 +264,8 @@ public class MiraiFrameUtil {
             for (Bot bot : Bot.getInstances()) {
                 if (bot.isOnline()) {
                     for (Group group : bot.getGroups()) {
-                        if (messageIdMap.get(group.getId()) == null) {
-                            messageIdMap.put(group.getId(), bot.getId());
+                        if (messageIdMap.get(group.getId() + "") == null) {
+                            messageIdMap.put(group.getId() + "", bot.getId() + "");
                         }
                     }
                 }
@@ -266,5 +274,112 @@ public class MiraiFrameUtil {
         } else {
             log.warn("is on rebuilding group-bot");
         }
+    }
+
+    /**
+     * 根据Mirai的事件构建Message，方便后续调用
+     * @param event Mirai事件
+     * @param botNames 机器人名称
+     */
+    public MessageInfo getMessageInfo(GroupMessageEvent event, String[] botNames){
+        MessageInfo messageInfo = new MessageInfo();
+        // Mirai 的事件内容封装
+        messageInfo.setLoginQq(event.getBot().getId() + "");
+        messageInfo.setQq(event.getSender().getId() + "");
+        messageInfo.setName(event.getSenderName());
+        messageInfo.setGroupId(event.getSubject().getId() + "");
+        messageInfo.setTime(event.getTime());
+        if (AngelinaContainer.administrators.contains(messageInfo.getQq())) {
+            messageInfo.setUserAdmin(PermissionEnum.Administrator);
+        } else {
+            switch (event.getSender().getPermission().getLevel()) {
+                case 1:
+                    messageInfo.setUserAdmin(PermissionEnum.GroupAdministrator);
+                    break;
+                case 2:
+                    messageInfo.setUserAdmin(PermissionEnum.GroupMaster);
+                    break;
+                default:
+                    messageInfo.setUserAdmin(PermissionEnum.GroupUser);
+                    break;
+            }
+        }
+
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        messageInfo.setEventString(chain.toString());
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                messageInfo.getAtQQList().add(((At) o).getTarget() + "");
+                if ((((At) o).getTarget() + "").equals(messageInfo.getLoginQq())) {
+                    //如果被艾特则视为被呼叫
+                    messageInfo.setCallMe(true);
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                messageInfo.setText(((PlainText) o).getContent().trim());
+                String[] orders = messageInfo.getText().split("\\s+");
+                if (orders.length > 0) {
+                    messageInfo.setKeyword(orders[0]);
+                    messageInfo.setArgs(Arrays.asList(orders));
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            messageInfo.setCallMe(true);
+                            messageInfo.setKeyword(messageInfo.getKeyword().replace(name, ""));
+                            break;
+                        }
+                    }
+                }
+            } else if (o instanceof OnlineGroupImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
+                //消息图片内容
+                messageInfo.getImgUrlList().add(((OnlineGroupImage) o).getOriginUrl());
+                messageInfo.getImgTypeList().add(((OnlineGroupImage) o).getImageType());
+            }
+        }
+        return messageInfo;
+    }
+
+    public MessageInfo getMessageInfo(FriendMessageEvent event, String[] botNames) {
+        MessageInfo messageInfo = new MessageInfo();
+
+        messageInfo.setLoginQq(event.getBot().getId() + "");
+        messageInfo.setQq(event.getSender().getId() + "");
+        messageInfo.setName(event.getSenderName());
+        messageInfo.setTime(event.getTime());
+        //获取消息体
+        MessageChain chain = event.getMessage();
+        messageInfo.setEventString(chain.toString());
+        for (Object o: chain){
+            if (o instanceof At) {
+                //消息艾特内容
+                messageInfo.getAtQQList().add(((At) o).getTarget() + "");
+                if ((((At) o).getTarget() + "").equals(messageInfo.getLoginQq())){
+                    //如果被艾特则视为被呼叫
+                    messageInfo.setCallMe(true);
+                }
+            } else if (o instanceof PlainText) {
+                //消息文字内容
+                messageInfo.setText(((PlainText) o).getContent().trim());
+
+                String[] orders = messageInfo.getText().split("\\s+");
+                if (orders.length > 0) {
+                    messageInfo.setKeyword(orders[0]);
+                    messageInfo.setArgs(Arrays.asList(orders));
+                    messageInfo.setCallMe(true);
+                    for (String name: botNames){
+                        if (orders[0].startsWith(name)){
+                            messageInfo.setKeyword(messageInfo.getKeyword().replace(name, ""));
+                            break;
+                        }
+                    }
+                }
+            } else if (o instanceof OnlineFriendImage){ // 编译器有可能因为无法识别Kotlin的class而报红，问题不大能通过编译
+                //消息图片内容
+                messageInfo.getImgUrlList().add(((OnlineFriendImage) o).getOriginUrl());
+                messageInfo.getImgTypeList().add(((OnlineFriendImage) o).getImageType());
+            }
+        }
+        return messageInfo;
     }
 }

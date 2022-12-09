@@ -1,6 +1,11 @@
 package top.angelinaBot.annotation;
 
+import top.angelinaBot.model.FunctionType;
+import top.angelinaBot.model.PermissionEnum;
+
 import java.lang.annotation.*;
+
+import static top.angelinaBot.model.FunctionType.Others;
 
 /**
  * Angelina框架的群聊方法通用修饰注解
@@ -17,8 +22,6 @@ public @interface AngelinaGroup {
     String[] dHash() default "";
     //使用方法描述
     String description() default "";
-    //自定义类别
-    String sort() default "其他功能";
     //功能块归属
     FunctionType funcClass() default Others;
     //作者

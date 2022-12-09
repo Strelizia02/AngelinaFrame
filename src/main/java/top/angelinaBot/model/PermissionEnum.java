@@ -1,3 +1,5 @@
+package top.angelinaBot.model;
+
 public enum PermissionEnum {
     Administrator("超级管理员", 3),
     GroupMaster("群主", 2),

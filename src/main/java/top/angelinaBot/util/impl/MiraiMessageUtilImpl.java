@@ -64,13 +64,13 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
 
 
         //获取群
-        for (Long groupId : replayInfo.getGroupId()) {
+        for (String groupId : replayInfo.getGroupId()) {
             if (MiraiFrameUtil.messageIdMap.get(groupId) != null) {
                 MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
                 try {
                     //获取登录bot
-                    Bot bot = Bot.getInstance(MiraiFrameUtil.messageIdMap.get(groupId));
-                    Group group = bot.getGroupOrFail(groupId);
+                    Bot bot = Bot.getInstance(Long.parseLong(MiraiFrameUtil.messageIdMap.get(groupId)));
+                    Group group = bot.getGroupOrFail(Long.parseLong(groupId));
 
                     if (replayMessage != null) {
                         //发送文字
@@ -91,17 +91,17 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
 
                     if (kick != null) {
                         //踢出群
-                        group.getOrFail(replayInfo.getQq()).kick("");
+                        group.getOrFail(Long.parseLong(replayInfo.getQq())).kick("");
                     }
 
                     if (muted != null) {
                         //禁言muted秒
-                        group.getOrFail(replayInfo.getQq()).mute(muted);
+                        group.getOrFail(Long.parseLong(replayInfo.getQq())).mute(muted);
                     }
 
                     if (nudged) {
                         //戳一戳
-                        group.getOrFail(replayInfo.getQq()).nudge();
+                        group.getOrFail(Long.parseLong(replayInfo.getQq())).nudge();
                     }
                     group.sendMessage(messageChainBuilder.build());
                     log.info("发送消息" + replayInfo);
@@ -133,8 +133,8 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
         List<ExternalResource> imgResource = getExternalResource(replayImgList);
 
         //获取登录bot
-        Bot bot = Bot.getInstance(replayInfo.getLoginQQ());
-        User user = bot.getFriendOrFail(replayInfo.getQq());
+        Bot bot = Bot.getInstance(Long.parseLong(replayInfo.getLoginQQ()));
+        User user = bot.getFriendOrFail(Long.parseLong(replayInfo.getQq()));
         MessageChainBuilder messageChainBuilder = new MessageChainBuilder();
 
         if (replayMessage != null) {
