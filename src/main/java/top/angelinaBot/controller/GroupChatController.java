@@ -88,6 +88,7 @@ public class GroupChatController {
                         }
                     } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
                         Method method = AngelinaContainer.groupMap.get(message.getKeyword());
+                        //TODO 在这里获取函数的Permisson注解来判断方法权限
                         if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
                             functionMapper.insertFunction(method.getName());
                             ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
