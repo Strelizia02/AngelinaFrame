@@ -5,21 +5,29 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaContainer;
+import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
+import top.angelinaBot.util.ChannelUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
+import top.angelinaBot.util.SendMessageUtil;
 
 import java.io.*;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static top.angelinaBot.container.QQFrameContainer.*;
 
 /**
  * @author strelitzia
@@ -45,12 +53,32 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Value("${userConfig.botNames}")
     public String botNames;
 
+    @Autowired
+    public ChannelUtil channelUtil;
+
+    @Value("${userConfig.appId}")
+    public String appIds;
+
+    @Value("${userConfig.qqList}")
+    private String qqList;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
     @Override
     public void afterSingletonsInstantiated() {
-        miraiFrameUtil.startMirai();
+        initQQFrameContainer();
+        if (!"".equals(qqList)) {
+            miraiFrameUtil.startMirai();
+        } else {
+            log.warn("您尚未填写登录QQ");
+        }
+
+        if (!"".equals(appIds)) {
+            channelUtil.init();
+        } else {
+            log.warn("您尚未填写登录的频道appID");
+        }
         if (botNames.equals("")) {
             throw new AngelinaException("请填写bot的名称！");
         }
@@ -121,5 +149,31 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         }catch (IOException e) {
             log.error("读取闲聊JSON文件失败，请检查chatReplay.json文件");
         }
+    }
+
+    @Autowired(required = false)
+    @Qualifier(Miari)
+    private SendMessageUtil MiarisendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(QQChannel)
+    private SendMessageUtil QQChannelsendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(Gocq)
+    private SendMessageUtil GocqsendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(Oicq)
+    private SendMessageUtil OicqsendMessageUtil;
+
+    @Autowired
+    QQFrameContainer qqFrameContainer;
+
+    public void initQQFrameContainer() {
+        qqFrameContainer.qqFrameMap.put(Miari, MiarisendMessageUtil);
+        qqFrameContainer.qqFrameMap.put(QQChannel, QQChannelsendMessageUtil);
+        qqFrameContainer.qqFrameMap.put(Gocq, GocqsendMessageUtil);
+        qqFrameContainer.qqFrameMap.put(Oicq, OicqsendMessageUtil);
     }
 }

@@ -24,10 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static top.angelinaBot.container.QQFrameContainer.Miari;
+
 /**
  * Mirai发送消息封装方法
  */
-@Component("mirai")
+@Component(Miari)
 @Slf4j
 public class MiraiMessageUtilImpl implements SendMessageUtil {
 
@@ -41,6 +43,9 @@ public class MiraiMessageUtilImpl implements SendMessageUtil {
      */
     @Override
     public void sendGroupMsg(ReplayInfo replayInfo) {
+        if (replayInfo == null) {
+            return;
+        }
         activityMapper.sendMessage();
         //解析replayInfo
         String replayMessage = replayInfo.getReplayMessage();

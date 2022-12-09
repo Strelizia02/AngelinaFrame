@@ -84,6 +84,12 @@ public class MessageInfo {
     */
     private PermissionEnum  userAdmin;
 
+    private String channelId;
+
+    private String author;
+
+    private String bot;
+
     public MessageInfo() {
 
     }
@@ -310,5 +316,29 @@ public class MessageInfo {
 
     public void setReplay(Boolean replay) {
         isReplay = replay;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getBot() {
+        return bot;
+    }
+
+    public void setBot(String bot) {
+        this.bot = bot;
     }
 }

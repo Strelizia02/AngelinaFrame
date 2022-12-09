@@ -8,12 +8,12 @@ import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.event.events.*;
 import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.DeviceInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.Exception.AngelinaException;
 import top.angelinaBot.container.AngelinaEventSource;
+import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.controller.EventsController;
 import top.angelinaBot.controller.FriendChatController;
 import top.angelinaBot.controller.GroupChatController;
@@ -113,7 +113,7 @@ public class MiraiFrameUtil {
             if (messageIdMap.get(event.getGroup().getId()) == event.getBot().getId()) {
                 MessageInfo messageInfo = new MessageInfo(event, botNames);
                 try {
-                    groupChatController.receive(messageInfo);
+                    groupChatController.receive(messageInfo, QQFrameContainer.Miari);
                     if (messageInfo.getText() != null) {
                         AngelinaEventSource.getInstance().handle(messageInfo);
                     }
@@ -138,7 +138,7 @@ public class MiraiFrameUtil {
             messageInfo.setLoginQq(event.getBot().getId());
             messageInfo.setGroupId(event.getGroup().getId());
             try {
-                eventsController.receive(messageInfo);
+                eventsController.receive(messageInfo, QQFrameContainer.Miari);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -154,7 +154,7 @@ public class MiraiFrameUtil {
                 messageInfo.setGroupId(event.getGroup().getId());
                 messageInfo.setQq(event.getAuthorId());
                 try {
-                    eventsController.receive(messageInfo);
+                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -173,7 +173,7 @@ public class MiraiFrameUtil {
                     messageInfo.setGroupId(subject.getId());
                     messageInfo.setQq(event.getFrom().getId());
                     try {
-                        eventsController.receive(messageInfo);
+                        eventsController.receive(messageInfo, QQFrameContainer.Miari);
                     } catch (InvocationTargetException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -192,7 +192,7 @@ public class MiraiFrameUtil {
                 messageInfo.setQq(event.getMember().getId());
                 messageInfo.setName(event.getMember().getNick());
                 try {
-                    eventsController.receive(messageInfo);
+                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -210,7 +210,7 @@ public class MiraiFrameUtil {
                 messageInfo.setQq(event.getMember().getId());
                 messageInfo.setName(event.getMember().getNick());
                 try {
-                    eventsController.receive(messageInfo);
+                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -239,7 +239,7 @@ public class MiraiFrameUtil {
             MessageInfo messageInfo = new MessageInfo(event, botNames);
             activityMapper.getFriendMessage();
             try {
-                friendChatController.receive(messageInfo);
+                friendChatController.receive(messageInfo, QQFrameContainer.Miari);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }

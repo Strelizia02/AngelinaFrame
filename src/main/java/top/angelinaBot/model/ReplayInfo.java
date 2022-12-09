@@ -35,11 +35,20 @@ public class ReplayInfo {
     //戳一戳
     Boolean isNudged = false;
 
+    String channel;
+
+    String bot;
+
+    String author;
+
     public ReplayInfo(MessageInfo messageInfo) {
         this.loginQQ = messageInfo.getLoginQq();
         this.setGroupId(messageInfo.getGroupId());
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
+        this.channel = messageInfo.getChannelId();
+        this.bot = messageInfo.getBot();
+        this.author = messageInfo.getAuthor();
     }
 
     public ReplayInfo() {
@@ -177,5 +186,29 @@ public class ReplayInfo {
             sb.append("[踢出群聊]");
         }
         return sb.toString();
+    }
+
+    public String getChannel() {
+        return channel;
+    }
+
+    public void setChannel(String channel) {
+        this.channel = channel;
+    }
+
+    public String getBot() {
+        return bot;
+    }
+
+    public void setBot(String bot) {
+        this.bot = bot;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 }
