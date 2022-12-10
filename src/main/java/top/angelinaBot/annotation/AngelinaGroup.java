@@ -23,7 +23,7 @@ public @interface AngelinaGroup {
     //使用方法描述
     String description() default "";
     //功能块归属
-    FunctionType funcClass() default Others;
+    FunctionType funcClass();
     //作者
     String author() default "Strelitzia02";
 }

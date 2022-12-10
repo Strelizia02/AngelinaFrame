@@ -3,6 +3,7 @@ package top.angelinaBot.service;
 import net.mamoe.mirai.Bot;
 import org.springframework.stereotype.Service;
 import top.angelinaBot.annotation.AngelinaGroup;
+import top.angelinaBot.model.FunctionType;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.PermissionEnum;
 import top.angelinaBot.model.ReplayInfo;
@@ -10,7 +11,7 @@ import top.angelinaBot.util.MiraiFrameUtil;
 
 @Service
 public class AliveService {
-    @AngelinaGroup(keyWords = {"切换"}, description = "切换活跃账号", permission = PermissionEnum.GroupAdministrator)
+    @AngelinaGroup(keyWords = {"切换"}, description = "切换活跃账号", permission = PermissionEnum.GroupAdministrator, funcClass = FunctionType.FunctionAdmin)
     public ReplayInfo switchAliveQQ(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         String qq;

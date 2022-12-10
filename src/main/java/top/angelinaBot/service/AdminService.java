@@ -6,10 +6,7 @@ import org.springframework.stereotype.Service;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
-import top.angelinaBot.model.EventEnum;
-import top.angelinaBot.model.MessageInfo;
-import top.angelinaBot.model.PermissionEnum;
-import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.model.*;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -21,7 +18,7 @@ public class AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
-    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭某个功能", permission = PermissionEnum.GroupAdministrator)
+    @AngelinaGroup(keyWords = {"关闭"}, description = "关闭某个功能", permission = PermissionEnum.GroupAdministrator, funcClass = FunctionType.FunctionAdmin)
     public ReplayInfo closeFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         if (messageInfo.getArgs().size() > 1) {
@@ -49,7 +46,7 @@ public class AdminService {
         return replayInfo;
     }
 
-    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开某个功能", permission = PermissionEnum.GroupAdministrator)
+    @AngelinaGroup(keyWords = {"开启", "打开"}, description = "打开某个功能", permission = PermissionEnum.GroupAdministrator, funcClass = FunctionType.FunctionAdmin)
     public ReplayInfo openFunc(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         if (messageInfo.getArgs().size() > 1) {
@@ -77,7 +74,7 @@ public class AdminService {
         return replayInfo;
     }
 
-    @AngelinaGroup(keyWords = {"已关闭", "功能开关"}, description = "查看当前已关闭的功能")
+    @AngelinaGroup(keyWords = {"已关闭", "功能开关"}, description = "查看当前已关闭的功能", funcClass = FunctionType.FunctionAdmin)
     public ReplayInfo funcList(MessageInfo messageInfo) {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         List<String> closeFunction = adminMapper.getCloseFunction(messageInfo.getGroupId());
