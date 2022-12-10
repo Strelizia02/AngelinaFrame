@@ -9,8 +9,12 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AngelinaFriend {
-    //关键字触发
+    /**
+     * 关键字触发
+     */
     String[] keyWords();
-    //方法描述
+    /**
+     * 使用方法描述
+     */
     String description() default "";
 }

@@ -1,16 +1,8 @@
 package top.angelinaBot.model;
 
-import net.mamoe.mirai.event.events.FriendMessageEvent;
-import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.internal.message.image.OnlineFriendImage;
-import net.mamoe.mirai.internal.message.image.OnlineGroupImage;
-import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.ImageType;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.PlainText;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

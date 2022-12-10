@@ -22,7 +22,7 @@ public interface AdminMapper {
     List<String> getCloseFunction(@Param("groupId") String groupId);
 
     @Select("CREATE TABLE IF NOT EXISTS `a_group_func_close`  (\n" +
-            "        `group_id` bigInt(255) NOT NULL,\n" +
+            "        `group_id` varchar(255) NOT NULL,\n" +
             "        `func_name` varchar(6) NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +
             "        );")
     Integer initAdminTable();

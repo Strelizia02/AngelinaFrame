@@ -17,7 +17,6 @@ import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.ChannelUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
-import top.angelinaBot.util.SendMessageUtil;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -63,11 +62,31 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Value("${userConfig.qqList}")
     private String qqList;
 
+    @Autowired(required = false)
+    @Qualifier(Miari)
+    private AngelinaSendMessageUtil MiarisendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(QQChannel)
+    private AngelinaSendMessageUtil QQChannelsendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(Gocq)
+    private AngelinaSendMessageUtil GocqsendMessageUtil;
+
+    @Autowired(required = false)
+    @Qualifier(Oicq)
+    private AngelinaSendMessageUtil OicqsendMessageUtil;
+
+    @Autowired
+    private QQFrameContainer qqFrameContainer;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
     @Override
     public void afterSingletonsInstantiated() {
+        //读取所有的超级管理员
         AngelinaContainer.administrators.addAll(Arrays.asList(administrators));
 
         initQQFrameContainer();
@@ -154,25 +173,9 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         }
     }
 
-    @Autowired(required = false)
-    @Qualifier(Miari)
-    private AngelinaSendMessageUtil MiarisendMessageUtil;
-
-    @Autowired(required = false)
-    @Qualifier(QQChannel)
-    private AngelinaSendMessageUtil QQChannelsendMessageUtil;
-
-    @Autowired(required = false)
-    @Qualifier(Gocq)
-    private AngelinaSendMessageUtil GocqsendMessageUtil;
-
-    @Autowired(required = false)
-    @Qualifier(Oicq)
-    private AngelinaSendMessageUtil OicqsendMessageUtil;
-
-    @Autowired
-    QQFrameContainer qqFrameContainer;
-
+    /**
+     * 初始化所有QQ框架信息
+     */
     public void initQQFrameContainer() {
         qqFrameContainer.qqFrameMap.put(Miari, MiarisendMessageUtil);
         qqFrameContainer.qqFrameMap.put(QQChannel, QQChannelsendMessageUtil);

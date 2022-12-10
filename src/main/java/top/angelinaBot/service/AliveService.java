@@ -9,6 +9,8 @@ import top.angelinaBot.model.PermissionEnum;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.MiraiFrameUtil;
 
+import java.util.List;
+
 @Service
 public class AliveService {
     @AngelinaGroup(keyWords = {"切换"}, description = "切换活跃账号", permission = PermissionEnum.GroupAdministrator, funcClass = FunctionType.FunctionAdmin)
@@ -33,6 +35,18 @@ public class AliveService {
             replayInfo.setReplayMessage("已将本群bot切换为" + bot.getNick());
         } else {
             replayInfo.setReplayMessage("所选账号不在本群中或已被封号");
+        }
+        return replayInfo;
+    }
+
+    @AngelinaGroup(keyWords = {"在线Bot", "在线", "Bot列表", "在线bot", "bot列表"}, description = "查看当前所有Bot信息", funcClass = FunctionType.FunctionAdmin)
+    public ReplayInfo getAliveQQ(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+
+        List<Bot> bots = Bot.getInstances();
+        int i = 0;
+        for (Bot bot: bots) {
+            replayInfo.setReplayMessage("[" + i + "]" + bot.getNick() + " " + bot.getId() + " " + (bot.isOnline() ? "在线\n" : "离线\n"));
         }
         return replayInfo;
     }

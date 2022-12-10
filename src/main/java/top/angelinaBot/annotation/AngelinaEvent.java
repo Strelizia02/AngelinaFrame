@@ -11,8 +11,13 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface AngelinaEvent {
-    //关键字触发
+    /**
+     * 关键字触发
+     */
     EventEnum event();
-    //方法描述
+
+    /**
+     * 使用方法描述
+     */
     String description() default "";
 }

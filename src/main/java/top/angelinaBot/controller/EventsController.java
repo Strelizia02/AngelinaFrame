@@ -7,16 +7,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
-import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
-import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.SendMessageUtil;
 import top.angelinaBot.vo.JsonResult;
 
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

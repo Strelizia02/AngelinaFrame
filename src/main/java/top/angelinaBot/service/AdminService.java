@@ -1,6 +1,5 @@
 package top.angelinaBot.service;
 
-import net.mamoe.mirai.contact.MemberPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.angelinaBot.annotation.AngelinaGroup;
@@ -8,7 +7,6 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.model.*;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
