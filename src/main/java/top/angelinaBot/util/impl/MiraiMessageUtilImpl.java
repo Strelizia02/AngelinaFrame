@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
-import top.angelinaBot.util.SendMessageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -31,7 +31,7 @@ import static top.angelinaBot.container.QQFrameContainer.Miari;
  */
 @Component(Miari)
 @Slf4j
-public class MiraiMessageUtilImpl implements SendMessageUtil {
+public class MiraiMessageUtilImpl implements AngelinaSendMessageUtil {
 
     @Autowired
     private ActivityMapper activityMapper;

@@ -12,6 +12,7 @@ import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
+import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.SendMessageUtil;
 import top.angelinaBot.vo.JsonResult;
 
@@ -36,7 +37,7 @@ public class EventsController {
     private FunctionMapper functionMapper;
 
     @Autowired
-    QQFrameContainer qqFrameContainer;
+    private SendMessageUtil sendMessageUtil;
 
     /**
      * 通用的qq事件处理接口，可以通过代码内部调用，也可以通过Post接口调用
@@ -46,8 +47,7 @@ public class EventsController {
      * @throws IllegalAccessException 反射相关异常
      */
     @PostMapping("receive")
-    public JsonResult<ReplayInfo> receive(MessageInfo message, String frame) throws InvocationTargetException, IllegalAccessException {
-        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(frame);
+    public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("接受到事件:{}", message.getEvent());

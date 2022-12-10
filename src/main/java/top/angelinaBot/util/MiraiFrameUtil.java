@@ -146,8 +146,9 @@ public class MiraiFrameUtil {
             messageInfo.setEvent(EventEnum.MemberJoinEvent);
             messageInfo.setLoginQq(event.getBot().getId() + "");
             messageInfo.setGroupId(event.getGroup().getId() + "");
+            messageInfo.setFrame(QQFrameContainer.Miari);
             try {
-                eventsController.receive(messageInfo, QQFrameContainer.Miari);
+                eventsController.receive(messageInfo);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -162,8 +163,9 @@ public class MiraiFrameUtil {
                 messageInfo.setLoginQq(event.getBot().getId() + "");
                 messageInfo.setGroupId(event.getGroup().getId() + "");
                 messageInfo.setQq(event.getAuthorId() + "");
+                messageInfo.setFrame(QQFrameContainer.Miari);
                 try {
-                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
+                    eventsController.receive(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -181,8 +183,9 @@ public class MiraiFrameUtil {
                     messageInfo.setLoginQq(event.getBot().getId() + "");
                     messageInfo.setGroupId(subject.getId() + "");
                     messageInfo.setQq(event.getFrom().getId() + "");
+                    messageInfo.setFrame(QQFrameContainer.Miari);
                     try {
-                        eventsController.receive(messageInfo, QQFrameContainer.Miari);
+                        eventsController.receive(messageInfo);
                     } catch (InvocationTargetException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -200,8 +203,9 @@ public class MiraiFrameUtil {
                 messageInfo.setGroupId(event.getGroup().getId() + "");
                 messageInfo.setQq(event.getMember().getId() + "");
                 messageInfo.setName(event.getMember().getNick());
+                messageInfo.setFrame(QQFrameContainer.Miari);
                 try {
-                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
+                    eventsController.receive(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -218,8 +222,9 @@ public class MiraiFrameUtil {
                 messageInfo.setGroupId(event.getGroup().getId() + "");
                 messageInfo.setQq(event.getMember().getId() + "");
                 messageInfo.setName(event.getMember().getNick());
+                messageInfo.setFrame(QQFrameContainer.Miari);
                 try {
-                    eventsController.receive(messageInfo, QQFrameContainer.Miari);
+                    eventsController.receive(messageInfo);
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -247,8 +252,9 @@ public class MiraiFrameUtil {
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
             MessageInfo messageInfo = getMessageInfo(event, botNames);
             activityMapper.getFriendMessage();
+            messageInfo.setFrame(QQFrameContainer.Miari);
             try {
-                friendChatController.receive(messageInfo, QQFrameContainer.Miari);
+                friendChatController.receive(messageInfo);
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }

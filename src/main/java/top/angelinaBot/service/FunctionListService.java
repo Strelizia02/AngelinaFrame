@@ -9,6 +9,7 @@ import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.container.AngelinaEventSource;
 import top.angelinaBot.container.AngelinaListener;
+import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.model.*;
 import top.angelinaBot.util.SendMessageUtil;
 
@@ -26,6 +27,9 @@ public class FunctionListService {
     //bot的呼叫关键字
     @Value("#{'${userConfig.botNames}'.split(' ')}")
     public String[] botNames;
+
+    @Autowired
+    private QQFrameContainer qqFrameContainer;
 
     @AngelinaGroup(keyWords = {"菜单", "功能", "会什么"}, description = "全部功能列表")
     public ReplayInfo getFunctionList(MessageInfo messageInfo) {
@@ -62,7 +66,6 @@ public class FunctionListService {
             textLine.addString("[6]全部菜单");
             textLine.nextLine();
             textLine.addString("请于十秒内发送编号查看菜单，超时或者发送其他信息则返回全部菜单");
-
 
 
             AngelinaListener angelinaListener = new AngelinaListener() {

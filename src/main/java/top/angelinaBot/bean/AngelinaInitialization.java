@@ -14,6 +14,7 @@ import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
+import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.ChannelUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
 import top.angelinaBot.util.SendMessageUtil;
@@ -155,19 +156,19 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
 
     @Autowired(required = false)
     @Qualifier(Miari)
-    private SendMessageUtil MiarisendMessageUtil;
+    private AngelinaSendMessageUtil MiarisendMessageUtil;
 
     @Autowired(required = false)
     @Qualifier(QQChannel)
-    private SendMessageUtil QQChannelsendMessageUtil;
+    private AngelinaSendMessageUtil QQChannelsendMessageUtil;
 
     @Autowired(required = false)
     @Qualifier(Gocq)
-    private SendMessageUtil GocqsendMessageUtil;
+    private AngelinaSendMessageUtil GocqsendMessageUtil;
 
     @Autowired(required = false)
     @Qualifier(Oicq)
-    private SendMessageUtil OicqsendMessageUtil;
+    private AngelinaSendMessageUtil OicqsendMessageUtil;
 
     @Autowired
     QQFrameContainer qqFrameContainer;

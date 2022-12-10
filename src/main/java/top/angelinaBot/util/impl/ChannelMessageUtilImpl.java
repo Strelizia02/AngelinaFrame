@@ -2,7 +2,6 @@ package top.angelinaBot.util.impl;
 
 import lombok.extern.slf4j.Slf4j;
 
-import net.mamoe.mirai.utils.ExternalResource;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,20 +9,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
-import top.angelinaBot.util.SendMessageUtil;
+import top.angelinaBot.util.AngelinaSendMessageUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -34,7 +24,7 @@ import static top.angelinaBot.container.QQFrameContainer.QQChannel;
  */
 @Component(QQChannel)
 @Slf4j
-public class ChannelMessageUtilImpl implements SendMessageUtil {
+public class ChannelMessageUtilImpl implements AngelinaSendMessageUtil {
 
     @Value("${userConfig.token}")
     public String userConfigToken;
@@ -63,7 +53,7 @@ public class ChannelMessageUtilImpl implements SendMessageUtil {
         String replayMessage = replayInfo.getReplayMessage();
         List<Object> replayImgList = replayInfo.getReplayImg();
 
-        String url = "https://sandbox.api.sgroup.qq.com/channels/" + replayInfo.getChannel() + "/messages";
+        String url = "https://sandbox.api.sgroup.qq.com/channels/" + replayInfo.getGroupId() + "/messages";
 
         JSONObject obj = new JSONObject();
 

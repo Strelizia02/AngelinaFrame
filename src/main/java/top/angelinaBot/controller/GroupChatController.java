@@ -2,11 +2,9 @@ package top.angelinaBot.controller;
 
 import net.mamoe.mirai.message.data.ImageType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
-import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
@@ -45,10 +43,11 @@ public class GroupChatController {
     @Autowired
     private FunctionMapper functionMapper;
 
+    @Autowired
+    private SendMessageUtil sendMessageUtil;
+
     private final Map<String, List<Long>> qqMsgRateList = new HashMap<>();
 
-    @Autowired
-    QQFrameContainer qqFrameContainer;
 
     /**
      * 通用的qq群聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用
@@ -60,12 +59,11 @@ public class GroupChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
-        SendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(message.getFrame());
         //不处理自身发送的消息
         if (!message.getLoginQq().equals(message.getQq())) {
             log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if (getMsgLimit(message, sendMessageUtil)) {
+                if (getMsgLimit(message)) {
                     activityMapper.getGroupMessage();
                     if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
                         List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
@@ -136,7 +134,7 @@ public class GroupChatController {
     /**
      * 消息回复限速机制
      */
-    private boolean getMsgLimit(MessageInfo messageInfo, SendMessageUtil sendMessageUtil) {
+    private boolean getMsgLimit(MessageInfo messageInfo) {
         boolean flag = true;
         //每10秒限制三条消息,10秒内超过5条就不再提示
         int length = 3;

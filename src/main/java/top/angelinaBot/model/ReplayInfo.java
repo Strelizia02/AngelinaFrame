@@ -65,6 +65,7 @@ public class ReplayInfo {
         this.setGroupId(messageInfo.getGroupId());
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
+        this.frame = messageInfo.getFrame();
     }
 
     public ReplayInfo() {
