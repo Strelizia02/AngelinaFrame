@@ -221,7 +221,11 @@ public class MessageInfo {
     }
 
     public void setUserAdmin(PermissionEnum userAdmin) {
-        this.userAdmin = userAdmin;
+        if (this.userAdmin != null && userAdmin.getLevel() > this.userAdmin.getLevel()) {
+            this.userAdmin = userAdmin;
+        } else if (this.userAdmin == null) {
+            this.userAdmin = userAdmin;
+        }
     }
 
     public void setReplay(Boolean replay) {

@@ -182,12 +182,12 @@ public class FunctionListService {
 
     public void drawFunctionByType(TextLine textLine, FunctionType type) {
         Set<Method> group = new HashSet<>(AngelinaContainer.groupMap.values());
+        textLine.addString(type.getName() + "：");
+        textLine.nextLine();
         for(Method method: group) {
             AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
 
             if (annotation.funcClass() == type) {
-                textLine.addString(type.getName() + "：");
-                textLine.nextLine();
                 textLine.addString(annotation.keyWords()[0]);
                 textLine.nextLine();
                 textLine.addSpace(2);

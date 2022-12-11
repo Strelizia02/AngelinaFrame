@@ -1,15 +1,18 @@
 package top.angelinaBot.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.controller.GroupChatController;
 import top.angelinaBot.model.MessageInfo;
+import top.angelinaBot.model.PermissionEnum;
 
 import javax.websocket.*;
 import java.io.IOException;
@@ -105,7 +108,19 @@ public class ChannelUtil {
                         String username = messageObj.getJSONObject("author").getString("username");
                         String channelId = messageObj.getString("channel_id");
                         String content = messageObj.getString("content");
+                        JSONArray roles = messageObj.getJSONObject("member").getJSONArray("roles");
                         MessageInfo messageInfo = new MessageInfo();
+
+                        for (int i = 0; i < roles.length(); i++) {
+                            if ("4".equals(roles.getString(i))) {
+                                messageInfo.setUserAdmin(PermissionEnum.GroupAdministrator);
+                            } else if ("2".equals(roles.getString(i)) || "5".equals(roles.getString(i))) {
+                                messageInfo.setUserAdmin(PermissionEnum.GroupMaster);
+                            } else {
+                                messageInfo.setUserAdmin(PermissionEnum.GroupUser);
+                            }
+                        }
+
                         messageInfo.setFrame(QQFrameContainer.QQChannel);
 
                         messageInfo.setGroupId(channelId);

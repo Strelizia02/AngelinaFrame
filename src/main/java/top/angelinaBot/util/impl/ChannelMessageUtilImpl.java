@@ -14,8 +14,12 @@ import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.model.ReplayInfo;
 import top.angelinaBot.util.AngelinaSendMessageUtil;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import static top.angelinaBot.container.QQFrameContainer.QQChannel;
 
@@ -59,8 +63,8 @@ public class ChannelMessageUtilImpl implements AngelinaSendMessageUtil {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "Bot " + userConfigAppId + "." + userConfigToken);
-//        httpHeaders.set("Content-Type", "multipart/form-data");
-        httpHeaders.set("Content-Type", "application/json");
+        httpHeaders.set("Content-Type", "multipart/form-data");
+//        httpHeaders.set("Content-Type", "application/json");
 
 
         try {
@@ -72,7 +76,19 @@ public class ChannelMessageUtilImpl implements AngelinaSendMessageUtil {
             if (replayImgList.size() > 0) {
                 //发送图片
                 for (Object replayImg : replayImgList) {
-                    obj.put("file_image", replayImg);
+                    if (replayImg instanceof String) {
+                        obj.put("image", replayImg);
+                    } else if (replayImg instanceof File) {
+                        obj.put("file_image", ((File)replayImg).getAbsolutePath());
+                    } else if (replayImg instanceof BufferedImage) {
+                        File dir = new File("runFile/cache/");
+                        if (!dir.exists()) {
+                            boolean mkdir = dir.mkdir();
+                        }
+                        String path  = "runFile/cache/" + UUID.randomUUID();
+                        ImageIO.write((BufferedImage) replayImg, "png", new File(path));
+                        obj.put("image", path);
+                    }
                 }
             }
 
