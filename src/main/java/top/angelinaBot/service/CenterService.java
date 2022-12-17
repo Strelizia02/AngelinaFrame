@@ -90,7 +90,7 @@ public class CenterService {
 
         String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
 
-        log.info(body);
+        log.info("心跳成功");
         if ("0".equals(s)) {
             JSONObject obj = new JSONObject(body);
             adminMapper.updateId(obj.getString("data"));
@@ -126,5 +126,6 @@ public class CenterService {
 
         activityMapper.clearActivity();
         functionMapper.deleteFunctionTable();
+        log.info("运行数据同步成功");
     }
 }
