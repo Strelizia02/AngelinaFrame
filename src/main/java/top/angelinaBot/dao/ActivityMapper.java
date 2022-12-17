@@ -3,6 +3,9 @@ package top.angelinaBot.dao;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import top.angelinaBot.model.MessageCount;
+
+import java.util.List;
 
 public interface ActivityMapper {
 
@@ -24,6 +27,9 @@ public interface ActivityMapper {
             "        );")
     void initActivityTable();
 
-    @Delete("delete from a_activity where time &lt; datetime('now','-1 day');")
+    @Delete("delete from a_activity;")
     void clearActivity();
+
+    @Select("select type, count(type) as count from a_activity GROUP BY type")
+    List<MessageCount> selectCount();
 }

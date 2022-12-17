@@ -26,4 +26,14 @@ public interface AdminMapper {
             "        `func_name` varchar(6) NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +
             "        );")
     Integer initAdminTable();
+
+    @Select("CREATE TABLE IF NOT EXISTS `t_id`  (\n" +
+            "        `id` varchar(255) NOT NULL);")
+    Integer initIdTable();
+
+    @Select("select id from t_id limit 1;")
+    String selectId();
+
+    @Select("update `t_id` set `id` = #{id}")
+    Integer updateId(@Param("id") String id);
 }

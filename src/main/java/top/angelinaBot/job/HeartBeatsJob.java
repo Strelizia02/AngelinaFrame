@@ -5,18 +5,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import top.angelinaBot.service.CenterService;
 
-public class CleanChatDataJob {
+public class HeartBeatsJob {
 
     @Autowired
     private CenterService centerService;
 
-
-    /**
-     * 每日总结一次，Send给中心
-     */
-    @Scheduled(cron = "0 10 4 */1 * ?")
+    @Scheduled(cron = "30 */2 * * * ?")
     @Async
-    public void exterminateJob() {
-        centerService.exterminateJob();
+    public void heartBeats() {
+        centerService.heartBeats();
     }
 }

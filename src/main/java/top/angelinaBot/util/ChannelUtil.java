@@ -207,8 +207,6 @@ public class ChannelUtil {
         tokenObj.putOpt("properties", null);
         identify.put("d", tokenObj);
         send(identify);
-
-        heartBeats();
     }
 
     @Async

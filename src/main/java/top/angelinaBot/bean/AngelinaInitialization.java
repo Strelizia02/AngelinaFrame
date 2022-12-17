@@ -14,6 +14,8 @@ import top.angelinaBot.container.QQFrameContainer;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
 import top.angelinaBot.dao.FunctionMapper;
+import top.angelinaBot.service.CenterService;
+import top.angelinaBot.service.InitAngelinaService;
 import top.angelinaBot.util.AngelinaSendMessageUtil;
 import top.angelinaBot.util.ChannelUtil;
 import top.angelinaBot.util.MiraiFrameUtil;
@@ -81,6 +83,12 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
     @Autowired
     private QQFrameContainer qqFrameContainer;
 
+    @Autowired
+    private CenterService centerService;
+
+    @Autowired(required = false)
+    private InitAngelinaService initAngelinaService;
+
     /**
      * 该方法仅在加载完所有的Bean以后，Spring完全启动前执行一次
      */
@@ -98,6 +106,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
 
         if (!"".equals(appIds)) {
             channelUtil.init();
+            channelUtil.heartBeats();
         } else {
             log.warn("您尚未填写登录的频道appID");
         }
@@ -108,6 +117,14 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         activityMapper.initActivityTable();
         functionMapper.initFunctionTable();
         adminMapper.initAdminTable();
+        adminMapper.initIdTable();
+
+        centerService.heartBeats();
+        centerService.exterminateJob();
+
+        if (initAngelinaService != null) {
+            initAngelinaService.init();
+        }
     }
 
     /**
