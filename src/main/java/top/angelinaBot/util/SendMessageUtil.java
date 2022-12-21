@@ -22,6 +22,6 @@ public class SendMessageUtil {
 
     public void sendFriendMsg(ReplayInfo replayInfo) {
         AngelinaSendMessageUtil sendMessageUtil = qqFrameContainer.qqFrameMap.get(replayInfo.getFrame());
-        sendMessageUtil.sendGroupMsg(replayInfo);
+        sendMessageUtil.sendFriendMsg(replayInfo);
     }
 }
