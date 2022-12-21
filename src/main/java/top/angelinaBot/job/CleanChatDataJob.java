@@ -14,7 +14,7 @@ public class CleanChatDataJob {
     /**
      * 每日总结一次，Send给中心
      */
-    @Scheduled(cron = "0 10 4 */1 * ?")
+    @Scheduled(fixDelay = 1000 * 60 * 60 * 24, initialDelay = -1)
     @Async
     public void exterminateJob() {
         centerService.exterminateJob();
