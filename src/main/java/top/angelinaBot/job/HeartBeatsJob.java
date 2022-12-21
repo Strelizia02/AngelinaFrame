@@ -10,7 +10,7 @@ public class HeartBeatsJob {
     @Autowired
     private CenterService centerService;
 
-    @Scheduled(cron = "30 */2 * * * ?")
+    @Scheduled(fixDelay = 3000, initialDelay = -1)
     @Async
     public void heartBeats() {
         centerService.heartBeats();
