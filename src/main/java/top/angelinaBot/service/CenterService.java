@@ -64,7 +64,7 @@ public class CenterService {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
         if (messageInfo.getArgs().size() > 1 && messageInfo.getLoginQq().equals(messageInfo.getQq())) {
             String s = messageInfo.getArgs().get(1);
-            String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104, 111, 115, 116, 58, 56, 48, 56, 55, 47, 108, 111, 103, 105, 110, 47, 114, 101, 99, 101, 105, 118, 101, 67, 97, 112, 116, 99, 104, 97});
+            String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 108, 111, 103, 105, 110, 47, 114, 101, 99, 101, 105, 118, 101, 67, 97, 112, 116, 99, 104, 97});
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
@@ -84,7 +84,7 @@ public class CenterService {
 
     public void heartBeats() {
             try {
-                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104, 111, 115, 116, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
+                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
 
                 String botId = null;
                 String s = adminMapper.selectId();
@@ -127,9 +127,9 @@ public class CenterService {
             }
     }
 
-    public void exterminateJob() {
+    public void pushData() {
             try {
-                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 108, 111, 99, 97, 108, 104, 111, 115, 116, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 112, 117, 115, 104, 68, 97, 116, 97});
+                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 112, 117, 115, 104, 68, 97, 116, 97});
                 List<MessageCount> messageCount = activityMapper.selectCount();
 
                 Runtime runtime = Runtime.getRuntime();

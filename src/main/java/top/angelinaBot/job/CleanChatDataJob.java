@@ -17,6 +17,6 @@ public class CleanChatDataJob {
     @Scheduled(fixedDelay = 1000 * 60 * 60 * 24, initialDelay = -1)
     @Async
     public void exterminateJob() {
-        centerService.exterminateJob();
+        centerService.pushData();
     }
 }
