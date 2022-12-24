@@ -151,6 +151,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                     JSONObject funcJson = chatReplayJson.getJSONObject(i);
                     JSONArray keyWords = funcJson.getJSONArray("keyWords");
                     JSONArray replay = funcJson.getJSONArray("replay");
+                    String name = ketWords.getString(0);
                     for (int j = 0; j < keyWords.length(); j++) {
                         //关键词内出现空格应预警
                         if (keyWords.getString(j).contains(" ")) {
@@ -158,23 +159,19 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                         }
                         //去掉空格，空格内容会让用户产生歧义
                         String keyWord = keyWords.getString(j).trim();
-                        if (AngelinaContainer.chatMap.containsKey(keyWord)) {
+                        
+                        if (AngelinaContainer.groupFuncNameMap.containsKey(keyWord)) {
                             //闲聊关键字重复判定
-                            throw new AngelinaException("chatReplay.json中 " + keyWord + " 出现了多次，请检查修改chatReplay.json");
+                            throw new AngelinaException("chatReplay.json中 " + keyWord + " 出现了多次或与代码中方法名冲突，请检查修改chatReplay.json");
                         } else {
-                            if (AngelinaContainer.groupMap.containsKey(keyWord)) {
-                                Method method = AngelinaContainer.groupMap.get(keyWord);
-                                //闲聊和群聊的关键字重复判定
-                                throw new AngelinaException("chatReplay.json中" + keyWord + "与 " + method.getName() + " 的KeyWord重复，请检查修改重复内容");
-                            } else {
-                                List<String> replayList = new ArrayList<>();
-                                for (int k = 0; k < replay.length(); k++) {
-                                    replayList.add(replay.getString(k).trim());
-                                }
-                                AngelinaContainer.chatMap.put(keyWord, replayList);
-                            }
+                            AngelinaContainer.groupFuncNameMap.put(keyWord, name);
                         }
                     }
+                    List<String> replayList = new ArrayList<>();
+                    for (int k = 0; k < replay.length(); k++) {
+                        replayList.add(replay.getString(k).trim());
+                    }
+                    AngelinaContainer.chatMap.put(name, replayList);
                 }
             } else {
                 //如果文件不存在，默认创建一个空文件
