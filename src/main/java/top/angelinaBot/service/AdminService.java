@@ -87,4 +87,9 @@ public class AdminService {
         replayInfo.setReplayMessage(sb.toString());
         return replayInfo;
     }
+    
+    @AngelinaGroup(keyWords = {"停用", "停止"}, description = "全局关闭某个功能", funcClass = FunctionType.FunctionAdmin)
+    
+    @AngelinaGroup(keyWords = {"已停用", "已停止"}, description = "查看哪些功能已全局关闭", funcClass = FunctionType.FunctionAdmin)
+
 }
