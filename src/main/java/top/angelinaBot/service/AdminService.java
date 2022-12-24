@@ -25,8 +25,9 @@ public class AdminService {
                 replayInfo.setReplayMessage("您不能对基本操作进行更改");
                 return replayInfo;
             }
-            if (AngelinaContainer.groupMap.containsKey(key)) {
-                adminMapper.closeFunction(messageInfo.getGroupId(), AngelinaContainer.groupMap.get(key).getName());
+            if (AngelinaContainer.groupFuncNameMap.containsKey(key)) {
+                String name = AngelinaContainer.groupFuncNameMap.get(key);
+                adminMapper.closeFunction(messageInfo.getGroupId(), name);
                 replayInfo.setReplayMessage("关闭功能 " + key + "成功");
                 return replayInfo;
             } else {
@@ -53,8 +54,9 @@ public class AdminService {
                 replayInfo.setReplayMessage("您不能对基本操作进行更改");
                 return replayInfo;
             }
-            if (AngelinaContainer.groupMap.containsKey(key)) {
-                adminMapper.openFunction(messageInfo.getGroupId(), AngelinaContainer.groupMap.get(key).getName());
+            if (AngelinaContainer.groupFuncNameMap.containsKey(key)) {
+                String name = AngelinaContainer.groupFuncNameMap.get(key);
+                adminMapper.openFunction(messageInfo.getGroupId(), name);
                 replayInfo.setReplayMessage("打开功能 " + key + "成功");
                 return replayInfo;
             } else {
