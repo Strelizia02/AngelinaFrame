@@ -65,49 +65,54 @@ public class GroupChatController {
             if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
                 if (getMsgLimit(message)) {
                     activityMapper.getGroupMessage();
-                    if (AngelinaContainer.chatMap.containsKey(message.getKeyword())) {
-                        List<String> s = AngelinaContainer.chatMap.get(message.getKeyword());
-                        ReplayInfo replayInfo = new ReplayInfo(message);
-                        //判断该群是否已关闭该功能
-                        if (adminMapper.canUseFunction(message.getGroupId(), s.get(0)) == 0) {
-                            String sendStr = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
-                            //解析大括号内容
-                            Pattern pattern = Pattern.compile("\\{[^}]*\\}");
-                            Matcher m = pattern.matcher(sendStr);
-                            while (m.find()) {
-                                String str = m.group();
-                                String[] split = str.substring(1, str.length() - 1).split("@");
-                                if (split[0].equals("audio")) {
-                                    //添加语音
-                                    replayInfo.setMp3(split[1]);
-                                } else if (split[0].equals("img")) {
-                                    //添加图片
-                                    replayInfo.setReplayImg(new File(split[1]));
+                    if (AngelinaContainer.groupFuncNameMap.containsKey(message.getKeyword())) {
+                        String name = AngelinaContainer.groupFuncNameMap.get(message.getKeyword());
+                        if (AngelinaContainer.chatMap.containsKey(name)) {
+                            List<String> s = AngelinaContainer.chatMap.get(name);
+                            ReplayInfo replayInfo = new ReplayInfo(message);
+                            //判断该群是否已关闭该功能
+                            if (adminMapper.canUseFunction(message.getGroupId(), name) == 0) {
+                                String sendStr = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
+                                //解析大括号内容
+                                Pattern pattern = Pattern.compile("\\{[^}]*\\}");
+                                Matcher m = pattern.matcher(sendStr);
+                                while (m.find()) {
+                                    String str = m.group();
+                                    String[] split = str.substring(1, str.length() - 1).split("@");
+                                    if (split[0].equals("audio")) {
+                                        //添加语音
+                                        replayInfo.setMp3(split[1]);
+                                    } else if (split[0].equals("img")) {
+                                        //添加图片
+                                        replayInfo.setReplayImg(new File(split[1]));
+                                    }
                                 }
-                            }
-                            replayInfo.setReplayMessage(m.replaceAll(" "));
-                            sendMessageUtil.sendGroupMsg(replayInfo);
-                            return JsonResult.success(replayInfo);
-                        }
-                    } else if (AngelinaContainer.groupMap.containsKey(message.getKeyword())) {
-                        Method method = AngelinaContainer.groupMap.get(message.getKeyword());
-                        if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
-                            //在这里获取函数的Permission注解来判断方法权限
-                            PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();
-                            PermissionEnum userAdmin = message.getUserAdmin();
-                            if (userAdmin.getLevel() < p.getLevel()) {
-                                ReplayInfo replayInfo = new ReplayInfo(message);
-                                replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
+                                replayInfo.setReplayMessage(m.replaceAll(" "));
                                 sendMessageUtil.sendGroupMsg(replayInfo);
                                 return JsonResult.success(replayInfo);
                             }
+                        }
+                        
+                        if (AngelinaContainer.groupMap.containsKey(name)) {
+                            Method method = AngelinaContainer.groupMap.get(name);
+                            if (adminMapper.canUseFunction(message.getGroupId(), name) == 0) {
+                                //在这里获取函数的Permission注解来判断方法权限
+                                PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();
+                                PermissionEnum userAdmin = message.getUserAdmin();
+                                if (userAdmin.getLevel() < p.getLevel()) {
+                                    ReplayInfo replayInfo = new ReplayInfo(message);
+                                    replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
+                                    sendMessageUtil.sendGroupMsg(replayInfo);
+                                    return JsonResult.success(replayInfo);
+                                }
 
-                            functionMapper.insertFunction(method.getName());
-                            ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                            if (message.isReplay()) {
-                                sendMessageUtil.sendGroupMsg(invoke);
+                                functionMapper.insertFunction(method.getName());
+                                ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                                if (message.isReplay()) {
+                                    sendMessageUtil.sendGroupMsg(invoke);
+                                }
+                                return JsonResult.success(invoke);
                             }
-                            return JsonResult.success(invoke);
                         }
                     }
                 }
