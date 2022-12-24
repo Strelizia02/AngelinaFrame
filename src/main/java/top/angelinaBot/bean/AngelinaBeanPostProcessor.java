@@ -57,18 +57,22 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                             if (annotation instanceof AngelinaGroup) {
                                 //获取文字关键字
                                 String[] groupKeyWords = ((AngelinaGroup) annotation).keyWords();
+                                //取keyWords中第一个作为唯一方法名标记
+                                String name = groupKeyWords[0];
+                                
                                 for (String keyWord : groupKeyWords) {
                                     //判断关键字是否重复
                                     if (AngelinaContainer.groupMap.containsKey(keyWord)) {
-                                        Method replaceMethod = AngelinaContainer.groupMap.get(keyWord);
+                                        Method replaceMethod = AngelinaContainer.groupFuncNameMap.get(keyWord);
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
                                     } else {
-                                        //关闭安全检查提升反射速度
-                                        method.setAccessible(true);
-                                        //确认完全符合要求后，将关键字和方法添加至全局变量keyWordsMap中
-                                        AngelinaContainer.groupMap.put(keyWord, method);
+                                        AngelinaContainer.groupFuncNameMap.put(keyWord, name);
                                     }
                                 }
+                                //关闭安全检查提升反射速度
+                                method.setAccessible(true);
+                                //确认完全符合要求后，将关键字和方法添加至全局变量keyWordsMap中
+                                AngelinaContainer.groupMap.put(name, method);
 
                                 String[] dHashList = ((AngelinaGroup) annotation).dHash();
                                 if (AngelinaContainer.dHashMap.size() == 10) {
