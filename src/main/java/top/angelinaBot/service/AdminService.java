@@ -90,8 +90,79 @@ public class AdminService {
         return replayInfo;
     }
     
-    @AngelinaGroup(keyWords = {"停用", "停止"}, description = "全局关闭某个功能", funcClass = FunctionType.FunctionAdmin)
+    @AngelinaGroup(keyWords = {"停用", "停止"}, description = "全局关闭某个功能", permission = PermissionEnum.Administrator, funcClass = FunctionType.FunctionAdmin))
+    public ReplayInfo stopFunc(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getArgs().size() > 1) {
+            String key = messageInfo.getArgs().get(1);
+            if (key.equals("停用") || key.equals("停止") || key.equals("启用") || key.equals("启动")) {
+                replayInfo.setReplayMessage("您不能对基本操作进行更改");
+                return replayInfo;
+            }
+            
+            if (AngelinaContainer.groupFuncNameMap.containsKey(key)) {
+                String name = AngelinaContainer.groupFuncNameMap.get(key);
+                adminMapper.stopFunction(name);
+                replayInfo.setReplayMessage("停止功能 " + key + "成功");
+                return replayInfo;
+            } else {
+                Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
+                for (EventEnum e: eventEnums) {
+                    if (key.equals(e.getEventName())) {
+                        adminMapper.stopFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getName());
+                        replayInfo.setReplayMessage("停止功能 " + key + "成功");
+                        return replayInfo;
+                    }
+                }
+            }
+        }
+        replayInfo.setReplayMessage("未找到该功能，停止失败");
+        return replayInfo;
+    }
+    
+    @AngelinaGroup(keyWords = {"启用", "启动"}, description = "全局启用某个功能", permission = PermissionEnum.Administrator, funcClass = FunctionType.FunctionAdmin))
+    public ReplayInfo openFunc(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        if (messageInfo.getArgs().size() > 1) {
+            String key = messageInfo.getArgs().get(1);
+            if (key.equals("停用") || key.equals("停止") || key.equals("启用") || key.equals("启动")) {
+                replayInfo.setReplayMessage("您不能对基本操作进行更改");
+                return replayInfo;
+            }
+            
+            if (AngelinaContainer.groupFuncNameMap.containsKey(key)) {
+                String name = AngelinaContainer.groupFuncNameMap.get(key);
+                adminMapper.startFunction(messageInfo.getGroupId(), name);
+                replayInfo.setReplayMessage("启用功能 " + key + "成功");
+                return replayInfo;
+            } else {
+                Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
+                for (EventEnum e: eventEnums) {
+                    if (key.equals(e.getEventName())) {
+                        adminMapper.startFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getName());
+                        replayInfo.setReplayMessage("启用功能 " + key + "成功");
+                        return replayInfo;
+                    }
+                }
+            }
+        }
+        replayInfo.setReplayMessage("未找到该功能，启用失败");
+        return replayInfo;
+    }
     
     @AngelinaGroup(keyWords = {"已停用", "已停止"}, description = "查看哪些功能已全局关闭", funcClass = FunctionType.FunctionAdmin)
-
+    public ReplayInfo stopFuncList(MessageInfo messageInfo) {
+        ReplayInfo replayInfo = new ReplayInfo(messageInfo);
+        List<String> stopFunction = adminMapper.getStopFunction(messageInfo.getGroupId());
+        if (closeFunction.size() == 0) {
+            replayInfo.setReplayMessage("当前功能均已启用");
+            return replayInfo;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String s: stopFunction) {
+            sb.append(s).append("   ").append("停用").append("\n");
+        }
+        replayInfo.setReplayMessage(sb.toString());
+        return replayInfo;
+    }
 }
