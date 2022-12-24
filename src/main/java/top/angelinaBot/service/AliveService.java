@@ -44,10 +44,12 @@ public class AliveService {
         ReplayInfo replayInfo = new ReplayInfo(messageInfo);
 
         List<Bot> bots = Bot.getInstances();
+        StringBuilder sb = new StringBuilder();
         int i = 0;
         for (Bot bot: bots) {
-            replayInfo.setReplayMessage("[" + i + "]" + bot.getNick() + " " + bot.getId() + " " + (bot.isOnline() ? "在线\n" : "离线\n"));
+            sb.append("[").append(i).append("]").append(bot.getNick()).append(" ").append(bot.getId()).append(" ").append((bot.isOnline() ? "在线\n" : "离线\n"));
         }
+        replayInfo.setReplayMessage(sb.toString);
         return replayInfo;
     }
 }
