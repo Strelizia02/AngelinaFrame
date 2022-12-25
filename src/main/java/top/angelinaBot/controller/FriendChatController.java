@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -31,6 +32,9 @@ public class FriendChatController {
 
     @Autowired
     private SendMessageUtil sendMessageUtil;
+
+    @Autowired
+    private ActivityMapper activityMapper;
 
     /**
      * 通用的qq私聊消息处理接口，可以通过代码内部调用，也可以通过Post接口调用

@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import top.angelinaBot.annotation.AngelinaEvent;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
@@ -53,8 +54,8 @@ public class EventsController {
             if (AngelinaContainer.eventMap.containsKey(message.getEvent())) {
                 Method method = AngelinaContainer.eventMap.get(message.getEvent());
                 if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
-                    AngelinaGroup angelinaGroup = method.getAnnotation(AngelinaGroup.class);
-                    functionMapper.insertFunction(angelinaGroup.keyWords()[0]);
+                    AngelinaEvent annotation = method.getAnnotation(AngelinaEvent.class);
+                    functionMapper.insertFunction(annotation.event().getEventName());
                     ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                     if (message.isReplay()) {
                         sendMessageUtil.sendGroupMsg(invoke);

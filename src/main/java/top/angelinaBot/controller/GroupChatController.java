@@ -89,6 +89,7 @@ public class GroupChatController {
                                 }
                                 replayInfo.setReplayMessage(m.replaceAll(" "));
                                 sendMessageUtil.sendGroupMsg(replayInfo);
+                                functionMapper.insertFunction(name);
                                 return JsonResult.success(replayInfo);
                             }
                         }
@@ -97,7 +98,8 @@ public class GroupChatController {
                             Method method = AngelinaContainer.groupMap.get(name);
                             if (adminMapper.canUseFunction(message.getGroupId(), name) == 0) {
                                 //在这里获取函数的Permission注解来判断方法权限
-                                PermissionEnum p = method.getAnnotation(AngelinaGroup.class).permission();
+                                AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
+                                PermissionEnum p = annotation.permission();
                                 PermissionEnum userAdmin = message.getUserAdmin();
                                 if (userAdmin.getLevel() < p.getLevel()) {
                                     ReplayInfo replayInfo = new ReplayInfo(message);
@@ -106,7 +108,7 @@ public class GroupChatController {
                                     return JsonResult.success(replayInfo);
                                 }
 
-                                functionMapper.insertFunction(method.getName());
+                                functionMapper.insertFunction(name);
                                 ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                                 if (message.isReplay()) {
                                     sendMessageUtil.sendGroupMsg(invoke);
@@ -123,7 +125,8 @@ public class GroupChatController {
                     //循环比对海明距离，小于6的直接触发
                     if (DHashUtil.getHammingDistance(dHash, s) < 6) {
                         Method method = AngelinaContainer.dHashMap.get(s);
-                        functionMapper.insertFunction(method.getName());
+                        AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
+                        functionMapper.insertFunction(annotation.keyWords()[0]);
                         ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
                         if (message.isReplay()) {
                             sendMessageUtil.sendGroupMsg(invoke);
