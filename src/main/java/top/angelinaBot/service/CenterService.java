@@ -117,13 +117,14 @@ public class CenterService {
 
                 String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
 
-                log.info("心跳成功");
-                if (body != null && "0".equals(s)) {
+                log.info("心跳成功, botId = {}", body);
+                if (body != null && botId == null) {
                     JSONObject obj = new JSONObject(body);
                     adminMapper.updateId(obj.getString("data"));
                 }
             } catch (Exception e) {
                 log.error("心跳失败");
+                e.printStackTrace();
             }
     }
 
@@ -160,6 +161,7 @@ public class CenterService {
                 log.info("运行数据同步成功");
             } catch (Exception e) {
                 log.error("运行数据同步失败");
+                e.printStackTrace();
             }
     }
 }

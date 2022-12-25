@@ -120,6 +120,8 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         adminMapper.initIdTable();
         adminMapper.initStopTable();
 
+        centerService.heartBeats();
+
         //用户自定义初始化接口
         if (initAngelinaService != null) {
             initAngelinaService.init();
