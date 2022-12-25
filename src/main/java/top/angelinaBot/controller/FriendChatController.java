@@ -41,18 +41,15 @@ public class FriendChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
-        //不处理自身发送的消息
-        if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("接受到私聊消息:{}", message.getText());
-            if (AngelinaContainer.friendMap.containsKey(message.getKeyword())) {
-                functionMapper.insertFunction(message.getName());
-                Method method = AngelinaContainer.friendMap.get(message.getKeyword());
-                ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                if (message.isReplay()) {
-                    sendMessageUtil.sendFriendMsg(invoke);
-                }
-                return JsonResult.success(invoke);
+        log.info("接受到私聊消息:{}", message.getText());
+        if (AngelinaContainer.friendMap.containsKey(message.getKeyword())) {
+            functionMapper.insertFunction(message.getName());
+            Method method = AngelinaContainer.friendMap.get(message.getKeyword());
+            ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+            if (message.isReplay()) {
+                sendMessageUtil.sendFriendMsg(invoke);
             }
+            return JsonResult.success(invoke);
         }
         return null;
     }
