@@ -62,8 +62,8 @@ public class AngelinaBeanPostProcessor implements BeanPostProcessor {
                                 
                                 for (String keyWord : groupKeyWords) {
                                     //判断关键字是否重复
-                                    if (AngelinaContainer.groupMap.containsKey(keyWord)) {
-                                        Method replaceMethod = AngelinaContainer.groupFuncNameMap.get(keyWord);
+                                    if (AngelinaContainer.groupFuncNameMap.containsKey(keyWord)) {
+                                        Method replaceMethod = AngelinaContainer.groupMap.get(AngelinaContainer.groupFuncNameMap.get(keyWord));
                                         throw new AngelinaException(clazz + " 的方法 " + method.getName() + "() 关键字 \"" + keyWord + "\" 与 " + replaceMethod.getDeclaringClass().getName() + " 的方法 " + replaceMethod.getName() + "() 关键字 \"" + keyWord + "\" 重复");
                                     } else {
                                         AngelinaContainer.groupFuncNameMap.put(keyWord, name);

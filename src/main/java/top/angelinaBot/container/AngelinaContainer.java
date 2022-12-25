@@ -16,7 +16,7 @@ public class AngelinaContainer {
     /**
      所有群聊触发关键字和方法名称的映射
      */
-    public static final Map<String, String> groupFuncNameMap = new HashMap();
+    public static final Map<String, String> groupFuncNameMap = new HashMap<>();
     
     /**
      * 群聊的关键字触发方法

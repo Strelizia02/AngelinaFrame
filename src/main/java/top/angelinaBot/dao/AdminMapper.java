@@ -15,7 +15,8 @@ public interface AdminMapper {
     @Delete("delete from a_group_func_close where group_id=#{groupId} and func_name=#{funcName};")
     Integer openFunction(@Param("groupId") String groupId, @Param("funcName") String funcName);
 
-    @Select("select count(group_id) from a_group_func_close where group_id=#{groupId} and func_name=#{funcName};")
+    @Select("select (select count(group_id) from a_group_func_close where group_id=#{groupId} and func_name=#{funcName}) " +
+            "+ (select count(func_name) from a_func_close where func_name=#{funcName}) as count;")
     Integer canUseFunction(@Param("groupId") String groupId, @Param("funcName") String funcName);
 
     @Select("select func_name from a_group_func_close where group_id=#{groupId};")
@@ -23,7 +24,7 @@ public interface AdminMapper {
 
     @Select("CREATE TABLE IF NOT EXISTS `a_group_func_close`  (\n" +
             "        `group_id` varchar(255) NOT NULL,\n" +
-            "        `func_name` varchar(6) NOT NULL DEFAULT CURRENT_TIMESTAMP\n" +
+            "        `func_name` varchar(255) NOT NULL " +
             "        );")
     Integer initAdminTable();
 
@@ -36,4 +37,15 @@ public interface AdminMapper {
 
     @Select("update `t_id` set `id` = #{id}")
     Integer updateId(@Param("id") String id);
+
+    @Select("CREATE TABLE IF NOT EXISTS `a_func_close` (`func_name` varchar(255) NOT NULL);")
+    Integer initStopTable();
+    @Delete("delete from a_func_close where func_name=#{funcName};")
+    Integer startFunction(@Param("funcName") String funcName);
+
+    @Insert("insert into a_func_close (func_name) values (#{funcName});")
+    Integer stopFunction(@Param("funcName") String funcName);
+
+    @Select("select func_name from a_func_close;")
+    List<String> getStopFunction();
 }

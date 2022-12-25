@@ -118,6 +118,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
         functionMapper.initFunctionTable();
         adminMapper.initAdminTable();
         adminMapper.initIdTable();
+        adminMapper.initStopTable();
 
         //用户自定义初始化接口
         if (initAngelinaService != null) {
@@ -151,7 +152,7 @@ public class AngelinaInitialization implements SmartInitializingSingleton {
                     JSONObject funcJson = chatReplayJson.getJSONObject(i);
                     JSONArray keyWords = funcJson.getJSONArray("keyWords");
                     JSONArray replay = funcJson.getJSONArray("replay");
-                    String name = ketWords.getString(0);
+                    String name = keyWords.getString(0);
                     for (int j = 0; j < keyWords.length(); j++) {
                         //关键词内出现空格应预警
                         if (keyWords.getString(j).contains(" ")) {
