@@ -3,8 +3,10 @@ package top.angelinaBot.job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import top.angelinaBot.service.CenterService;
 
+@Component
 public class CleanChatDataJob {
 
     @Autowired
@@ -14,7 +16,7 @@ public class CleanChatDataJob {
     /**
      * 每日总结一次，Send给中心
      */
-    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24, initialDelay = -1)
+    @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
     @Async
     public void exterminateJob() {
         centerService.pushData();
