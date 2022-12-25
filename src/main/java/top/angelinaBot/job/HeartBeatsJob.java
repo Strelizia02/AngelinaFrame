@@ -12,7 +12,7 @@ public class HeartBeatsJob {
     @Autowired
     private CenterService centerService;
 
-    @Scheduled(fixedDelay = 180000, initialDelay = -1)
+    @Scheduled(fixedDelay = 3 * 60 * 1000, initialDelay = -1)
     @Async
     public void heartBeats() {
         centerService.heartBeats();
