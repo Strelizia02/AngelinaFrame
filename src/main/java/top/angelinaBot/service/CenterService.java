@@ -83,85 +83,85 @@ public class CenterService {
     }
 
     public void heartBeats() {
-            try {
-                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
+        try {
+            String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
 
-                String botId = null;
-                String s = adminMapper.selectId();
-                if (!"0".equals(s)) {
-                    botId = s;
-                }
-
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-                Map<String, Object> requestBody = new HashMap<>();
-                requestBody.put(new String(new byte[]{105, 100}), botId);
-                requestBody.put(new String(new byte[]{110, 97, 109, 101}), botNames.split(" ")[0]);
-                List<QQ> qqList1 = new ArrayList<>();
-                for (int i = 0; i < qqList.length; i++) {
-                    Bot instance = Bot.getInstanceOrNull(Long.parseLong(qqList[i]));
-                    if (instance != null) {
-                        qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], instance.isOnline()));
-                    } else {
-                        qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], false));
-                    }
-                }
-                if (!userConfigToken.isEmpty()) {
-                    qqList1.add(new QQ(userConfigToken, QQFrameContainer.QQChannel, userConfigType, true));
-                }
-
-                requestBody.put(new String(new byte[]{108, 105, 115, 116}), qqList1);
-
-                HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
-
-                String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
-
-                log.info("心跳成功, botId = {}", body);
-                if (body != null && botId == null) {
-                    JSONObject obj = new JSONObject(body);
-                    adminMapper.updateId(obj.getString("data"));
-                }
-            } catch (Exception e) {
-                log.error("心跳失败");
-                e.printStackTrace();
+            String botId = null;
+            String s = adminMapper.selectId();
+            if (!"0".equals(s)) {
+                botId = s;
             }
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put(new String(new byte[]{105, 100}), botId);
+            requestBody.put(new String(new byte[]{110, 97, 109, 101}), botNames.split(" ")[0]);
+            List<QQ> qqList1 = new ArrayList<>();
+            for (int i = 0; i < qqList.length; i++) {
+                Bot instance = Bot.getInstanceOrNull(Long.parseLong(qqList[i]));
+                if (instance != null) {
+                    qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], instance.isOnline()));
+                } else {
+                    qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], false));
+                }
+            }
+            if (!userConfigToken.isEmpty()) {
+                qqList1.add(new QQ(userConfigToken, QQFrameContainer.QQChannel, userConfigType, true));
+            }
+
+            requestBody.put(new String(new byte[]{108, 105, 115, 116}), qqList1);
+
+            HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
+
+            String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
+
+            log.info("心跳成功, botId = {}", body);
+            if (body != null && botId == null) {
+                JSONObject obj = new JSONObject(body);
+                adminMapper.updateId(obj.getString("data"));
+            }
+        } catch (Exception e) {
+            log.error("心跳失败");
+            e.printStackTrace();
+        }
     }
 
     public void pushData() {
-            try {
-                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 112, 117, 115, 104, 68, 97, 116, 97});
-                List<MessageCount> messageCount = activityMapper.selectCount();
+        try {
+            String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 112, 117, 115, 104, 68, 97, 116, 97});
+            List<MessageCount> messageCount = activityMapper.selectCount();
 
-                Runtime runtime = Runtime.getRuntime();
-                long totalMemory = runtime.totalMemory() - runtime.freeMemory();
-                List<FunctionCount> functionCount = functionMapper.selectFunction();
+            Runtime runtime = Runtime.getRuntime();
+            long totalMemory = runtime.totalMemory() - runtime.freeMemory();
+            List<FunctionCount> functionCount = functionMapper.selectFunction();
 
-                HttpHeaders httpHeaders = new HttpHeaders();
-                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-                Map<String, Object> requestBody = new HashMap<>();
-                requestBody.put(new String(new byte[]{109, 101, 115, 115, 97, 103, 101, 67, 111, 117, 110, 116}), messageCount);
-                requestBody.put(new String(new byte[]{116, 111, 116, 97, 108, 77, 101, 109, 111, 114, 121}), totalMemory);
-                requestBody.put(new String(new byte[]{102, 117, 110, 99, 116, 105, 111, 110, 67, 111, 117, 110, 116}), functionCount);
-                requestBody.put(new String(new byte[]{98, 111, 116, 73, 100}), adminMapper.selectId());
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put(new String(new byte[]{109, 101, 115, 115, 97, 103, 101, 67, 111, 117, 110, 116}), messageCount);
+            requestBody.put(new String(new byte[]{116, 111, 116, 97, 108, 77, 101, 109, 111, 114, 121}), totalMemory);
+            requestBody.put(new String(new byte[]{102, 117, 110, 99, 116, 105, 111, 110, 67, 111, 117, 110, 116}), functionCount);
+            requestBody.put(new String(new byte[]{98, 111, 116, 73, 100}), adminMapper.selectId());
 
-                if (sendDataService != null) {
-                    Count count = sendDataService.sendData();
-                    if (count != null) {
-                        requestBody.put(new String(new byte[]{113, 113, 67, 111, 117, 110, 116}), count.getQqCount());
-                        requestBody.put(new String(new byte[]{103, 114, 111, 117, 112, 67, 111, 117, 110, 116}), count.getGroupCount());
-                    }
+            if (sendDataService != null) {
+                Count count = sendDataService.sendData();
+                if (count != null) {
+                    requestBody.put(new String(new byte[]{113, 113, 67, 111, 117, 110, 116}), count.getQqCount());
+                    requestBody.put(new String(new byte[]{103, 114, 111, 117, 112, 67, 111, 117, 110, 116}), count.getGroupCount());
                 }
-
-                HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
-                restTemplate.postForEntity(url, httpEntity, String.class);
-
-                activityMapper.clearActivity();
-                functionMapper.deleteFunctionTable();
-                log.info("运行数据同步成功");
-            } catch (Exception e) {
-                log.error("运行数据同步失败");
-                e.printStackTrace();
             }
+
+            HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
+            restTemplate.postForEntity(url, httpEntity, String.class);
+
+            activityMapper.clearActivity();
+            functionMapper.deleteFunctionTable();
+            log.info("运行数据同步成功");
+        } catch (Exception e) {
+            log.error("运行数据同步失败");
+            e.printStackTrace();
+        }
     }
 }
