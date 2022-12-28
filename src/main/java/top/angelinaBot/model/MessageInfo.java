@@ -40,6 +40,10 @@ public class MessageInfo {
     */
     private String groupId;
     /**
+     * 消息唯一编码
+     */
+    private String messageId;
+    /**
      * 图片Url合集
     */
     private List<String> imgUrlList = new ArrayList<>();
@@ -230,5 +234,13 @@ public class MessageInfo {
 
     public void setReplay(Boolean replay) {
         isReplay = replay;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

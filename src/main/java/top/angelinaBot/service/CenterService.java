@@ -83,48 +83,50 @@ public class CenterService {
     }
 
     public void heartBeats() {
-        try {
-            String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
+        if (qqList[0].equals("")) {
+            try {
+                String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
 
-            String botId = null;
-            String s = adminMapper.selectId();
-            if (!"0".equals(s)) {
-                botId = s;
-            }
-
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put(new String(new byte[]{105, 100}), botId);
-            requestBody.put(new String(new byte[]{110, 97, 109, 101}), botNames.split(" ")[0]);
-            List<QQ> qqList1 = new ArrayList<>();
-            for (int i = 0; i < qqList.length; i++) {
-                Bot instance = Bot.getInstanceOrNull(Long.parseLong(qqList[i]));
-                if (instance != null) {
-                    qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], instance.isOnline()));
-                } else {
-                    qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], false));
+                String botId = null;
+                String s = adminMapper.selectId();
+                if (!"0".equals(s)) {
+                    botId = s;
                 }
+
+                HttpHeaders httpHeaders = new HttpHeaders();
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+                Map<String, Object> requestBody = new HashMap<>();
+                requestBody.put(new String(new byte[]{105, 100}), botId);
+                requestBody.put(new String(new byte[]{110, 97, 109, 101}), botNames.split(" ")[0]);
+                List<QQ> qqList1 = new ArrayList<>();
+                for (int i = 0; i < qqList.length; i++) {
+                    Bot instance = Bot.getInstanceOrNull(Long.parseLong(qqList[i]));
+                    if (instance != null) {
+                        qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], instance.isOnline()));
+                    } else {
+                        qqList1.add(new QQ(qqList[i], QQFrameContainer.Miari, typeList[i], false));
+                    }
+                }
+                if (!userConfigToken.isEmpty()) {
+                    qqList1.add(new QQ(userConfigToken, QQFrameContainer.QQChannel, userConfigType, true));
+                }
+
+                requestBody.put(new String(new byte[]{108, 105, 115, 116}), qqList1);
+
+                HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
+
+                String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
+
+                log.info("心跳成功, botId = {}", body);
+                if (body != null && botId == null) {
+                    JSONObject obj = new JSONObject(body);
+                    adminMapper.updateId(obj.getString("data"));
+                }
+            } catch (Exception e) {
+                log.error("心跳失败");
+                e.printStackTrace();
             }
-            if (!userConfigToken.isEmpty()) {
-                qqList1.add(new QQ(userConfigToken, QQFrameContainer.QQChannel, userConfigType, true));
-            }
-
-            requestBody.put(new String(new byte[]{108, 105, 115, 116}), qqList1);
-
-            HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, httpHeaders);
-
-            String body = restTemplate.postForEntity(url, httpEntity, String.class).getBody();
-
-            log.info("心跳成功, botId = {}", body);
-            if (body != null && botId == null) {
-                JSONObject obj = new JSONObject(body);
-                adminMapper.updateId(obj.getString("data"));
-            }
-        } catch (Exception e) {
-            log.error("心跳失败");
-            e.printStackTrace();
         }
     }
 

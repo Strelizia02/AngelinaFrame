@@ -31,6 +31,10 @@ public class ReplayInfo {
      */
     List<String> groupId = new ArrayList<>();
     /**
+     * 回复的消息id
+     */
+    String messageId;
+    /**
      * 文字内容
      */
     String replayMessage;
@@ -65,6 +69,7 @@ public class ReplayInfo {
         this.setGroupId(messageInfo.getGroupId());
         this.qq = messageInfo.getQq();
         this.name = messageInfo.getName();
+        this.messageId = messageInfo.getMessageId();
         this.frame = messageInfo.getFrame();
     }
 
@@ -207,5 +212,13 @@ public class ReplayInfo {
 
     public String getFrame() {
         return frame;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
     }
 }

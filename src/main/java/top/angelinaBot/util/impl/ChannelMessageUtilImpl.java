@@ -20,10 +20,7 @@ import top.angelinaBot.util.AngelinaSendMessageUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -74,23 +71,12 @@ public class ChannelMessageUtilImpl implements AngelinaSendMessageUtil {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set("Authorization", "Bot " + userConfigAppId + "." + userConfigToken);
             httpHeaders.setContentType(MediaType.MULTIPART_FORM_DATA);
+            params.add("msg_id", replayInfo.getMessageId());
 
             try {
                 if (replayMessage != null) {
                     //发送文字
                     params.add("content", replayMessage);
-                    JSONObject kv1 = new JSONObject();
-                    JSONArray kv = new JSONArray();
-                    kv.put(kv1);
-                    kv1.append("key", "#DESC#");
-                    kv1.append("value", "#机器人订阅消息#");
-                    JSONObject ark = new JSONObject();
-                    ark.append("template", 1);
-                    ark.append("kv", kv);
-
-                    JSONObject obj = new JSONObject();
-                    obj.append("ark", ark);
-                    params.add("ark", obj.toString());
                 }
 
                 if (replayImgList.size() > 0) {
@@ -101,7 +87,9 @@ public class ChannelMessageUtilImpl implements AngelinaSendMessageUtil {
                         } else if (replayImg instanceof File) {
                             params.add("file_image", new FileSystemResource((File) replayImg));
                         } else if (replayImg instanceof BufferedImage) {
-                            params.add("file_image", new ByteArrayResource(bufferImage2byte((BufferedImage) replayImg)));
+                            File f = new File("runFile/cache/" + UUID.randomUUID());
+                            ImageIO.write((BufferedImage) replayImg, "png", f);
+                            params.add("file_image", new FileSystemResource(f));
                         }
                     }
                 }

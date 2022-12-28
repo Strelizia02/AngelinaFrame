@@ -25,7 +25,10 @@ userConfig:
   # 登录协议，可选项有：IPAD ANDROID_PAD ANDROID_PHONE MACOS，推荐IPAD或MACOS
   typeList: 'IPAD'
 
-  # QQ频道机器人登录信息
-  token: ''
+# QQ频道机器人登录信息
+  # BotAPPID 开发者ID
   appId: ''
+  # 机器人令牌
+  token: ''
+  # 公域还是私域 public/private
   type: ''

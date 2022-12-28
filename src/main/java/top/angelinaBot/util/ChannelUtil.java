@@ -129,6 +129,7 @@ public class ChannelUtil {
 
                         messageInfo.setName(username);
                         messageInfo.setCallMe(true);
+                        messageInfo.setMessageId(messageObj.getString("id"));
                         Pattern pattern = Pattern.compile("\\u003c@!([0-9.]*)\\u003e");
                         Matcher matcher = pattern.matcher(content);
                         String s = matcher.replaceAll("").replace("/", "").trim();
