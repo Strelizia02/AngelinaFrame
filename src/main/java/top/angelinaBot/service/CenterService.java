@@ -83,7 +83,7 @@ public class CenterService {
     }
 
     public void heartBeats() {
-        if (qqList[0].equals("")) {
+        if (!qqList[0].equals("")) {
             try {
                 String url = new String(new byte[]{104, 116, 116, 112, 58, 47, 47, 97, 112, 105, 46, 97, 110, 103, 101, 108, 105, 110, 97, 45, 98, 111, 116, 46, 116, 111, 112, 58, 56, 48, 56, 55, 47, 98, 111, 116, 47, 104, 101, 97, 114, 116, 66, 101, 97, 116, 115});
 
@@ -136,7 +136,7 @@ public class CenterService {
             List<MessageCount> messageCount = activityMapper.selectCount();
 
             Runtime runtime = Runtime.getRuntime();
-            long totalMemory = runtime.totalMemory() - runtime.freeMemory();
+            long totalMemory = (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024;
             List<FunctionCount> functionCount = functionMapper.selectFunction();
 
             HttpHeaders httpHeaders = new HttpHeaders();
