@@ -7,6 +7,7 @@ import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.BlackListMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +47,9 @@ public class GroupChatController {
     @Autowired
     private SendMessageUtil sendMessageUtil;
 
+    @Autowired
+    private BlackListMapper blackListMapper;
+
     private final Map<String, List<Long>> qqMsgRateList = new HashMap<>();
 
 
@@ -59,80 +63,95 @@ public class GroupChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
-        //不处理自身发送的消息
-        if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
-            if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
-                if (getMsgLimit(message)) {
-                    activityMapper.getGroupMessage();
-                    if (AngelinaContainer.groupFuncNameMap.containsKey(message.getKeyword())) {
-                        String name = AngelinaContainer.groupFuncNameMap.get(message.getKeyword());
-                        if (AngelinaContainer.chatMap.containsKey(name)) {
-                            List<String> s = AngelinaContainer.chatMap.get(name);
-                            ReplayInfo replayInfo = new ReplayInfo(message);
-                            //判断该群是否已关闭该功能
-                            if (adminMapper.canUseFunction(message.getGroupId(), name) == 0) {
-                                String sendStr = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
-                                //解析大括号内容
-                                Pattern pattern = Pattern.compile("\\{[^}]*\\}");
-                                Matcher m = pattern.matcher(sendStr);
-                                while (m.find()) {
-                                    String str = m.group();
-                                    String[] split = str.substring(1, str.length() - 1).split("@");
-                                    if (split[0].equals("audio")) {
-                                        //添加语音
-                                        replayInfo.setMp3(split[1]);
-                                    } else if (split[0].equals("img")) {
-                                        //添加图片
-                                        replayInfo.setReplayImg(new File(split[1]));
-                                    }
-                                }
-                                replayInfo.setReplayMessage(m.replaceAll(" "));
-                                sendMessageUtil.sendGroupMsg(replayInfo);
-                                functionMapper.insertFunction(name);
-                                return JsonResult.success(replayInfo);
-                            }
-                        }
-                        
-                        if (AngelinaContainer.groupMap.containsKey(name)) {
-                            Method method = AngelinaContainer.groupMap.get(name);
-                            if (adminMapper.canUseFunction(message.getGroupId(), name) == 0) {
-                                //在这里获取函数的Permission注解来判断方法权限
-                                AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
-                                PermissionEnum p = annotation.permission();
-                                PermissionEnum userAdmin = message.getUserAdmin();
-                                if (userAdmin.getLevel() < p.getLevel()) {
-                                    ReplayInfo replayInfo = new ReplayInfo(message);
-                                    replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
-                                    sendMessageUtil.sendGroupMsg(replayInfo);
-                                    return JsonResult.success(replayInfo);
-                                }
+        if (message.getLoginQq().equals(message.getQq())) {
+            //不处理自身发送的消息
+            return null;
+        }
 
-                                functionMapper.insertFunction(name);
-                                ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                                if (message.isReplay()) {
-                                    sendMessageUtil.sendGroupMsg(invoke);
-                                }
-                                return JsonResult.success(invoke);
-                            }
-                        }
+        if (blackListMapper.selectBlackByQQ(message.getQq()) > 0) {
+            //不处理拉黑人的消息
+            return null;
+        }
+
+        log.info("bot[{}]接受到群[{}]消息:{}", message.getLoginQq(), message.getGroupId(), message.getEventString());
+        if (message.getCallMe()) { //当判断被呼叫时，调用反射响应回复
+            if (!getMsgLimit(message)) {
+                //超出反应速率
+                return null;
+            }
+
+            activityMapper.getGroupMessage();
+            if (!AngelinaContainer.groupFuncNameMap.containsKey(message.getKeyword())) {
+                //没有找到对应功能
+                return null;
+            }
+
+            String name = AngelinaContainer.groupFuncNameMap.get(message.getKeyword());
+            if (adminMapper.canUseFunction(message.getGroupId(), name) != 0) {
+                //判断该群是否已关闭该功能
+                return null;
+            }
+
+            if (AngelinaContainer.chatMap.containsKey(name)) {
+                //该功能是一个闲聊功能
+                List<String> s = AngelinaContainer.chatMap.get(name);
+                ReplayInfo replayInfo = new ReplayInfo(message);
+                String sendStr = s.get(new Random().nextInt(s.size())).replace("{userName}", message.getName());
+                //解析大括号内容
+                Pattern pattern = Pattern.compile("\\{[^}]*\\}");
+                Matcher m = pattern.matcher(sendStr);
+                while (m.find()) {
+                    String str = m.group();
+                    String[] split = str.substring(1, str.length() - 1).split("@");
+                    if (split[0].equals("audio")) {
+                        //添加语音
+                        replayInfo.setMp3(split[1]);
+                    } else if (split[0].equals("img")) {
+                        //添加图片
+                        replayInfo.setReplayImg(new File(split[1]));
                     }
                 }
-            } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1 && message.getImgTypeList().get(0) != ImageType.GIF) {
-                //没有文字且只有一张非gif图片的时候，准备DHash运算
-                String dHash = DHashUtil.getDHash(message.getImgUrlList().get(0));
-                for (String s : AngelinaContainer.dHashMap.keySet()) {
-                    //循环比对海明距离，小于6的直接触发
-                    if (DHashUtil.getHammingDistance(dHash, s) < 6) {
-                        Method method = AngelinaContainer.dHashMap.get(s);
-                        AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
-                        functionMapper.insertFunction(annotation.keyWords()[0]);
-                        ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                        if (message.isReplay()) {
-                            sendMessageUtil.sendGroupMsg(invoke);
-                        }
-                        return JsonResult.success(invoke);
+                replayInfo.setReplayMessage(m.replaceAll(" "));
+                sendMessageUtil.sendGroupMsg(replayInfo);
+                functionMapper.insertFunction(name);
+                return JsonResult.success(replayInfo);
+            }
+
+            if (AngelinaContainer.groupMap.containsKey(name)) {
+                //该功能是一个群聊功能
+                Method method = AngelinaContainer.groupMap.get(name);
+                //在这里获取函数的Permission注解来判断方法权限
+                AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
+                PermissionEnum p = annotation.permission();
+                PermissionEnum userAdmin = message.getUserAdmin();
+                if (userAdmin.getLevel() < p.getLevel()) {
+                    ReplayInfo replayInfo = new ReplayInfo(message);
+                    replayInfo.setReplayMessage("该功能需要" + p.getName() + "权限才可以使用");
+                    sendMessageUtil.sendGroupMsg(replayInfo);
+                    return JsonResult.success(replayInfo);
+                }
+
+                functionMapper.insertFunction(name);
+                ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                if (message.isReplay()) {
+                    sendMessageUtil.sendGroupMsg(invoke);
+                }
+                return JsonResult.success(invoke);
+            }
+        } else if (message.getKeyword() == null && message.getImgUrlList().size() == 1 && message.getImgTypeList().get(0) != ImageType.GIF) {
+            //没有文字且只有一张非gif图片的时候，准备DHash运算
+            String dHash = DHashUtil.getDHash(message.getImgUrlList().get(0));
+            for (String s : AngelinaContainer.dHashMap.keySet()) {
+                //循环比对海明距离，小于6的直接触发
+                if (DHashUtil.getHammingDistance(dHash, s) < 6) {
+                    Method method = AngelinaContainer.dHashMap.get(s);
+                    AngelinaGroup annotation = method.getAnnotation(AngelinaGroup.class);
+                    functionMapper.insertFunction(annotation.keyWords()[0]);
+                    ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+                    if (message.isReplay()) {
+                        sendMessageUtil.sendGroupMsg(invoke);
                     }
+                    return JsonResult.success(invoke);
                 }
             }
         }

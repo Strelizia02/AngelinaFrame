@@ -9,7 +9,9 @@ import top.angelinaBot.annotation.AngelinaEvent;
 import top.angelinaBot.annotation.AngelinaGroup;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
+import top.angelinaBot.dao.ActivityMapper;
 import top.angelinaBot.dao.AdminMapper;
+import top.angelinaBot.dao.BlackListMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -37,7 +39,13 @@ public class EventsController {
     private FunctionMapper functionMapper;
 
     @Autowired
+    private BlackListMapper blackListMapper;
+
+    @Autowired
     private SendMessageUtil sendMessageUtil;
+
+    @Autowired
+    private ActivityMapper activityMapper;
 
     /**
      * 通用的qq事件处理接口，可以通过代码内部调用，也可以通过Post接口调用
@@ -49,21 +57,34 @@ public class EventsController {
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
         //不处理自身发送的消息
-        if (!message.getLoginQq().equals(message.getQq())) {
-            log.info("接受到事件:{}", message.getEvent());
-            if (AngelinaContainer.eventMap.containsKey(message.getEvent())) {
-                Method method = AngelinaContainer.eventMap.get(message.getEvent());
-                if (adminMapper.canUseFunction(message.getGroupId(), method.getName()) == 0) {
-                    AngelinaEvent annotation = method.getAnnotation(AngelinaEvent.class);
-                    functionMapper.insertFunction(annotation.event().getEventName());
-                    ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-                    if (message.isReplay()) {
-                        sendMessageUtil.sendGroupMsg(invoke);
-                    }
-                    return JsonResult.success(invoke);
-                }
-            }
+        if (message.getLoginQq().equals(message.getQq())) {
+            return null;
         }
-        return null;
+
+        if (blackListMapper.selectBlackByQQ(message.getQq()) > 0) {
+            //不处理拉黑人的消息
+            return null;
+        }
+
+        log.info("接受到事件:{}", message.getEvent());
+        activityMapper.getEventMessage();
+        if (!AngelinaContainer.eventMap.containsKey(message.getEvent())) {
+            //没有找到对应功能
+            return null;
+        }
+
+        Method method = AngelinaContainer.eventMap.get(message.getEvent());
+        if (adminMapper.canUseFunction(message.getGroupId(), message.getEvent().getEventName()) != 0) {
+            //判断该群是否已关闭该功能
+            return null;
+        }
+
+        AngelinaEvent annotation = method.getAnnotation(AngelinaEvent.class);
+        functionMapper.insertFunction(annotation.event().getEventName());
+        ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+        if (message.isReplay()) {
+            sendMessageUtil.sendGroupMsg(invoke);
+        }
+        return JsonResult.success(invoke);
     }
 }

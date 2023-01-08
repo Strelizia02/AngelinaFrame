@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import top.angelinaBot.container.AngelinaContainer;
 import top.angelinaBot.bean.SpringContextRunner;
 import top.angelinaBot.dao.ActivityMapper;
+import top.angelinaBot.dao.BlackListMapper;
 import top.angelinaBot.dao.FunctionMapper;
 import top.angelinaBot.model.MessageInfo;
 import top.angelinaBot.model.ReplayInfo;
@@ -34,6 +35,9 @@ public class FriendChatController {
     private SendMessageUtil sendMessageUtil;
 
     @Autowired
+    private BlackListMapper blackListMapper;
+
+    @Autowired
     private ActivityMapper activityMapper;
 
     /**
@@ -45,16 +49,24 @@ public class FriendChatController {
      */
     @PostMapping("receive")
     public JsonResult<ReplayInfo> receive(MessageInfo message) throws InvocationTargetException, IllegalAccessException {
-        log.info("接受到私聊消息:{}", message.getText());
-        if (AngelinaContainer.friendMap.containsKey(message.getKeyword())) {
-            functionMapper.insertFunction(message.getName());
-            Method method = AngelinaContainer.friendMap.get(message.getKeyword());
-            ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
-            if (message.isReplay()) {
-                sendMessageUtil.sendFriendMsg(invoke);
-            }
-            return JsonResult.success(invoke);
+        if (blackListMapper.selectBlackByQQ(message.getQq()) > 0) {
+            //不处理拉黑人的消息
+            return null;
         }
-        return null;
+
+        log.info("接受到私聊消息:{}", message.getText());
+        activityMapper.getFriendMessage();
+        if (!AngelinaContainer.friendMap.containsKey(message.getKeyword())) {
+            //没有找到该功能
+            return null;
+        }
+
+        functionMapper.insertFunction(message.getName());
+        Method method = AngelinaContainer.friendMap.get(message.getKeyword());
+        ReplayInfo invoke = (ReplayInfo) method.invoke(SpringContextRunner.getBean(method.getDeclaringClass()), message);
+        if (message.isReplay()) {
+            sendMessageUtil.sendFriendMsg(invoke);
+        }
+        return JsonResult.success(invoke);
     }
 }

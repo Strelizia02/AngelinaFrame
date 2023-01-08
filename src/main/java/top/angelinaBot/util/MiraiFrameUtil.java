@@ -50,9 +50,6 @@ public class MiraiFrameUtil {
     @Autowired
     private EventsController eventsController;
 
-    @Autowired
-    private ActivityMapper activityMapper;
-
     /**
      * rebuild状态，1为正在rebuild，0为已经rebuild完成
      */
@@ -141,7 +138,6 @@ public class MiraiFrameUtil {
         //某个Bot加入了一个新群
         GlobalEventChannel.INSTANCE.subscribeAlways(BotJoinGroupEvent.class, event -> {
             messageIdMap.put(event.getGroupId() + "", event.getBot().getId() + "");
-            activityMapper.getEventMessage();
             MessageInfo messageInfo = new MessageInfo();
             messageInfo.setEvent(EventEnum.MemberJoinEvent);
             messageInfo.setLoginQq(event.getBot().getId() + "");
@@ -157,7 +153,6 @@ public class MiraiFrameUtil {
         //群撤回消息
         GlobalEventChannel.INSTANCE.subscribeAlways(MessageRecallEvent.GroupRecall.class, event -> {
             if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
-                activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.GroupRecall);
                 messageInfo.setLoginQq(event.getBot().getId() + "");
@@ -177,7 +172,6 @@ public class MiraiFrameUtil {
             Contact subject = event.getSubject();
             if (subject instanceof Group) {
                 if (messageIdMap.get(subject.getId() + "").equals(event.getBot().getId() + "") && event.getTarget() instanceof Bot){
-                    activityMapper.getEventMessage();
                     MessageInfo messageInfo = new MessageInfo();
                     messageInfo.setEvent(EventEnum.NudgeEvent);
                     messageInfo.setLoginQq(event.getBot().getId() + "");
@@ -196,7 +190,6 @@ public class MiraiFrameUtil {
         //某人进群
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberJoinEvent.class, event -> {
             if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
-                activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.MemberJoinEvent);
                 messageInfo.setLoginQq(event.getBot().getId() + "");
@@ -215,7 +208,6 @@ public class MiraiFrameUtil {
         //某人退群
         GlobalEventChannel.INSTANCE.subscribeAlways(MemberLeaveEvent.class, event -> {
             if (messageIdMap.get(event.getGroup().getId() + "").equals(event.getBot().getId() + "")) {
-                activityMapper.getEventMessage();
                 MessageInfo messageInfo = new MessageInfo();
                 messageInfo.setEvent(EventEnum.MemberLeaveEvent);
                 messageInfo.setLoginQq(event.getBot().getId() + "");
@@ -251,7 +243,6 @@ public class MiraiFrameUtil {
         //好友消息
         GlobalEventChannel.INSTANCE.subscribeAlways(FriendMessageEvent.class, event -> {
             MessageInfo messageInfo = getMessageInfo(event, botNames);
-            activityMapper.getFriendMessage();
             messageInfo.setFrame(QQFrameContainer.Miari);
             try {
                 friendChatController.receive(messageInfo);

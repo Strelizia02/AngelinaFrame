@@ -34,7 +34,7 @@ public class AdminService {
                 Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
                 for (EventEnum e: eventEnums) {
                     if (key.equals(e.getEventName())) {
-                        adminMapper.closeFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getEventName());
+                        adminMapper.closeFunction(messageInfo.getGroupId(), key);
                         replayInfo.setReplayMessage("关闭功能 " + key + "成功");
                         return replayInfo;
                     }
@@ -63,7 +63,7 @@ public class AdminService {
                 Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
                 for (EventEnum e: eventEnums) {
                     if (key.equals(e.getEventName())) {
-                        adminMapper.openFunction(messageInfo.getGroupId(), AngelinaContainer.eventMap.get(e).getEventName());
+                        adminMapper.openFunction(messageInfo.getGroupId(), key);
                         replayInfo.setReplayMessage("打开功能 " + key + "成功");
                         return replayInfo;
                     }
@@ -109,7 +109,7 @@ public class AdminService {
                 Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
                 for (EventEnum e: eventEnums) {
                     if (key.equals(e.getEventName())) {
-                        adminMapper.stopFunction(AngelinaContainer.eventMap.get(e).getEventName());
+                        adminMapper.stopFunction(key);
                         replayInfo.setReplayMessage("停止功能 " + key + "成功");
                         return replayInfo;
                     }
@@ -139,7 +139,7 @@ public class AdminService {
                 Set<EventEnum> eventEnums = AngelinaContainer.eventMap.keySet();
                 for (EventEnum e: eventEnums) {
                     if (key.equals(e.getEventName())) {
-                        adminMapper.startFunction(AngelinaContainer.eventMap.get(e).getEventName());
+                        adminMapper.startFunction(key);
                         replayInfo.setReplayMessage("启用功能 " + key + "成功");
                         return replayInfo;
                     }
