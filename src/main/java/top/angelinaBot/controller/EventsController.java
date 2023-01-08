@@ -74,7 +74,7 @@ public class EventsController {
         }
 
         Method method = AngelinaContainer.eventMap.get(message.getEvent());
-        if (adminMapper.canUseFunction(message.getGroupId(), message.getEvent().getEventName()) != 0) {
+        if (adminMapper.canUseFunction(message.getGroupId(), message.getEvent().getEventName()) > 0) {
             //判断该群是否已关闭该功能
             return null;
         }

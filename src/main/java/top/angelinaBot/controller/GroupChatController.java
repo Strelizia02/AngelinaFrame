@@ -87,7 +87,7 @@ public class GroupChatController {
             }
 
             String name = AngelinaContainer.groupFuncNameMap.get(message.getKeyword());
-            if (adminMapper.canUseFunction(message.getGroupId(), name) != 0) {
+            if (adminMapper.canUseFunction(message.getGroupId(), name) > 0) {
                 //判断该群是否已关闭该功能
                 return null;
             }
