@@ -170,6 +170,10 @@ public class ReplayInfo {
      * @param bufferedImage 图片BufferedImage
      */
     public void setReplayImg(BufferedImage bufferedImage) {
+        if (bufferedImage == null) {
+            log.warn("BufferImage图片不存在");
+            return;
+        }
         replayImg.add(bufferedImage);
     }
 
@@ -178,6 +182,10 @@ public class ReplayInfo {
      * @param file 文件File
      */
     public void setReplayImg(File file) {
+        if (file == null) {
+            log.warn("文件图片不存在");
+            return;
+        }
         replayImg.add(file);
     }
 
@@ -186,6 +194,10 @@ public class ReplayInfo {
      * @param url 图片url
      */
     public void setReplayImg(String url) {
+        if (url == null || url.equals("")) {
+            log.warn("url图片不存在");
+            return;
+        }
         replayImg.add(url);
     }
 
